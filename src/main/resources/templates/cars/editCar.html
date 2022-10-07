@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="/fragments/head"></th:block>
+</head>
+<body>
+<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+
+<form th:action="@{/cars/edit/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT">
+    <label for="model">Car model</label>
+    <input type="text" name="model" id="model" th:field="*{model}" required>
+    <label for="manufacturers">Manufacturers</label>
+    <select class="form-select" id="manufacturers" th:field="*{manufacturer}" required>
+        <option th:each="manufacturer : ${manufacturers}"
+                th:text="${manufacturer}"
+                th:value="${manufacturer}"
+        ></option>
+    </select>
+    <label for="class">Class</label>
+    <select class="form-select" id="class" th:field="*{categoryClass}" required>
+        <option th:each="class : ${class}"
+                th:text="${class}"
+                th:value="${class}"
+        ></option>
+    </select>
+    <label for="pricePerDay">Price per day $</label>
+    <input type="number" name="pricePerDay" id="pricePerDay" th:field="*{pricePerDay}" required>
+    <input type="hidden" name="id" id="id" th:field="*{id}" th:value="*{id}" required>
+    <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Add">
+</form>
+
+<div class="fixed-bottom" th:insert="/fragments/footer :: body"></div>
+</body>
+</html>

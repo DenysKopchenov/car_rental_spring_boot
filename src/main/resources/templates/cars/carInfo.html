@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="/fragments/head"></th:block>
+</head>
+<body>
+<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<div th:text="${car}">
+</div>
+<th:block sec:authorize="hasAuthority('ADMIN')">
+    <div>
+        <form th:action="@{/admin/delete/{id}(id=${car.id})}" th:method="DELETE">
+            <input class="btn btn-danger" type="submit" value="Delete">
+        </form>
+    </div>
+    <a th:href="@{/admin/edit/{id}(id=${car.id})}" class="btn btn-info">Edit car</a>
+    <a class="btn btn-primary" th:href="@{/cars/new}">New car</a>
+</th:block>
+<a th:href="@{/cars/{id}(id=${car.id})}" class="btn btn-info">Detail</a>
+<th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
+    <a th:href="@{/order/car/{id}(id=${car.id})}" class="btn btn-info">Rent a car</a>
+</th:block>
+<div class="fixed-bottom" th:insert="/fragments/footer :: body"></div>
+</body>
+</html>
