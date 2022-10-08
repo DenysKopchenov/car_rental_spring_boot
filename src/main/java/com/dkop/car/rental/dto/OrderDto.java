@@ -1,5 +1,8 @@
 package com.dkop.car.rental.dto;
 
+import com.dkop.car.rental.model.car.Car;
+import com.dkop.car.rental.model.client.AppUser;
+import com.dkop.car.rental.model.order.PassportData;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -10,9 +13,9 @@ import java.util.UUID;
 public class OrderDto {
 
     private UUID id;
-    private CarDto carDto;
-    private AppUserDto appUserDto;
-    private String passportData;
+    private Car car;
+    private AppUser appUser;
+    private PassportData passportData;
     private boolean withDriver;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;

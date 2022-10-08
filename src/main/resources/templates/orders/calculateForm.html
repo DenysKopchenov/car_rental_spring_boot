@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="/fragments/head"></th:block>
+</head>
+<body>
+<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+
+<form th:action="@{/order/book}" th:object="${order}" th:method="GET"
+      class="request-form ftco-animate bg-primary fadeInUp ftco-animated">
+    <div class="d-flex">
+        <div class="form-group mr-2">
+            <label for="startDate" class="label">Start date</label>
+            <input type="date" class="form-control" id="startDate"
+                   th:value="*{startDate}"
+                   th:field="*{startDate}"
+                   th:attr="min=*{startDate}"
+                   placeholder="Date" required>
+        </div>
+        <div class="form-group ml-2">
+            <label for="endDate" class="label">End date</label>
+            <input type="date" class="form-control" id="endDate"
+                   th:value="*{endDate}"
+                   th:field="*{endDate}"
+                   th:attr="min=*{startDate.plusDays(1)}"
+                   placeholder="Date" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="needDriver" class="label">Need driver</label>
+        <input type="checkbox" id="needDriver"
+               th:field="*{withDriver}"
+               class="btn btn-secondary py-3 px-4">
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Calculate price" class="btn btn-secondary py-3 px-4">
+    </div>
+    <input type="hidden" th:value="*{car}" th:field="*{car}" class="btn btn-secondary py-3 px-4">
+</form>
+
+<div class="fixed-bottom" th:insert="/fragments/footer :: body"></div>
+</body>
+</html>

@@ -16,9 +16,11 @@
     <a th:href="@{/admin/edit/{id}(id=${car.id})}" class="btn btn-info">Edit car</a>
     <a class="btn btn-primary" th:href="@{/cars/new}">New car</a>
 </th:block>
-<a th:href="@{/cars/{id}(id=${car.id})}" class="btn btn-info">Detail</a>
 <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
-    <a th:href="@{/order/car/{id}(id=${car.id})}" class="btn btn-info">Rent a car</a>
+    <form th:action="@{/order}" th:method="GET">
+        <input type="hidden" name="carId" th:value="${car.id}">
+        <input class="btn btn-danger" type="submit" value="Rent a car">
+    </form>
 </th:block>
 <div class="fixed-bottom" th:insert="/fragments/footer :: body"></div>
 </body>

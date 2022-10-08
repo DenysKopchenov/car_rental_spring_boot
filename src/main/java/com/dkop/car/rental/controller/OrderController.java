@@ -36,26 +36,20 @@ public class OrderController {
     @GetMapping()
     public String showOrderForm(@RequestParam("carId") UUID carId, @ModelAttribute("order") OrderDto orderDto) {
         Car car = carService.findById(carId);
-//        orderDto.setCarDto(new CarDto(car.getId(),
-//                car.getManufacturer(),
-//                car.getCategoryClass(),
-//                car.getModel(),
-//                car.getPricePerDay()));
-        orderDto.setCarDto(mapper.mapCarToCarDto(car));
-//        orderDto.setCar(car);
+        orderDto.setCar(car);
         orderDto.setStartDate(LocalDate.now());
+        return "orders/calculateForm";
+    }
+
+    @GetMapping("/book")
+    public String showPayment(@ModelAttribute("order") OrderDto orderDto) {
+        orderService.calculateOrder(orderDto);
         return "orders/orderForm";
     }
 
-    @GetMapping("/payment")
-    public String showPayment(@ModelAttribute("order") OrderDto orderDto) {
-        orderService.calculateOrder(orderDto);
-        return "orders/paymentForm";
-    }
-
-    @PostMapping("/payment")
+    @PostMapping("/book")
     public String payPayment(@ModelAttribute("order") OrderDto orderDto) {
         orderService.createOrder(orderDto);
-        return "orders/paymentForm";
+        return "orders/orderForm";
     }
 }

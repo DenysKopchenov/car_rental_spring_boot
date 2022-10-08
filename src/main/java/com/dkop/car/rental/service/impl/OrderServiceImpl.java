@@ -38,7 +38,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private static long calculatePricePerDay(OrderDto orderDto) {
-        long pricePerDay = orderDto.getCarDto().getPricePerDay();
+//        long pricePerDay = orderDto.getCarDto().getPricePerDay();
+        long pricePerDay = orderDto.getCar().getPricePerDay();
         if (orderDto.isWithDriver()) {
             pricePerDay += 30;
         }
@@ -51,7 +52,8 @@ public class OrderServiceImpl implements OrderService {
         //validate all data
         RentOrder rentOrder = new RentOrder();
         rentOrder.setAppUser((AppUser) authentication.getPrincipal());
-        rentOrder.setCar(mapper.mapCarDtoToCar(orderDto.getCarDto()));
+//        rentOrder.setCar(mapper.mapCarDtoToCar(orderDto.getCarDto()));
+        rentOrder.setCar(orderDto.getCar());
         long pricePerDay = calculatePricePerDay(orderDto);
         if (orderDto.getRentalPrice() != pricePerDay * Period.between(orderDto.getStartDate(), orderDto.getEndDate()).getDays()) {
             throw new IllegalArgumentException();
