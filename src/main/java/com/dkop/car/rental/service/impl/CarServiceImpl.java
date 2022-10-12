@@ -41,7 +41,7 @@ public class CarServiceImpl implements CarService {
     public Page<Car> findAll(PaginationAndSortingBean paginationAndSortingBean, CarFilterBean carFilterBean) {
         int currentPage = paginationAndSortingBean.getPage();
         int currentSize = paginationAndSortingBean.getSize();
-        String currentSort = paginationAndSortingBean.getSort();
+        String currentSort = paginationAndSortingBean.getSort() == null ? "model" : paginationAndSortingBean.getSort();
         String direction = paginationAndSortingBean.getDirection();
 
         List<CategoryClass> categories = carFilterBean.getCategories();
@@ -53,17 +53,16 @@ public class CarServiceImpl implements CarService {
             manufacturers = Arrays.stream(Manufacturer.values()).collect(Collectors.toList());
         }
         String model = carFilterBean.getModel();
-        Long minPrice = carFilterBean.getMinPrice();
+        long minPrice = carFilterBean.getMinPrice();
         if (minPrice <= 0) {
             minPrice = carRepository.findMinPrice();
             carFilterBean.setMinPrice(minPrice);
         }
-        Long maxPrice = carFilterBean.getMaxPrice();
+        long maxPrice = carFilterBean.getMaxPrice();
         if (maxPrice < minPrice) {
             maxPrice = carRepository.findMaxPrice();
             carFilterBean.setMaxPrice(maxPrice);
         }
-
 
         PageRequest of = PageRequest.of(currentPage - 1, currentSize, Sort.by(Sort.Direction.valueOf(direction), currentSort));
         return carRepository.findByManufacturerInAndCategoryClassInAndModelContainsIgnoreCaseAndPricePerDayBetween(manufacturers,

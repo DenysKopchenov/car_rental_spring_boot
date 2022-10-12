@@ -1,5 +1,6 @@
 package com.dkop.car.rental.util;
 
+import com.dkop.car.rental.dto.AppUserDto;
 import com.dkop.car.rental.dto.CarDto;
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.dto.RegFormDto;
@@ -31,13 +32,23 @@ public class Mapper {
         return carDto;
     }
 
-    public AppUser mapUserDtoToUser(RegFormDto regFormDto) {
+    public AppUser mapRegFormDtoToUser(RegFormDto regFormDto) {
         AppUser appUser = new AppUser();
         appUser.setFirstName(regFormDto.getFirstName());
         appUser.setLastName(regFormDto.getLastName());
         appUser.setEmail(regFormDto.getEmail());
         appUser.setActive(Boolean.TRUE);
         return appUser;
+    }
+
+    public AppUserDto mapAppUserToAppUserDto(AppUser appUser) {
+        AppUserDto appUserDto = new AppUserDto();
+        appUserDto.setId(appUser.getId());
+        appUserDto.setFirstName(appUser.getFirstName());
+        appUserDto.setLastName(appUser.getLastName());
+        appUserDto.setEmail(appUser.getEmail());
+        appUserDto.setActive(appUser.isActive());
+        return appUserDto;
     }
 
     public OrderDetails mapOrderDtoToOrderDetails(OrderDto orderDto) {

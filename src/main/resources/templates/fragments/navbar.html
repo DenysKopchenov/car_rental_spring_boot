@@ -26,9 +26,12 @@
                     <li class="text-end">
                         <a class="btn btn-primary" th:href="@{/admin/newCar}">New car</a>
                     </li>
+                    <li class="text-end">
+                        <a class="btn btn-info" th:href="@{/admin/showUsers}">Show users</a>
+                    </li>
                 </th:block>
                 <li sec:authorize="hasAuthority('USER')" class="text-end">
-                    <a type="button" class="btn btn-warning" th:href="@{/user/myOrders}">My orders</a>
+                    <a type="button" class="btn btn-info" th:href="@{/user/myOrders}">My orders</a>
                 </li>
             </ul>
 

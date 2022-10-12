@@ -11,9 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PaginationAndSortingBean {
 
-
     private Integer page = 1;
     private Integer size = 5;
-    private String sort = "model";
+    private String sort;
     private String direction = "ASC";
 }
