@@ -1,12 +1,14 @@
-package com.dkop.car.rental.controller;
+package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.CarDto;
 import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.exception.UserAlreadyExists;
+import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Manufacturer;
 import com.dkop.car.rental.service.CarService;
 import com.dkop.car.rental.service.UserService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -54,7 +58,7 @@ public class AdminController {
     }
 
     @GetMapping("/newManager")
-    public String showManagerRegistrationForm(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
+    public String showNewManagerRegistrationForm(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
         model.addAttribute(TITLE_ATTRIBUTE, TITLE_REGISTER_NEW_MANAGER);
         return REGISTRATION_PAGE;
     }
@@ -82,10 +86,13 @@ public class AdminController {
         return "cars/newCar";
     }
 
+    @SneakyThrows
     @PostMapping("/newCar")
-    public String createNewCar(@ModelAttribute("car") CarDto carDto) {
-        carService.saveCar(carDto);
-        return "redirect:/cars?success";
+    public String createNewCar(@ModelAttribute("car") CarDto carDto, Model model,
+                               @RequestParam("image") MultipartFile multipartImage) {
+        Car car = carService.saveCar(carDto);
+        model.addAttribute("id", car.getId());
+        return "redirect:/cars/{id}?success";
     }
 
     @DeleteMapping("/deleteCar/{id}")
@@ -102,9 +109,10 @@ public class AdminController {
     }
 
     @PutMapping("/editCar/{id}")
-    public String editCar(@ModelAttribute("updated") CarDto updated, Model model) {
+    public String editCar(@ModelAttribute("updated") CarDto updated, Model model,
+                          @RequestParam("image") MultipartFile multipartImage) {
         carService.updateCar(updated);
-        return "redirect:/cars/{id}";
+        return "redirect:/cars/{id}?success";
     }
 
     private static void setManufacturersAndCategoryClassAttributes(Model model) {

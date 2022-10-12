@@ -1,4 +1,4 @@
-package com.dkop.car.rental.controller;
+package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.model.car.Car;

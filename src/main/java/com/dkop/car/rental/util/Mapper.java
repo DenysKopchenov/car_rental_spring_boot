@@ -22,11 +22,13 @@ public class Mapper {
     }
 
     public CarDto mapCarToCarDto(Car car) {
-        return new CarDto(car.getId(),
-                car.getManufacturer(),
-                car.getCategoryClass(),
-                car.getModel(),
-                car.getPricePerDay());
+        CarDto carDto = new CarDto();
+        carDto.setId(car.getId());
+        carDto.setManufacturer(car.getManufacturer());
+        carDto.setCategoryClass(car.getCategoryClass());
+        carDto.setModel(car.getModel());
+        carDto.setPricePerDay(car.getPricePerDay());
+        return carDto;
     }
 
     public AppUser mapUserDtoToUser(RegFormDto regFormDto) {

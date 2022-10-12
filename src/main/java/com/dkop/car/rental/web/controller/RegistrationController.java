@@ -1,4 +1,4 @@
-package com.dkop.car.rental.controller;
+package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.exception.UserAlreadyExists;
@@ -44,7 +44,7 @@ public class RegistrationController {
         return REGISTRATION_PAGE;
     }
 
-    @PostMapping //all
+    @PostMapping
     public String register(@ModelAttribute(USER) @Valid RegFormDto regFormDto,
                            BindingResult bindingResult,
                            RedirectAttributes redirectAttributes) {

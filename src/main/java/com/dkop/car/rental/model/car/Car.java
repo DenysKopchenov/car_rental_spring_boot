@@ -34,4 +34,5 @@ public class Car {
     @OneToMany(mappedBy = "car",
             fetch = FetchType.LAZY)
     private Set<RentOrder> rentOrders;
+    private byte[] image;
 }

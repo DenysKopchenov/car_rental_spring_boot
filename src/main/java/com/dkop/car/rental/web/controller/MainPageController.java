@@ -1,4 +1,4 @@
-package com.dkop.car.rental.controller;
+package com.dkop.car.rental.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

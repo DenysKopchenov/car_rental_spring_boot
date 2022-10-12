@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -22,4 +23,5 @@ public class CarDto {
     private CategoryClass categoryClass;
     private String model;
     private long pricePerDay;
+    private MultipartFile image;
 }

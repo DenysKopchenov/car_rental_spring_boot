@@ -7,6 +7,7 @@ import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Manufacturer;
 import com.dkop.car.rental.repository.CarRepository;
 import com.dkop.car.rental.service.CarService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -70,6 +71,7 @@ public class CarServiceImpl implements CarService {
     }
 
 
+    @SneakyThrows
     @Override
     public Car saveCar(CarDto carDto) {
         Car car = new Car();
@@ -77,6 +79,7 @@ public class CarServiceImpl implements CarService {
         car.setManufacturer(carDto.getManufacturer());
         car.setModel(carDto.getModel());
         car.setPricePerDay(carDto.getPricePerDay());
+        car.setImage(carDto.getImage().getBytes());
         carRepository.save(car);
         return carRepository.save(car);
     }
@@ -87,6 +90,12 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public byte[] findImageByCarId(UUID id) {
+        return carRepository.findCarImageByCarId(id);
+    }
+
+    @SneakyThrows
+    @Override
     public Car updateCar(CarDto carDto) {
         Car car = new Car();
         car.setId(carDto.getId());
@@ -94,6 +103,7 @@ public class CarServiceImpl implements CarService {
         car.setManufacturer(carDto.getManufacturer());
         car.setModel(carDto.getModel());
         car.setPricePerDay(carDto.getPricePerDay());
+        car.setImage(carDto.getImage().getBytes());
         return carRepository.save(car);
     }
 

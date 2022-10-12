@@ -5,23 +5,37 @@
 </head>
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
-<div th:text="${car}">
-</div>
-<th:block sec:authorize="hasAuthority('ADMIN')">
-    <div>
-        <form th:action="@{/admin/delete/{id}(id=${car.id})}" th:method="DELETE">
-            <input class="btn btn-danger" type="submit" value="Delete">
-        </form>
+<div class="col-md-3">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">
+                <img th:src="@{'/cars/image?id=' + ${car.id}}" width="100%" height="30%">
+            </h2>
+            <div class="card-text">
+                <a th:href="@{/cars/{id}(id=${car.id})}" th:text="${car.manufacturer}">CAR
+                    MANUFACTURER</a>
+                <span class="cat" th:text="${car.categoryClass}">CAR MODEL</span>
+                <span class="cat" th:text="${car.model}">CAR MODEL</span>
+                <p class="price ml-auto" th:text="'$' + ${car.pricePerDay} + '/day'"></p>
+            </div>
+            <th:block sec:authorize="hasAuthority('ADMIN')">
+                <div>
+                    <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}" th:method="DELETE">
+                        <input class="btn btn-danger" type="submit" value="Delete">
+                    </form>
+                </div>
+                <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit car</a>
+            </th:block>
+            <p class="d-flex mb-0 d-block">
+                <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
+                    <a th:href="@{/order?carId={id}(id=${car.id})}" class="btn btn-primary py-2 mr-1">Book
+                        now</a>
+                </th:block>
+                <a th:href="@{/cars/{id}(id=${car.id})}" class="btn btn-secondary py-2 ml-1">Details</a>
+            </p>
+        </div>
     </div>
-    <a th:href="@{/admin/edit/{id}(id=${car.id})}" class="btn btn-info">Edit car</a>
-    <a class="btn btn-primary" th:href="@{/cars/new}">New car</a>
-</th:block>
-<th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
-    <form th:action="@{/order}" th:method="GET">
-        <input type="hidden" name="carId" th:value="${car.id}">
-        <input class="btn btn-danger" type="submit" value="Rent a car">
-    </form>
-</th:block>
+</div>
 <div class="fixed-bottom" th:insert="/fragments/footer :: body"></div>
 </body>
 </html>

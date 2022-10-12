@@ -5,8 +5,24 @@
 </head>
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
-
-<form th:action="@{/admin/editCar/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT">
+<div class="col-md-3">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">
+                <img th:src="@{'/cars/image?id=' + ${updated.id}}" width="100%" height="30%">
+            </h2>
+            <div class="card-text">
+                <a th:text="${updated.manufacturer}">CAR
+                    MANUFACTURER</a>
+                <span class="cat" th:text="|Category: ${updated.categoryClass}|">CAR MODEL</span>
+                <span class="cat" th:text="${updated.model}">CAR MODEL</span>
+                <p class="price ml-auto" th:text="'$' + ${updated.pricePerDay} + '/day'"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<form th:action="@{/admin/editCar/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT"
+      enctype="multipart/form-data">
     <label for="model">Car model</label>
     <input type="text" name="model" id="model" th:field="*{model}" required>
     <label for="manufacturers">Manufacturers</label>
@@ -25,6 +41,7 @@
     </select>
     <label for="pricePerDay">Price per day $</label>
     <input type="number" name="pricePerDay" id="pricePerDay" th:field="*{pricePerDay}" required>
+    <input type="file" name="image" accept="image/png, image/jpeg"/>
     <input type="hidden" name="id" id="id" th:field="*{id}" th:value="*{id}" required>
     <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Edit">
 </form>

@@ -16,6 +16,8 @@ public interface CarService {
 
     Car findById(UUID id);
 
+    byte[] findImageByCarId(UUID id);
+
     Car updateCar(CarDto carDto);
 
     void deleteCar(UUID id);

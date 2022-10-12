@@ -6,7 +6,7 @@
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
 
-<form th:action="@{/admin/newCar}" th:object="${car}" method="post">
+<form th:action="@{/admin/newCar}" th:object="${car}" method="post" enctype="multipart/form-data">
     <label for="manufacturers">Manufacturers</label>
     <select class="form-select" id="manufacturers" th:field="*{manufacturer}" required>
         <option th:each="manufacturer : ${manufacturers}"
@@ -23,6 +23,7 @@
     </select>
     <label for="pricePerDay">Price per day $</label>
     <input type="number" name="pricePerDay" id="pricePerDay" th:field="*{pricePerDay}" required>
+    <input type="file" name="image" accept="image/png, image/jpeg"/>
     <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Add">
 </form>
 
