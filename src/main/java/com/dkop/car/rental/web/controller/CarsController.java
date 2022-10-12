@@ -3,6 +3,7 @@ package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.CarDto;
 import com.dkop.car.rental.dto.CarFilterBean;
+import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Manufacturer;
@@ -22,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -44,17 +44,17 @@ public class CarsController {
 
     @GetMapping
     public String showCarList(Model model,
-//                              HttpServletRequest request,
-                              @RequestParam("page") Optional<Integer> page,
-                              @RequestParam("size") Optional<Integer> size,
-                              @RequestParam("sort") Optional<String> sort,
+                              @ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean,
                               @ModelAttribute("filter") CarFilterBean carFilterBean) {
         model.addAttribute(TITLE_ATTRIBUTE, CARS_TITLE);
-        Page<Car> pagedCars = carService.findAll(page, size, sort, carFilterBean);
+        Page<Car> pagedCars = carService.findAll(paginationAndSortingBean, carFilterBean);
         List<CarDto> cars = pagedCars.map(car -> mapper.mapCarToCarDto(car))
                 .toList();
         model.addAttribute("cars", cars);
-        model.addAttribute("page", cars);
+//        model.addAttribute("currentPage", paginationAndSortingBean.getPage());
+//        model.addAttribute("size", paginationAndSortingBean.getSize());
+//        model.addAttribute("sort", paginationAndSortingBean.getSort());
+//        model.addAttribute("direction", paginationAndSortingBean.getDirection());
         model.addAttribute("numberOfPages", pagedCars.getTotalPages());
         setManufacturersAndCategoryClassAttributes(model);
         return "cars/cars";

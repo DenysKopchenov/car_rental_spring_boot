@@ -91,8 +91,7 @@ public class AdminController {
     public String createNewCar(@ModelAttribute("car") CarDto carDto, Model model,
                                @RequestParam("image") MultipartFile multipartImage) {
         Car car = carService.saveCar(carDto);
-        model.addAttribute("id", car.getId());
-        return "redirect:/cars/{id}?success";
+        return "redirect:/cars/" + car.getId() + "?success";
     }
 
     @DeleteMapping("/deleteCar/{id}")

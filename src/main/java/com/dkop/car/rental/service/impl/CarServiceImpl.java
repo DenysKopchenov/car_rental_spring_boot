@@ -2,6 +2,7 @@ package com.dkop.car.rental.service.impl;
 
 import com.dkop.car.rental.dto.CarDto;
 import com.dkop.car.rental.dto.CarFilterBean;
+import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Manufacturer;
@@ -18,8 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,33 +38,34 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Page<Car> findAll(Optional<Integer> page, Optional<Integer> size, Optional<String> sort, CarFilterBean carFilterBean) {
-        int currentPage = page.orElse(1);
-        int currentSize = size.orElse(5);
-        String currentSort = sort.orElse("model");
+    public Page<Car> findAll(PaginationAndSortingBean paginationAndSortingBean, CarFilterBean carFilterBean) {
+        int currentPage = paginationAndSortingBean.getPage();
+        int currentSize = paginationAndSortingBean.getSize();
+        String currentSort = paginationAndSortingBean.getSort();
+        String direction = paginationAndSortingBean.getDirection();
+
         List<CategoryClass> categories = carFilterBean.getCategories();
-        if (Objects.isNull(categories) || categories.isEmpty()) {
+        if (categories.isEmpty()) {
             categories = Arrays.stream(CategoryClass.values()).collect(Collectors.toList());
         }
         List<Manufacturer> manufacturers = carFilterBean.getManufacturers();
-        if (Objects.isNull(manufacturers) || manufacturers.isEmpty()) {
+        if (manufacturers.isEmpty()) {
             manufacturers = Arrays.stream(Manufacturer.values()).collect(Collectors.toList());
         }
         String model = carFilterBean.getModel();
-        if (Objects.isNull(model)) {
-            model = "";
-        }
         Long minPrice = carFilterBean.getMinPrice();
-        if (Objects.isNull(minPrice)) {
+        if (minPrice <= 0) {
             minPrice = carRepository.findMinPrice();
+            carFilterBean.setMinPrice(minPrice);
         }
         Long maxPrice = carFilterBean.getMaxPrice();
-        if (Objects.isNull(maxPrice)){
+        if (maxPrice < minPrice) {
             maxPrice = carRepository.findMaxPrice();
+            carFilterBean.setMaxPrice(maxPrice);
         }
 
 
-        PageRequest of = PageRequest.of(currentPage - 1, currentSize, Sort.by(currentSort));
+        PageRequest of = PageRequest.of(currentPage - 1, currentSize, Sort.by(Sort.Direction.valueOf(direction), currentSort));
         return carRepository.findByManufacturerInAndCategoryClassInAndModelContainsIgnoreCaseAndPricePerDayBetween(manufacturers,
                 categories, model, minPrice, maxPrice, of);
     }

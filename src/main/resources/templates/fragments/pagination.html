@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<th:block th:if="${numberOfPages > 1}" th:fragment="pagination">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <div th:if="${numberOfPages > 1 && pagination.page != 1}">
+                <li class="page-item"><a class="page-link" onclick="changePage(1)">First</a></li>
+                <li class="page-item"><a class="page-link" th:attr="onclick=|changePage(${pagination.page - 1})|">Previous</a>
+                </li>
+            </div>
+            <div th:if="${page > 4}">
+                <li class="page-item"><a class="page-link" th:attr="onclick=changePage(${pagination.page + 4})">...</a>
+                </li>
+            </div>
+            <li th:if="${numberOfPages > 0}"
+                th:each="page : ${#numbers.sequence(1, numberOfPages)}"
+                class="page-item">
+                <a class="page-link"
+                   th:attr="onclick=|changePage(${page})|"
+                   th:text=${page}
+                   th:classappend="${page==pagination.page} ? active"></a>
+            </li>
+            <div th:if="${pagination.page < numberOfPages}">
+                <li class="page-item"><a class="page-link"
+                                         th:attr="onclick=|changePage(${pagination.page + 1})|">Next</a></li>
+                <li class="page-item"><a class="page-link" th:attr="onclick=|changePage(${numberOfPages})|">Last</a>
+                </li>
+            </div>
+        </ul>
+    </nav>
+</th:block>
+</body>
+</html>

@@ -1,17 +1,16 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:insert="/fragments/head"></th:block>
+    <th:block th:replace="/fragments/head :: head"></th:block>
 </head>
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
 <div th:if="${param.success}">
     <div class="alert alert-success">Car created</div>
 </div>
-
-<div class="container">
+<th:block th:if="${cars.isEmpty()}">NOT FOUND</th:block>
+<div class="container" th:if="${!cars.isEmpty()}">
     <div class="row">
-        <th:block th:if="${cars.isEmpty()}">NOT FOUND</th:block>
         <div class="col-3">
             <form th:action="@{/cars}" th:object="${filter}" th:method="GET">
                 <label>Categories</label>
@@ -35,54 +34,100 @@
                 <label for="minPrice">Min price</label>
                 <input type="number" th:field="*{minPrice}" id="minPrice">
                 <label for="maxPrice">Max price</label>
-                <input type="number" th:field="*{maxPrice}" id="maxPrice" th:attr="min=*{minPrice} + 1">
+                <input type="number" th:field="*{maxPrice}" id="maxPrice" th:attr="min=*{minPrice} + 1"
+                       th:required="*{minPrice} > 0">
                 <label for="model">Model</label>
                 <input type="text" th:field="*{model}" id="model">
+                <input type="hidden" th:value="${pagination.size}" th:field="${pagination.size}">
+                <input type="hidden" th:value="${pagination.sort}" th:field="${pagination.sort}">
+                <input type="hidden" th:value="${pagination.direction}" th:field="${pagination.direction}">
                 <input type="submit" value="Apply">
             </form>
         </div>
-        <div class="col-md-3" th:each="car : ${cars}">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title">
-                        <img th:src="@{'/cars/image?id=' + ${car.id}}" width="100%" height="30%">
-                    </h2>
-                    <div class="card-text">
-                        <a th:href="@{/cars/{id}(id=${car.id})}" th:text="${car.manufacturer}">CAR
-                            MANUFACTURER</a>
-                        <span class="cat" th:text="${car.categoryClass}">CAR MODEL</span>
-                        <span class="cat" th:text="${car.model}">CAR MODEL</span>
-                        <p class="price ml-auto" th:text="'$' + ${car.pricePerDay} + '/day'"></p>
-                    </div>
-                    <th:block sec:authorize="hasAuthority('ADMIN')">
-                        <div>
-                            <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}" th:method="DELETE">
-                                <input class="btn btn-danger" type="submit" value="Delete">
-                            </form>
-                        </div>
-                        <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit car</a>
-                    </th:block>
-                    <p class="d-flex mb-0 d-block">
-                        <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
-                            <a th:href="@{/order?carId={id}(id=${car.id})}" class="btn btn-primary py-2 mr-1">Book
-                                now</a>
-                        </th:block>
-                        <a th:href="@{/cars/{id}(id=${car.id})}" class="btn btn-secondary py-2 ml-1">Details</a>
-                    </p>
+        <div class="col-8">
+            <div class="row">
+                <div class="col m-auto">
+                    <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+                </div>
+                <div class="col m-auto">
+                    <form th:action="@{/cars}" th:method="GET" th:object="${pagination}" onchange="submit()">
+                        <input type="hidden" th:value="${filter.categories}" th:field="${filter.categories}">
+                        <input type="hidden" th:value="${filter.manufacturers}" th:field="${filter.manufacturers}">
+                        <input type="hidden" th:value="${filter.minPrice}" th:field="${filter.minPrice}">
+                        <input type="hidden" th:value="${filter.maxPrice}" th:field="${filter.maxPrice}">
+                        <input type="hidden" th:value="${filter.model}" th:field="${filter.model}">
+                        <label class="form-label" for="size">Page size
+                            <select class="form-select" name="size" id="size">
+                                <option th:value="1" th:selected="*{size} == 1">1</option>
+                                <option th:value="5" th:selected="*{size} == 5">5</option>
+                                <option th:value="10" th:selected="*{size} == 10">10</option>
+                                <option th:value="20" th:selected="*{size} == 20">20</option>
+                            </select>
+                        </label>
+                        <label class="form-label" for="sort">Sort
+                            <select class="form-select" name="sort" id="sort">
+                                <option th:value="model" th:selected="*{sort eq 'model'}">Model a-z</option>
+                                <option th:value="categoryClass" th:selected="*{sort eq 'categoryClass'}">Category
+                                </option>
+                                <option th:value="manufacturer" th:selected="*{sort eq 'manufacturer'}">Manufacturer
+                                </option>
+                                <option th:value="pricePerDay" th:selected="*{sort eq 'pricePerDay'}">Price per day
+                                </option>
+                            </select>
+                        </label>
+                        <label class="form-label" for="direction">Sort direction
+                            <select class="form-select" name="direction" id="direction">
+                                <option th:value="ASC" th:selected="*{direction eq 'ASC'}">ASC</option>
+                                <option th:value="DESC" th:selected="*{direction eq 'DESC'}">DESC</option>
+                            </select>
+                        </label>
+                    </form>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xl-4" th:each="car : ${cars}">
+                    <div class="product-container">
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                <img class="card-img-top" th:src="@{'/cars/image?id=' + ${car.id}}">
+                            </h2>
+                            <div class="card-text">
+                                <a th:href="@{/cars/{id}(id=${car.id})}" th:text="${car.manufacturer}">CAR
+                                    MANUFACTURER</a>
+                                <span class="cat" th:text="${car.categoryClass}">CAR MODEL</span>
+                                <span class="cat" th:text="${car.model}">CAR MODEL</span>
+                                <p class="price ml-auto" th:text="'$' + ${car.pricePerDay} + '/day'"></p>
+                            </div>
+                            <div class="row">
+                                <div class="col m-auto" sec:authorize="hasAuthority('ADMIN')">
+                                    <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}" th:method="DELETE">
+                                        <input class="btn btn-danger" type="submit" value="Delete">
+                                    </form>
+                                    <div class="col m-auto">
+                                        <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit
+                                            car</a>
+                                    </div>
+                                </div>
+
+                                <div sec:authorize="!isAuthenticated || hasAuthority('USER')" class="col m-auto">
+                                    <a th:href="@{/order?carId={id}(id=${car.id})}" class="btn btn-primary py-2 mr-1">Book
+                                        now</a>
+                                </div>
+                                <div class="col m-auto">
+                                    <a th:href="@{/cars/{id}(id=${car.id})}"
+                                       class="btn btn-secondary py-2 ml-1">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col m-auto">
+                <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+            </div>
         </div>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
     </div>
 </div>
-<div class="fixed-bottom" th:insert="/fragments/footer :: body"></div>
+<div th:insert="/fragments/footer :: footer"></div>
 </body>
 </html>
