@@ -6,7 +6,7 @@
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
 
-<form th:action="@{/cars/edit/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT">
+<form th:action="@{/admin/editCar/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT">
     <label for="model">Car model</label>
     <input type="text" name="model" id="model" th:field="*{model}" required>
     <label for="manufacturers">Manufacturers</label>
@@ -26,7 +26,7 @@
     <label for="pricePerDay">Price per day $</label>
     <input type="number" name="pricePerDay" id="pricePerDay" th:field="*{pricePerDay}" required>
     <input type="hidden" name="id" id="id" th:field="*{id}" th:value="*{id}" required>
-    <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Add">
+    <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Edit">
 </form>
 
 <div class="fixed-bottom" th:insert="/fragments/footer :: body"></div>

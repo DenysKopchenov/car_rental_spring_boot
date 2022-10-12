@@ -2,16 +2,24 @@ package com.dkop.car.rental.controller;
 
 
 import com.dkop.car.rental.dto.CarDto;
+import com.dkop.car.rental.dto.CarFilterBean;
 import com.dkop.car.rental.model.car.Car;
+import com.dkop.car.rental.model.car.CategoryClass;
+import com.dkop.car.rental.model.car.Manufacturer;
 import com.dkop.car.rental.service.CarService;
 import com.dkop.car.rental.util.Mapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,14 +40,20 @@ public class CarsController {
     }
 
     @GetMapping
-    public String showCarList(Model model) {
+    public String showCarList(Model model,
+//                              HttpServletRequest request,
+                              @RequestParam("page") Optional<Integer> page,
+                              @RequestParam("size") Optional<Integer> size,
+                              @RequestParam("sort") Optional<String> sort,
+                              @ModelAttribute("filter") CarFilterBean carFilterBean) {
         model.addAttribute(TITLE_ATTRIBUTE, CARS_TITLE);
-        List<CarDto> cars = carService.showCars(1, 2, "1").stream().map(car -> new CarDto(car.getId(),
-                car.getManufacturer(),
-                car.getCategoryClass(),
-                car.getModel(),
-                car.getPricePerDay())).collect(Collectors.toList());
+        Page<Car> pagedCars = carService.findAll(page, size, sort, carFilterBean);
+        List<CarDto> cars = pagedCars.map(car -> mapper.mapCarToCarDto(car))
+                .toList();
         model.addAttribute("cars", cars);
+        model.addAttribute("page", cars);
+        model.addAttribute("numberOfPages", pagedCars.getTotalPages());
+        setManufacturersAndCategoryClassAttributes(model);
         return "cars/cars";
     }
 
@@ -50,5 +64,10 @@ public class CarsController {
         model.addAttribute(TITLE_ATTRIBUTE, car.getModel());
         model.addAttribute("car", carDto);
         return "cars/carInfo";
+    }
+
+    private static void setManufacturersAndCategoryClassAttributes(Model model) {
+        model.addAttribute("manufacturers", Arrays.stream(Manufacturer.values()).collect(Collectors.toList()));
+        model.addAttribute("class", Arrays.stream(CategoryClass.values()).collect(Collectors.toList()));
     }
 }

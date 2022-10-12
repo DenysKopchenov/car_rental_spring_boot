@@ -2,14 +2,15 @@ package com.dkop.car.rental.service;
 
 
 import com.dkop.car.rental.dto.CarDto;
+import com.dkop.car.rental.dto.CarFilterBean;
 import com.dkop.car.rental.model.car.Car;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CarService {
-
-    List<Car> showCars(int page, int perPage, String sortBy);
 
     Car saveCar(CarDto carDto);
 
@@ -18,4 +19,11 @@ public interface CarService {
     Car updateCar(CarDto carDto);
 
     void deleteCar(UUID id);
+
+    Page<Car> findPaginated(Pageable pageable);
+
+    Page<Car> findAll(Optional<Integer> page,
+                      Optional<Integer> size,
+                      Optional<String> sort,
+                      CarFilterBean carFilterBean);
 }

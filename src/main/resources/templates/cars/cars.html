@@ -8,25 +8,98 @@
 <div th:if="${param.success}">
     <div class="alert alert-success">Car created</div>
 </div>
-<div th:each="car : ${cars}">
-    <div th:text="${car}"></div>
-    <th:block sec:authorize="hasAuthority('ADMIN')">
-        <div>
-            <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}" th:method="DELETE">
-                <input class="btn btn-danger" type="submit" value="Delete">
+
+<div class="container">
+    <div class="row">
+        <th:block th:if="${cars.isEmpty()}">NOT FOUND</th:block>
+        <div class="col-3">
+            <form th:action="@{/cars}" th:object="${filter}" th:method="GET">
+                <label>Categories</label>
+                <div class="form-check" th:each="category : ${class}">
+                    <input type="checkbox"
+                           th:id="${category}"
+                           th:value="${category}"
+                           th:cheked="*{categories}"
+                           th:field="*{categories}">
+                    <label class="form-check-label" th:for="${category}" th:text="${category}"/>
+                </div>
+                <label>Manufacturers</label>
+                <div class="form-check" th:each="manufacturer : ${manufacturers}">
+                    <input type="checkbox"
+                           th:id="${manufacturer}"
+                           th:value="${manufacturer}"
+                           th:checked="*{manufacturers}"
+                           th:field="*{manufacturers}">
+                    <label class="form-check-label" th:for="${manufacturer}" th:text="${manufacturer}"/>
+                </div>
+                <label for="minPrice">Min price</label>
+                <input type="number" th:field="*{minPrice}" id="minPrice">
+                <label for="maxPrice">Max price</label>
+                <input type="number" th:field="*{maxPrice}" id="maxPrice">
+                <label for="model">Model</label>
+                <input type="text" th:field="*{model}" id="model">
+                <input type="submit" value="Apply">
             </form>
         </div>
-        <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit car</a>
-        <a class="btn btn-primary" th:href="@{/cars/new}">New car</a>
-    </th:block>
-    <a th:href="@{/cars/{id}(id=${car.id})}" class="btn btn-info">Detail</a>
-    <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
-        <form th:action="@{/order}" th:method="GET">
-            <input type="hidden" name="carId" th:value="${car.id}">
-            <input class="btn btn-danger" type="submit" value="Rent a car">
-        </form>
-    </th:block>
+        <div class="col-md-3" th:each="car : ${cars}">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <a th:href="@{/cars/{id}(id=${car.id})}" th:text="${car.manufacturer}">CAR
+                        MANUFACTURER</a>
+                        <span class="cat" th:text="${car.model}">CAR MODEL</span>
+                    </h2>
+                    <div class="card-text">
+                        <p class="price ml-auto" th:text="'$' + ${car.pricePerDay} + '/day'"></p>
+                    </div>
+                    <th:block sec:authorize="hasAuthority('ADMIN')">
+                        <div>
+                            <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}" th:method="DELETE">
+                                <input class="btn btn-danger" type="submit" value="Delete">
+                            </form>
+                        </div>
+                        <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit car</a>
+                    </th:block>
+                    <p class="d-flex mb-0 d-block">
+                        <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
+                            <a th:href="@{/order?carId={id}(id=${car.id})}" class="btn btn-primary py-2 mr-1">Book
+                                now</a>
+                        </th:block>
+                        <a th:href="@{/cars/{id}(id=${car.id})}" class="btn btn-secondary py-2 ml-1">Details</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
 </div>
+<!--<div th:each="car : ${cars}">-->
+<!--    <div th:text="${car}"></div>-->
+<!--    <th:block sec:authorize="hasAuthority('ADMIN')">-->
+<!--        <div>-->
+<!--            <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}" th:method="DELETE">-->
+<!--                <input class="btn btn-danger" type="submit" value="Delete">-->
+<!--            </form>-->
+<!--        </div>-->
+<!--        <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit car</a>-->
+<!--        <a class="btn btn-primary" th:href="@{/cars/new}">New car</a>-->
+<!--    </th:block>-->
+<!--    <a th:href="@{/cars/{id}(id=${car.id})}" class="btn btn-info">Detail</a>-->
+<!--    <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">-->
+<!--        <form th:action="@{/order}" th:method="GET">-->
+<!--            <input type="hidden" name="carId" th:value="${car.id}">-->
+<!--            <input class="btn btn-danger" type="submit" value="Rent a car">-->
+<!--        </form>-->
+<!--    </th:block>-->
+<!--</div>-->
 <th:block th:if="${cars.isEmpty()}">NOT FOUND</th:block>
 <div class="fixed-bottom" th:insert="/fragments/footer :: body"></div>
 </body>

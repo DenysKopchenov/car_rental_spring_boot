@@ -46,7 +46,6 @@ public class Mapper {
         orderDetails.setEndDate(orderDto.getEndDate());
         orderDetails.setStartDate(orderDto.getStartDate());
         orderDetails.setRentalPrice(orderDto.getRentalPrice());
-        orderDetails.setRepairCost(orderDetails.getRepairCost());
         return orderDetails;
     }
 }
