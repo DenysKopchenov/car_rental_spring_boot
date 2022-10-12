@@ -1,8 +1,9 @@
 package com.dkop.car.rental.dto;
 
 import com.dkop.car.rental.model.client.Role;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -13,12 +14,14 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class AppUserDto implements Serializable {
-    private final UUID id;
-    private final String email;
-    private final String firstName;
-    private final String lastName;
-    private final Role role;
-    private final boolean isActive;
+
+    private UUID id;
+    private String email;
+    private String firstName;
+    private String lastName;
+    private Role role;
+    private boolean isActive;
 }

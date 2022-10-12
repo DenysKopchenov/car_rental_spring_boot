@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="/fragments/head"></th:block>
+</head>
+<body>
+<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+
+<div class="row justify-content-md-center">
+    <div class="col-md-6 order-md-5">
+        <div th:if="${param.success}" class="alert alert-success">Registration success</div>
+        <div th:if="${param.failed}" class="alert alert-danger"
+             th:text="|Registration failed ${appUser.email} already exists|"></div>
+        <form id="regForm" th:method="POST" th:action="@{/profile/edit}"
+              th:object="${appUser}">
+            <div class="mb-3">
+                <div class="col mb-3">
+                    <label for="firstName">First name</label>
+                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                    <div class="alert alert-danger" th:if="${#fields.hasErrors('firstName')}"
+                         th:errors="*{firstName}"></div>
+                </div>
+                <div class="col mb-3">
+                    <label for="lastName">Last name</label>
+                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                    <div class="alert alert-danger" th:if="${#fields.hasErrors('lastName')}"
+                         th:errors="*{lastName}"></div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="col mb-3">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}"
+                           placeholder="email@example.com" required>
+                    <div class="alert alert-danger" th:if="${#fields.hasErrors('email')}"
+                         th:errors="*{email}"></div>
+                </div>
+            </div>
+
+            <hr class="mb-4">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Register</button>
+        </form>
+    </div>
+</div>
+
+<th:block th:insert="/fragments/footer :: footer"></th:block>
+</body>
+</html>

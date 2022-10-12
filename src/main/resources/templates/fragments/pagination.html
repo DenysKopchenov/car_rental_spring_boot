@@ -4,17 +4,17 @@
 </head>
 <body>
 <th:block th:if="${numberOfPages > 1}" th:fragment="pagination">
-    <nav aria-label="Page navigation example">
-        <ul class="pagination">
-            <div th:if="${numberOfPages > 1 && pagination.page != 1}">
+    <nav>
+        <ul class="pagination pagination-sm">
+            <th:block th:if="${numberOfPages > 1 && pagination.page != 1}">
                 <li class="page-item"><a class="page-link" onclick="changePage(1)">First</a></li>
                 <li class="page-item"><a class="page-link" th:attr="onclick=|changePage(${pagination.page - 1})|">Previous</a>
                 </li>
-            </div>
-            <div th:if="${page > 4}">
+            </th:block>
+            <th:block th:if="${page > 4}">
                 <li class="page-item"><a class="page-link" th:attr="onclick=changePage(${pagination.page + 4})">...</a>
                 </li>
-            </div>
+            </th:block>
             <li th:if="${numberOfPages > 0}"
                 th:each="page : ${#numbers.sequence(1, numberOfPages)}"
                 class="page-item">
@@ -23,12 +23,12 @@
                    th:text=${page}
                    th:classappend="${page==pagination.page} ? active"></a>
             </li>
-            <div th:if="${pagination.page < numberOfPages}">
+            <th:block th:if="${pagination.page < numberOfPages}">
                 <li class="page-item"><a class="page-link"
                                          th:attr="onclick=|changePage(${pagination.page + 1})|">Next</a></li>
                 <li class="page-item"><a class="page-link" th:attr="onclick=|changePage(${numberOfPages})|">Last</a>
                 </li>
-            </div>
+            </th:block>
         </ul>
     </nav>
 </th:block>

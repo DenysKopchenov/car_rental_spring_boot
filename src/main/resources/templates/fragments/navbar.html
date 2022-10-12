@@ -43,8 +43,9 @@
                 <a type="button" class="btn btn-warning" th:href="@{/registration}">Sign-up</a>
             </div>
             <div sec:authorize="isAuthenticated()" class="text-end">
-                <div th:text="${#authentication}">
+                <div th:text="${#authentication.principal.firstName}">
                 </div>
+                <a type="button" class="btn btn-warning" th:href="@{/profile}">Profile</a>
                 <a type="button" class="btn btn-warning" th:href="@{/logout}">Logout</a>
             </div>
         </div>

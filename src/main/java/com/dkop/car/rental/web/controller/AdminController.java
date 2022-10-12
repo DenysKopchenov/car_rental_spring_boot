@@ -52,7 +52,7 @@ public class AdminController {
 
 
     @GetMapping
-    public String showAdminPAge(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
+    public String showAdminPage(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
         model.addAttribute(TITLE_ATTRIBUTE, TITLE_REGISTER_NEW_MANAGER);
         return "admin/admin";
     }
@@ -113,6 +113,12 @@ public class AdminController {
         carService.updateCar(updated);
         return "redirect:/cars/{id}?success";
     }
+
+    @GetMapping("/showUsers")
+    public String showUsers() {
+        return "admin/users";
+    }
+
 
     private static void setManufacturersAndCategoryClassAttributes(Model model) {
         model.addAttribute("manufacturers", Arrays.stream(Manufacturer.values()).collect(Collectors.toList()));

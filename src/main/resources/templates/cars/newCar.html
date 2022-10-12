@@ -5,28 +5,43 @@
 </head>
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
-
-<form th:action="@{/admin/newCar}" th:object="${car}" method="post" enctype="multipart/form-data">
-    <label for="manufacturers">Manufacturers</label>
-    <select class="form-select" id="manufacturers" th:field="*{manufacturer}" required>
-        <option th:each="manufacturer : ${manufacturers}"
-                th:text="${manufacturer}"
-                th:value="${manufacturer}"></option>
-    </select>
-    <label for="model">Car model</label>
-    <input type="text" name="model" id="model" th:field="*{model}" required><br>
-    <label for="class">Class</label>
-    <select class="form-select" id="class" th:field="*{categoryClass}" required>
-        <option th:each="class : ${class}"
-                th:text="${class}"
-                th:value="${class}"></option>
-    </select>
-    <label for="pricePerDay">Price per day $</label>
-    <input type="number" name="pricePerDay" id="pricePerDay" th:field="*{pricePerDay}" required>
-    <input type="file" name="image" accept="image/png, image/jpeg"/>
-    <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Add">
-</form>
-
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6 m-auto p-auto d-flex justify-content-center">
+            <form th:action="@{/admin/newCar}" th:object="${car}" method="post" enctype="multipart/form-data">
+                <div class="col">
+                    <label for="manufacturers">Manufacturers</label>
+                    <select class="form-select" id="manufacturers" th:field="*{manufacturer}" required>
+                        <option th:each="manufacturer : ${manufacturers}"
+                                th:text="${manufacturer}"
+                                th:value="${manufacturer}"></option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="model">Car model</label>
+                    <input class="form-control" type="text" name="model" id="model" th:field="*{model}" required><br>
+                </div>
+                <div class="col">
+                    <label for="class">Class</label>
+                    <select class="form-select" id="class" th:field="*{categoryClass}" required>
+                        <option th:each="class : ${class}"
+                                th:text="${class}"
+                                th:value="${class}"></option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="pricePerDay">Price per day $</label>
+                    <input class="form-control" type="number" name="pricePerDay" id="pricePerDay"
+                           th:field="*{pricePerDay}" required>
+                </div>
+                <div class="col">
+                    <input class="form-control" type="file" name="image" accept="image/png, image/jpeg"/>
+                </div>
+                <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Create new car">
+            </form>
+        </div>
+    </div>
+</div>
 <div th:insert="/fragments/footer :: footer"></div>
 </body>
 </html>
