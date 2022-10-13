@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="/fragments/head"></th:block>
+</head>
+<body>
+<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+
+<div th:if="${!userOrders.isEmpty()} ?: 'Not found'">
+    <div class="container my-2">
+        <h1>Orders</h1>
+        <form th:action="@{/user/myOrders}" th:method="GET" th:object="${pagination}" onchange="submit()">
+            <label class="form-label" for="size">Page size
+                <select class="form-select" name="size" id="size">
+                    <option th:value="1" th:selected="*{size} == 1">1</option>
+                    <option th:value="5" th:selected="*{size} == 5">5</option>
+                    <option th:value="10" th:selected="*{size} == 10">10</option>
+                    <option th:value="20" th:selected="*{size} == 20">20</option>
+                </select>
+            </label>
+            <label class="form-label" for="sort">Sort
+                <select class="form-select" name="sort" id="sort">
+                    <option th:value="car" th:selected="*{sort eq 'car'}">Start date</option>
+                    <option th:value="orderDetails.orderStatus" th:selected="*{sort eq 'orderDetails.orderStatus'}">
+                        Order status
+                    </option>
+                    <option th:value="orderDetails.rentalPrice" th:selected="*{sort eq 'orderDetails.rentalPrice'}">
+                        Rental price
+                    </option>
+                </select>
+            </label>
+            <label class="form-label" for="direction">Sort direction
+                <select class="form-select" name="direction" id="direction">
+                    <option th:value="ASC" th:selected="*{direction eq 'ASC'}">ASC</option>
+                    <option th:value="DESC" th:selected="*{direction eq 'DESC'}">DESC</option>
+                </select>
+            </label>
+        </form>
+        <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+        <table border="1" class="table table-striped table-responsive-md">
+            <thead>
+            <tr>
+                <th>Car</th>
+                <th>With driver</th>
+                <th>Start date</th>
+                <th>End date</th>
+                <th>Rental price total</th>
+                <th>Order status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${userOrders}">
+                <td th:text="${order.car}"></td>
+                <td th:text="${order.withDriver}"></td>
+                <td th:text="${order.startDate}"></td>
+                <td th:text="${order.endDate}"></td>
+                <td th:text="${order.rentalPrice}"></td>
+                <td th:text="${order.orderStatus}"></td>
+                <!--                <td>-->
+                <!--                    <form th:if="${user.isActive}" th:action="@{/admin/blockUser/{id}(id=${user.id})}" th:method="PUT">-->
+                <!--                        <input class="btn btn-danger" type="submit"-->
+                <!--                               th:attr="onclick=|return confirm('block ${user.email}?')|" value="Block">-->
+                <!--                    </form>-->
+                <!--                    <form th:if="${!user.isActive}" th:action="@{/admin/unblockUser/{id}(id=${user.id})}" th:method="PUT">-->
+                <!--                        <input class="btn btn-success" type="submit"-->
+                <!--                               th:attr="onclick=|return confirm('unblock ${user.email}?')|" value="Unblock">-->
+                <!--                    </form>-->
+                <!--                </td>-->
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${userOrders.isEmpty()}">
+        <p>Not found</p>
+    </div>
+
+
+    <div th:insert="/fragments/footer :: footer"></div>
+</body>
+</html>

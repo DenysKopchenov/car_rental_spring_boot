@@ -5,8 +5,10 @@
 </head>
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
-<div th:if="${param.blocked}" th:text="|User ${userResult.email} was blocked|" class="alert alert-success"></div>
-<div th:if="${param.unblocked}" th:text="|User ${userResult.email} was unblocked|" class="alert alert-success"></div>
+<div th:if="${param.blocked} and ${userResult != null}" th:text="|User ${userResult.email} was blocked|"
+     class="alert alert-danger"></div>
+<div th:if="${param.unblocked} and ${userResult != null}" th:text="|User ${userResult.email} was unblocked|"
+     class="alert alert-success"></div>
 <div class="container my-2">
     <h1>Users</h1>
     <form th:action="@{/admin/showUsers}" th:method="GET" th:object="${pagination}" onchange="submit()">
@@ -20,10 +22,10 @@
         </label>
         <label class="form-label" for="sort">Sort
             <select class="form-select" name="sort" id="sort">
-                <option th:value="firstName" th:selected="*{sort eq 'firstName'}">First name</option>
-                <option th:value="lastName" th:selected="*{sort eq 'lastName'}">Last name</option>
-                <option th:value="email" th:selected="*{sort eq 'email'}">Email</option>
-                <option th:value="isActive" th:selected="*{sort eq 'isActive'}">Is active</option>
+                <option th:value="withDriver" th:selected="*{sort eq 'withDriver'}">With driver</option>
+                <option th:value="startDate" th:selected="*{sort eq 'startDate'}">Start date</option>
+                <option th:value="endDate" th:selected="*{sort eq 'endDate'}">End date</option>
+                <option th:value="orderStatus" th:selected="*{sort eq 'orderStatus'}">Order status</option>
             </select>
         </label>
         <label class="form-label" for="direction">Sort direction
@@ -51,11 +53,11 @@
             <td>
                 <form th:if="${user.isActive}" th:action="@{/admin/blockUser/{id}(id=${user.id})}" th:method="PUT">
                     <input class="btn btn-danger" type="submit"
-                           th:attr="onclick=|return confirm(block ${user.email} ?)|" value="Block">
+                           th:attr="onclick=|return confirm('block ${user.email}?')|" value="Block">
                 </form>
                 <form th:if="${!user.isActive}" th:action="@{/admin/unblockUser/{id}(id=${user.id})}" th:method="PUT">
                     <input class="btn btn-success" type="submit"
-                           th:attr="onclick=|return confirm(unblock ${user.email} ?)|" value="Unblock">
+                           th:attr="onclick=|return confirm('unblock ${user.email}?')|" value="Unblock">
                 </form>
             </td>
         </tr>

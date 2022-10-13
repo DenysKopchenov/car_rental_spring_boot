@@ -41,7 +41,7 @@ public class CarServiceImpl implements CarService {
     public Page<Car> findAll(PaginationAndSortingBean paginationAndSortingBean, CarFilterBean carFilterBean) {
         int currentPage = paginationAndSortingBean.getPage();
         int currentSize = paginationAndSortingBean.getSize();
-        String currentSort = paginationAndSortingBean.getSort() == null ? "model" : paginationAndSortingBean.getSort();
+        String currentSort = paginationAndSortingBean.getSort();
         String direction = paginationAndSortingBean.getDirection();
 
         List<CategoryClass> categories = carFilterBean.getCategories();

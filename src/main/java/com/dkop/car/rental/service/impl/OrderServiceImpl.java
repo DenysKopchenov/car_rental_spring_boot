@@ -1,6 +1,8 @@
 package com.dkop.car.rental.service.impl;
 
 import com.dkop.car.rental.dto.OrderDto;
+import com.dkop.car.rental.dto.OrderFilterBean;
+import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.model.client.AppUser;
 import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.OrderStatus;
@@ -9,6 +11,9 @@ import com.dkop.car.rental.repository.OrderRepository;
 import com.dkop.car.rental.service.OrderService;
 import com.dkop.car.rental.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -66,8 +71,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<RentOrder> findOrdersByAppUserId(UUID appUserId) {
-        return orderRepository.findOrdersByAppUserId(appUserId);
+    public Page<RentOrder> findPagedOrdersByAppUserId(UUID appUserId, PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean) {
+        PageRequest of = PageRequest.of(paginationAndSortingBean.getPage() - 1, paginationAndSortingBean.getSize(), Sort.by(Sort.Direction.valueOf(paginationAndSortingBean.getDirection()), paginationAndSortingBean.getSort()));
+        return orderRepository.findOrdersByAppUserId(appUserId, of);
     }
 
     @Override

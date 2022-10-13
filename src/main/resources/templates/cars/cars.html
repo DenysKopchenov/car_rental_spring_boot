@@ -89,13 +89,16 @@
                     <div class="product-container">
                         <div class="card-body">
                             <h2 class="card-title">
-                                <img class="card-img-top" th:src="@{'/cars/image?id=' + ${car.id}}">
+                                <a th:href="@{/cars/{id}(id=${car.id})}">
+                                    <img class="card-img-top" width="75%" height="50%"
+                                         th:src="@{'/cars/image?id=' + ${car.id}}">
+                                </a>
                             </h2>
                             <div class="card-text">
-                                <a th:href="@{/cars/{id}(id=${car.id})}" th:text="${car.manufacturer}">CAR
+                                <p class="price ml-auto" th:text="|${car.manufacturer}|"></p>
+                                <a th:href="@{/cars/{id}(id=${car.id})}" th:text="${car.model}">CAR
                                     MANUFACTURER</a>
-                                <span class="cat" th:text="${car.categoryClass}">CAR MODEL</span>
-                                <span class="cat" th:text="${car.model}">CAR MODEL</span>
+                                <p class="price ml-auto" th:text="|Class: ${car.categoryClass}|"></p>
                                 <p class="price ml-auto" th:text="'$' + ${car.pricePerDay} + '/day'"></p>
                             </div>
                             <div class="row">

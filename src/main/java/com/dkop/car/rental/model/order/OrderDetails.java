@@ -34,4 +34,6 @@ public class OrderDetails {
     private long rentalPrice;
     private OrderStatus orderStatus;
     private String rejectOrderDetails;
+    @OneToOne(cascade = CascadeType.MERGE)
+    private RepairPayment repairPayment;
 }

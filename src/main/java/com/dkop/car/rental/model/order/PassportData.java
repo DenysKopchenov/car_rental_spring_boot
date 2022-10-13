@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +30,7 @@ public class PassportData {
     private String firstName;
     private String lastName;
     private String passportCode;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate issueDate;
     private String issueDepartment;
 }
