@@ -1,4 +1,4 @@
-package com.dkop.car.rental.model.client;
+package com.dkop.car.rental.model.user;
 
 import com.dkop.car.rental.model.order.RentOrder;
 import lombok.Getter;

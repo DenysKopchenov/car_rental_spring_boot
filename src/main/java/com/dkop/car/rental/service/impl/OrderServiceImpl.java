@@ -3,10 +3,10 @@ package com.dkop.car.rental.service.impl;
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.dto.OrderFilterBean;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
-import com.dkop.car.rental.model.client.AppUser;
 import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.OrderStatus;
 import com.dkop.car.rental.model.order.RentOrder;
+import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.repository.OrderRepository;
 import com.dkop.car.rental.service.OrderService;
 import com.dkop.car.rental.util.Mapper;
@@ -43,16 +43,8 @@ public class OrderServiceImpl implements OrderService {
         orderDto.setRentalPrice(totalRentalPrice);
     }
 
-    private static long calculatePricePerDay(OrderDto orderDto) {
-        long pricePerDay = orderDto.getCar().getPricePerDay();
-        if (orderDto.isWithDriver()) {
-            pricePerDay += 30;
-        }
-        return pricePerDay;
-    }
-
     @Override
-    public RentOrder createOrder(OrderDto orderDto) {
+    public RentOrder saveOrder(OrderDto orderDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RentOrder rentOrder = new RentOrder();
         rentOrder.setAppUser((AppUser) authentication.getPrincipal());
@@ -72,15 +64,6 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return orderRepository.save(rentOrder);
-    }
-
-    private boolean isOrderAlreadyExist(RentOrder rentOrder) {
-        return orderRepository.isOrderExist(rentOrder.getCar().getId(),
-                rentOrder.getAppUser().getId(),
-                rentOrder.getOrderDetails().getStartDate(),
-                rentOrder.getOrderDetails().getEndDate(),
-                rentOrder.getOrderDetails().isWithDriver(),
-                rentOrder.getOrderDetails().getOrderStatus());
     }
 
     @Override
@@ -114,5 +97,22 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public RentOrder findById(UUID orderId) {
         return orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
+    }
+
+    private static long calculatePricePerDay(OrderDto orderDto) {
+        long pricePerDay = orderDto.getCar().getPricePerDay();
+        if (orderDto.isWithDriver()) {
+            pricePerDay += 30;
+        }
+        return pricePerDay;
+    }
+
+    private boolean isOrderAlreadyExist(RentOrder rentOrder) {
+        return orderRepository.isOrderExist(rentOrder.getCar().getId(),
+                rentOrder.getAppUser().getId(),
+                rentOrder.getOrderDetails().getStartDate(),
+                rentOrder.getOrderDetails().getEndDate(),
+                rentOrder.getOrderDetails().isWithDriver(),
+                rentOrder.getOrderDetails().getOrderStatus());
     }
 }

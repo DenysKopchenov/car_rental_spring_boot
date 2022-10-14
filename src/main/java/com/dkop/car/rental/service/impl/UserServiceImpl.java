@@ -3,8 +3,8 @@ package com.dkop.car.rental.service.impl;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.exception.UserAlreadyExists;
-import com.dkop.car.rental.model.client.AppUser;
-import com.dkop.car.rental.model.client.Role;
+import com.dkop.car.rental.model.user.AppUser;
+import com.dkop.car.rental.model.user.Role;
 import com.dkop.car.rental.repository.AppUserRepository;
 import com.dkop.car.rental.service.UserService;
 import com.dkop.car.rental.util.Mapper;
@@ -40,8 +40,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public AppUser savePerson(RegFormDto regFormDto) throws UserAlreadyExists {
+    public AppUser saveAppUser(RegFormDto regFormDto) throws UserAlreadyExists {
         checkIsUserExists(regFormDto);
+
         AppUser appUser = mapper.mapRegFormDtoToUser(regFormDto);
         appUser.setEncodedPassword(passwordEncoder.encode(regFormDto.getPassword()));
         return appUserRepository.save(appUser);
@@ -69,11 +70,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<AppUser> findAllWithRoleUser(PaginationAndSortingBean pagination) {
+    public Page<AppUser> findAllByRole(PaginationAndSortingBean pagination, Role role) {
         String currentSort = pagination.getSort() == null ? "email" : pagination.getSort();
         PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(),
                 Sort.by(Sort.Direction.valueOf(pagination.getDirection()), currentSort));
-        return appUserRepository.findByRoleIn(List.of(Role.USER), of);
+        return appUserRepository.findByRoleIn(List.of(role), of);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.dkop.car.rental.repository;
 
-import com.dkop.car.rental.model.client.AppUser;
-import com.dkop.car.rental.model.client.Role;
+import com.dkop.car.rental.model.user.AppUser;
+import com.dkop.car.rental.model.user.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

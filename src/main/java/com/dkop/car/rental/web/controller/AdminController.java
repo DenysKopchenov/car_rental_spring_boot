@@ -8,7 +8,8 @@ import com.dkop.car.rental.exception.UserAlreadyExists;
 import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Manufacturer;
-import com.dkop.car.rental.model.client.AppUser;
+import com.dkop.car.rental.model.user.AppUser;
+import com.dkop.car.rental.model.user.Role;
 import com.dkop.car.rental.service.CarService;
 import com.dkop.car.rental.service.UserService;
 import com.dkop.car.rental.util.Mapper;
@@ -79,7 +80,7 @@ public class AdminController {
             return REGISTRATION_PAGE;
         }
         try {
-            userService.savePerson(regFormDto);
+            userService.saveAppUser(regFormDto);
             return "redirect:/registration/manager?success";
         } catch (UserAlreadyExists ex) {
             redirectAttributes.addFlashAttribute(USER, regFormDto);
@@ -124,7 +125,7 @@ public class AdminController {
 
     @GetMapping("/showUsers")
     public String showUsers(@ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean, Model model) {
-        Page<AppUser> allUserPage = userService.findAllWithRoleUser(paginationAndSortingBean);
+        Page<AppUser> allUserPage = userService.findAllByRole(paginationAndSortingBean, Role.USER);
         List<AppUserDto> allUsers = allUserPage.stream()
                 .map(mapper::mapAppUserToAppUserDto)
                 .collect(Collectors.toList());

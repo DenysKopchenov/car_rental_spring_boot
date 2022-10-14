@@ -1,7 +1,7 @@
 package com.dkop.car.rental.model.order;
 
 import com.dkop.car.rental.model.car.Car;
-import com.dkop.car.rental.model.client.AppUser;
+import com.dkop.car.rental.model.user.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

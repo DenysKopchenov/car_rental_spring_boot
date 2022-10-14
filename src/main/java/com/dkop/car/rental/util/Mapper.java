@@ -5,9 +5,9 @@ import com.dkop.car.rental.dto.CarDto;
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.model.car.Car;
-import com.dkop.car.rental.model.client.AppUser;
 import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.RentOrder;
+import com.dkop.car.rental.model.user.AppUser;
 import org.springframework.stereotype.Component;
 
 @Component

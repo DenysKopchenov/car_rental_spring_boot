@@ -1,7 +1,7 @@
 package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.AppUserDto;
-import com.dkop.car.rental.model.client.AppUser;
+import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

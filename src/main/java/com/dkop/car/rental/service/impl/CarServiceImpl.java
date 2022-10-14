@@ -83,7 +83,6 @@ public class CarServiceImpl implements CarService {
         car.setModel(carDto.getModel());
         car.setPricePerDay(carDto.getPricePerDay());
         car.setImage(carDto.getImage().getBytes());
-        carRepository.save(car);
         return carRepository.save(car);
     }
 

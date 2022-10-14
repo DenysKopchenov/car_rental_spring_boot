@@ -12,7 +12,7 @@ public interface OrderService {
 
     void calculateOrder(OrderDto orderDto);
 
-    RentOrder createOrder(OrderDto orderDto);
+    RentOrder saveOrder(OrderDto orderDto);
 
     Page<RentOrder> findOrdersByAppUserId(UUID appUserId, PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean);
 

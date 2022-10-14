@@ -1,6 +1,6 @@
 package com.dkop.car.rental.dto;
 
-import com.dkop.car.rental.model.client.Role;
+import com.dkop.car.rental.model.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * A DTO for the {@link com.dkop.car.rental.model.client.AppUser} entity
+ * A DTO for the {@link com.dkop.car.rental.model.user.AppUser} entity
  */
 @Getter
 @Setter

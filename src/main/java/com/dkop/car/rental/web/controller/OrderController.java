@@ -59,7 +59,7 @@ public class OrderController {
         if (bindingResult.hasErrors()) {
             return "orders/orderForm";
         }
-        RentOrder order = orderService.createOrder(orderDto);
+        RentOrder order = orderService.saveOrder(orderDto);
 
         return "redirect:/order/" + order.getId();
     }

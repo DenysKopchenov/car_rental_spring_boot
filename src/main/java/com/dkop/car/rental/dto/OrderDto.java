@@ -1,10 +1,10 @@
 package com.dkop.car.rental.dto;
 
 import com.dkop.car.rental.model.car.Car;
-import com.dkop.car.rental.model.client.AppUser;
 import com.dkop.car.rental.model.order.OrderStatus;
 import com.dkop.car.rental.model.order.PassportData;
 import com.dkop.car.rental.model.order.RepairPayment;
+import com.dkop.car.rental.model.user.AppUser;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 

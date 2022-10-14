@@ -52,7 +52,7 @@ public class RegistrationController {
             return REGISTRATION_PAGE;
         }
         try {
-            userService.savePerson(regFormDto);
+            userService.saveAppUser(regFormDto);
             return "redirect:/registration?success";
         } catch (UserAlreadyExists ex) {
             redirectAttributes.addFlashAttribute(USER, regFormDto);
