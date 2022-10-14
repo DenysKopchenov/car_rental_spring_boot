@@ -7,7 +7,7 @@
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
 
 <div>
-    <form th:action="@{/order/book}" th:object="${order}" th:method="POST">
+    <form th:action="@{/order/bookCar}" th:object="${order}" th:method="POST">
         <div th:text="${order}"></div>
         <div th:text="|Car = *{car.id}|"></div>
         <div th:text="|Total price = *{rentalPrice}|"></div>

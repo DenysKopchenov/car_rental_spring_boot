@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,9 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Page<Car> findAll(PaginationAndSortingBean paginationAndSortingBean, CarFilterBean carFilterBean) {
+        if (Objects.isNull(paginationAndSortingBean.getSort())) {
+            paginationAndSortingBean.setSort("model");
+        }
         int currentPage = paginationAndSortingBean.getPage();
         int currentSize = paginationAndSortingBean.getSize();
         String currentSort = paginationAndSortingBean.getSort();

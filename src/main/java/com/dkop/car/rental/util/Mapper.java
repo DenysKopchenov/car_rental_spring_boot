@@ -53,8 +53,8 @@ public class Mapper {
 
     public OrderDetails mapOrderDtoToOrderDetails(OrderDto orderDto) {
         OrderDetails orderDetails = new OrderDetails();
-        orderDetails.setOrderStatus(orderDetails.getOrderStatus());
-        orderDetails.setWithDriver(orderDetails.isWithDriver());
+        orderDetails.setOrderStatus(orderDto.getOrderStatus());
+        orderDetails.setWithDriver(orderDto.isWithDriver());
         orderDetails.setPassportData(orderDto.getPassportData());
         orderDetails.setEndDate(orderDto.getEndDate());
         orderDetails.setStartDate(orderDto.getStartDate());

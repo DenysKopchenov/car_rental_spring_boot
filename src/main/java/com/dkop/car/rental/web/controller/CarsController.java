@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -48,9 +47,6 @@ public class CarsController {
                               @ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean,
                               @ModelAttribute("filter") CarFilterBean carFilterBean) {
         model.addAttribute(TITLE_ATTRIBUTE, CARS_TITLE);
-        if (Objects.isNull(paginationAndSortingBean.getSort())) {
-            paginationAndSortingBean.setSort("model");
-        }
         Page<Car> pagedCars = carService.findAll(paginationAndSortingBean, carFilterBean);
         List<CarDto> cars = pagedCars.map(car -> mapper.mapCarToCarDto(car))
                 .toList();

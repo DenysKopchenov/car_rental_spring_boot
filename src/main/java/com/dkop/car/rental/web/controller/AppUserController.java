@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -36,10 +35,7 @@ public class AppUserController {
                                    @ModelAttribute("filter") OrderFilterBean orderFilterBean,
                                    @AuthenticationPrincipal AppUser appUser,
                                    Model model) {
-        if (Objects.isNull(paginationAndSortingBean.getSort())) {
-            paginationAndSortingBean.setSort("orderDetails.orderStatus");
-        }
-        Page<RentOrder> userOrdersPaged = orderService.findPagedOrdersByAppUserId(appUser.getId(), paginationAndSortingBean, orderFilterBean);
+        Page<RentOrder> userOrdersPaged = orderService.findOrdersByAppUserId(appUser.getId(), paginationAndSortingBean, orderFilterBean);
         List<OrderDto> userOrders = userOrdersPaged.stream()
                 .map(order -> {
                     OrderDto orderDto = new OrderDto();

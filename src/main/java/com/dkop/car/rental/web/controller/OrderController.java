@@ -41,13 +41,13 @@ public class OrderController {
         return "orders/calculateForm";
     }
 
-    @GetMapping("/book")
+    @GetMapping("/bookCar")
     public String showPayment(@ModelAttribute("order") OrderDto orderDto) {
         orderService.calculateOrder(orderDto);
         return "orders/orderForm";
     }
 
-    @PostMapping("/book")
+    @PostMapping("/bookCar")
     public String payPayment(@ModelAttribute("order") OrderDto orderDto) {
         orderService.createOrder(orderDto);
         return "orders/orderForm";
