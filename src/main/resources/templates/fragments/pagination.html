@@ -11,18 +11,24 @@
                 <li class="page-item"><a class="page-link" th:attr="onclick=|changePage(${pagination.page - 1})|">Previous</a>
                 </li>
             </th:block>
-            <th:block th:if="${page > 4}">
-                <li class="page-item"><a class="page-link" th:attr="onclick=changePage(${pagination.page + 4})">...</a>
+
+            <a th:if="${pagination.page > 4}" class="page-link"
+               th:attr="onclick=|changePage(${pagination.page - 4})|">...</a>
+
+            <th:block
+                    th:each="page, i: ${#numbers.sequence(pagination.page > 4 ? pagination.page - 3 : 1, numberOfPages)}">
+                <li th:if="${i.current < pagination.page + 4}" class="page-item">
+                    <a class="page-link"
+                       th:attr="onclick=|changePage(${page})|"
+                       th:text="${page}"
+                       th:classappend="${page==pagination.page} ? active"></a>
+                </li>
+                <li th:if="${i.current == pagination.page + 4}" class="page-item">
+                    <a class="page-link"
+                       th:attr="onclick=|changePage(${pagination.page + 4})|">...</a>
                 </li>
             </th:block>
-            <li th:if="${numberOfPages > 0}"
-                th:each="page : ${#numbers.sequence(1, numberOfPages)}"
-                class="page-item">
-                <a class="page-link"
-                   th:attr="onclick=|changePage(${page})|"
-                   th:text=${page}
-                   th:classappend="${page==pagination.page} ? active"></a>
-            </li>
+
             <th:block th:if="${pagination.page < numberOfPages}">
                 <li class="page-item"><a class="page-link"
                                          th:attr="onclick=|changePage(${pagination.page + 1})|">Next</a></li>
