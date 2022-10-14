@@ -5,38 +5,93 @@
 </head>
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<div class="container my-2">
+    <div class="row no-gutters">
+        <div class="col-md-4 d-flex align-items-center">
+            <form th:action="@{/order/bookCar}" th:object="${order}" th:method="GET"
+                  class="request-form ftco-animate fadeInUp ftco-animated">
+                <h2>Calculate price</h2>
+                <div class="form-group">
+                    <label for="needDriver" class="label">Need driver (+30$ per/day)</label>
+                    <input type="checkbox" id="needDriver"
+                           th:field="*{withDriver}"
+                           class="btn btn-secondary py-3 px-4">
+                </div>
+                <div class="d-flex">
+                    <div class="form-group mr-2">
+                        <label for="startDate" class="label">Start date</label>
+                        <input type="date" class="form-control" id="startDate"
+                               th:value="*{startDate}"
+                               th:field="*{startDate}"
+                               th:attr="min=*{startDate}"
+                               placeholder="Date" required>
+                    </div>
+                    <div class="form-group ml-2">
+                        <div class="form-group ml-2">
+                            <label for="endDate" class="label">End date</label>
+                            <input type="date" class="form-control" id="endDate"
+                                   th:value="*{endDate}"
+                                   th:field="*{endDate}"
+                                   th:attr="min=*{startDate.plusDays(1)}"
+                                   placeholder="Date" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Calculate price" class="btn btn-info py-3 px-4">
+                </div>
+                <input type="hidden" th:value="*{car}" th:field="*{car}">
+            </form>
+        </div>
+        <div class="col-md-8 d-flex align-items-center">
+            <div>
+                <div th:text="|${order.car.manufacturer} ${order.car.model}|"></div>
+                <div th:text="|Price per day  $${order.car.pricePerDay}/day|"></div>
+            </div>
+            <img width="75%" height="100%"
+                 th:src="@{'/cars/image?id=' + ${order.car.id}}">
+        </div>
+    </div>
+</div>
 
-<form th:action="@{/order/bookCar}" th:object="${order}" th:method="GET"
-      class="request-form ftco-animate bg-primary fadeInUp ftco-animated">
-    <div class="d-flex">
-        <div class="form-group mr-2">
-            <label for="startDate" class="label">Start date</label>
-            <input type="date" class="form-control" id="startDate"
-                   th:value="*{startDate}"
-                   th:field="*{startDate}"
-                   th:attr="min=*{startDate}"
-                   placeholder="Date" required>
-        </div>
-        <div class="form-group ml-2">
-            <label for="endDate" class="label">End date</label>
-            <input type="date" class="form-control" id="endDate"
-                   th:value="*{endDate}"
-                   th:field="*{endDate}"
-                   th:attr="min=*{startDate.plusDays(1)}"
-                   placeholder="Date" required>
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="needDriver" class="label">Need driver</label>
-        <input type="checkbox" id="needDriver"
-               th:field="*{withDriver}"
-               class="btn btn-secondary py-3 px-4">
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Calculate price" class="btn btn-secondary py-3 px-4">
-    </div>
-    <input type="hidden" th:value="*{car}" th:field="*{car}" class="btn btn-secondary py-3 px-4">
-</form>
+
+<!--<div class="container my-2">-->
+
+<!--    <form th:action="@{/order/bookCar}" th:object="${order}" th:method="GET"-->
+<!--          class="form">-->
+<!--        <div class="d-flex">-->
+<!--            <div th:text="|${order.car.manufacturer} ${order.car.model}|"></div>-->
+<!--            <img width="150px" height="100px"-->
+<!--                 th:src="@{'/cars/image?id=' + ${order.car.id}}">-->
+<!--            <div class="form-group mr-2">-->
+<!--                <label for="startDate" class="label">Start date</label>-->
+<!--                <input type="date" class="form-control" id="startDate"-->
+<!--                       th:value="*{startDate}"-->
+<!--                       th:field="*{startDate}"-->
+<!--                       th:attr="min=*{startDate}"-->
+<!--                       placeholder="Date" required>-->
+<!--            </div>-->
+<!--            <div class="form-group ml-2">-->
+<!--                <label for="endDate" class="label">End date</label>-->
+<!--                <input type="date" class="form-control" id="endDate"-->
+<!--                       th:value="*{endDate}"-->
+<!--                       th:field="*{endDate}"-->
+<!--                       th:attr="min=*{startDate.plusDays(1)}"-->
+<!--                       placeholder="Date" required>-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--                <label for="needDriver" class="label">Need driver</label>-->
+<!--                <input type="checkbox" id="needDriver"-->
+<!--                       th:field="*{withDriver}"-->
+<!--                       class="btn btn-secondary py-3 px-4">-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="form-group">-->
+<!--            <input type="submit" value="Calculate price" class="btn btn-secondary py-3 px-4">-->
+<!--        </div>-->
+<!--        <input type="hidden" th:value="*{car}" th:field="*{car}" class="btn btn-secondary py-3 px-4">-->
+<!--    </form>-->
+<!--</div>-->
 
 <div th:insert="/fragments/footer :: footer"></div>
 </body>

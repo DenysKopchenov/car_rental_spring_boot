@@ -8,6 +8,7 @@ import com.dkop.car.rental.model.order.RepairPayment;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ public class OrderDto {
     private UUID id;
     private Car car;
     private AppUser appUser;
+    @Valid
     private PassportData passportData;
     private boolean withDriver;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

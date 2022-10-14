@@ -26,14 +26,15 @@
                     </label>
                     <label class="form-label" for="sort">Sort
                         <select class="form-select" name="sort" id="sort">
-                            <option th:value="orderDetails.startDate"
-                                    th:selected="*{sort eq 'orderDetails.startDate'}">
-                                Start date
-                            </option>
                             <option th:value="orderDetails.orderStatus"
                                     th:selected="*{sort eq 'orderDetails.orderStatus'}">
                                 Order status
                             </option>
+                            <option th:value="orderDetails.startDate"
+                                    th:selected="*{sort eq 'orderDetails.startDate'}">
+                                Start date
+                            </option>
+
                             <option th:value="orderDetails.rentalPrice"
                                     th:selected="*{sort eq 'orderDetails.rentalPrice'}">
                                 Rental price
@@ -59,6 +60,7 @@
                 <th>End date</th>
                 <th>Rental price total</th>
                 <th>Order status</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody>
@@ -74,6 +76,14 @@
                 <td th:text="${order.endDate}"></td>
                 <td th:text="${order.rentalPrice}"></td>
                 <td th:text="${order.orderStatus}"></td>
+                <td>
+                    <form sec:authorize="${hasAuthority('USER')}" th:if="${order.orderStatus.name eq 'AWAIT_PAYMENT'}"
+                          th:action="@{/order/payOrder/{id}(id=${order.id})}" th:method="PUT">
+                        <input type="submit" value="Pay"
+                               th:attr="onclick=|return confirm('Pay $${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|">
+                    </form>
+                    <a th:href="@{/order/{id}(id=${order.id})}" class="btn btn-info">Details</a>
+                </td>
             </tr>
             </tbody>
         </table>

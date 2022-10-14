@@ -39,8 +39,8 @@ public class AppUserController {
         List<OrderDto> userOrders = userOrdersPaged.stream()
                 .map(order -> {
                     OrderDto orderDto = new OrderDto();
+                    orderDto.setId(order.getId());
                     orderDto.setCar(order.getCar());
-
                     OrderDetails orderDetails = order.getOrderDetails();
                     orderDto.setWithDriver(orderDetails.isWithDriver());
                     orderDto.setStartDate(orderDetails.getStartDate());

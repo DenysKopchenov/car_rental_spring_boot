@@ -7,6 +7,7 @@ import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.client.AppUser;
 import com.dkop.car.rental.model.order.OrderDetails;
+import com.dkop.car.rental.model.order.RentOrder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -59,6 +60,21 @@ public class Mapper {
         orderDetails.setEndDate(orderDto.getEndDate());
         orderDetails.setStartDate(orderDto.getStartDate());
         orderDetails.setRentalPrice(orderDto.getRentalPrice());
+        orderDetails.setPassportData(orderDto.getPassportData());
         return orderDetails;
+    }
+
+    public OrderDto mapRentOrderToOrderDto(RentOrder rentOrder) {
+        OrderDto orderDto = new OrderDto();
+        orderDto.setId(rentOrder.getId());
+        orderDto.setCar(rentOrder.getCar());
+        OrderDetails orderDetails = rentOrder.getOrderDetails();
+        orderDto.setWithDriver(orderDetails.isWithDriver());
+        orderDto.setStartDate(orderDetails.getStartDate());
+        orderDto.setEndDate(orderDetails.getEndDate());
+        orderDto.setRentalPrice(orderDetails.getRentalPrice());
+        orderDto.setOrderStatus(orderDetails.getOrderStatus());
+        orderDto.setRepairPayment(orderDetails.getRepairPayment());
+        return orderDto;
     }
 }

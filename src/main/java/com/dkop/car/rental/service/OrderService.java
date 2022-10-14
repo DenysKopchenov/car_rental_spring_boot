@@ -3,23 +3,22 @@ package com.dkop.car.rental.service;
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.dto.OrderFilterBean;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
-import com.dkop.car.rental.model.order.OrderStatus;
 import com.dkop.car.rental.model.order.RentOrder;
 import org.springframework.data.domain.Page;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 public interface OrderService {
 
     void calculateOrder(OrderDto orderDto);
 
-    void createOrder(OrderDto orderDto);
+    RentOrder createOrder(OrderDto orderDto);
 
-    Page<RentOrder> findPagedOrdersByAppUserId(UUID clientId, PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean);
+    Page<RentOrder> findOrdersByAppUserId(UUID appUserId, PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean);
 
-    List<RentOrder> findOrdersOrderStatus(OrderStatus orderStatus);
+    Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean);
 
-    List<RentOrder> showOrdersThatExpiresToday(LocalDate now);
+    RentOrder payOrder(UUID orderId);
+
+    RentOrder findById(UUID orderId);
 }
