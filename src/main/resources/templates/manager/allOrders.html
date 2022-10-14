@@ -6,16 +6,15 @@
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
 
-<div th:if="${!userOrders.isEmpty()} ?: 'Not found'">
+<div th:if="${!orders.isEmpty()} ?: 'Not found'">
     <div class="container my-2">
-
         <h1>Orders</h1>
         <div class="row">
             <div class="col">
                 <th:block th:insert="/fragments/pagination :: pagination"></th:block>
             </div>
             <div class="col">
-                <form th:action="@{/user/myOrders}" th:method="GET" th:object="${pagination}" onchange="submit()">
+                <form th:action="@{/manager/allOrders}" th:method="GET" th:object="${pagination}" onchange="submit()">
                     <label class="form-label" for="size">Page size
                         <select class="form-select" name="size" id="size">
                             <option th:value="1" th:selected="*{size} == 1">1</option>
@@ -54,20 +53,22 @@
             <thead>
             <tr>
                 <th>№</th>
+                <th>Client</th>
                 <th>Car</th>
                 <th>With driver</th>
                 <th>Start date</th>
                 <th>End date</th>
                 <th>Rental price total</th>
                 <th>Order status</th>
-                <th>Reject details</th>
-                <th>Repair payment</th>
                 <th>Action</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="order, i : ${userOrders}">
+            <tr th:each="order, i : ${orders}">
                 <td th:text="${i.index} + 1"></td>
+                <td>
+                    <div th:text="|${order.appUserDto.firstName} ${order.appUserDto.lastName}|"></div>
+                </td>
                 <td>
                     <div th:text="|${order.car.manufacturer} ${order.car.model}|"></div>
                     <img width="150px" height="100px"
@@ -78,26 +79,21 @@
                 <td th:text="${order.endDate}"></td>
                 <td th:text="${order.rentalPrice}"></td>
                 <td th:text="${order.orderStatus}"></td>
-                <td th:if="${order.orderStatus.name eq 'REJECTED'}"
-                    th:text="${order.orderStatus.rejectOrderDetails}"></td>
-                <td th:if="${order.repairPayment != null}"
-                    th:text="|${order.repairPayment.damageDescription}| ${order.repairPayment.repairCost}"></td>
                 <td>
-                    <form th:if="${order.orderStatus.name eq 'AWAIT_PAYMENT'}"
-                          th:action="@{/order/payOrder/{id}(id=${order.id})}" th:method="PUT">
-                        <input type="submit"
-                               th:attr="onclick=|return confirm('Pay $${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|"
-                               value="Pay order"
-                               class="btn btn-success">
-                    </form>
-
-                    <form th:if="${order.orderStatus.name eq 'AWAIT_REPAIR'}"
-                          th:action="@{/order/payRepair/{id}(id=${order.id})}" th:method="PUT">
-                        <input type="submit"
-                               th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|"
-                               value="Pay repair"
-                               class="btn btn-warning">
-                    </form>
+                    <th:blcok th:if="${order.orderStatus.name eq 'PENDING'}">
+                        <form th:action="@{/order/reject/{id}(id=${order.id})}" th:method="GET">
+                            <input type="submit"
+                                   th:attr="onclick=|return confirm('Reject order?')|"
+                                   value="Reject"
+                                   class="btn btn-warning">
+                        </form>
+                        <form th:action="@{/order/accept/{id}(id=${order.id})}" th:method="PUT">
+                            <input type="submit"
+                                   th:attr="onclick=|return confirm('Accept order')|"
+                                   value="Accept"
+                                   class="btn btn-success">
+                        </form>
+                    </th:blcok>
                     <a th:href="@{/order/{id}(id=${order.id})}" class="btn btn-info">Details</a>
                 </td>
             </tr>

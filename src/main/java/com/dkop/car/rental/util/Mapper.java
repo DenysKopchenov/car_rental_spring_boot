@@ -75,6 +75,8 @@ public class Mapper {
         orderDto.setRentalPrice(orderDetails.getRentalPrice());
         orderDto.setOrderStatus(orderDetails.getOrderStatus());
         orderDto.setRepairPayment(orderDetails.getRepairPayment());
+        orderDto.setRejectOrderDetails(orderDetails.getRejectOrderDetails());
+        orderDto.setRepairPayment(orderDetails.getRepairPayment());
         return orderDto;
     }
 }

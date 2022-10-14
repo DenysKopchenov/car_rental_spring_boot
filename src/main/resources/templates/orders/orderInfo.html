@@ -16,6 +16,8 @@
             <th>End date</th>
             <th>Rental price total</th>
             <th>Order status</th>
+            <th th:if="${order.orderStatus.name eq 'REJECTED'}">Reject details</th>
+            <th th:if="${order.repairPayment != null}">Repair payment</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -31,11 +33,54 @@
             <td th:text="${order.endDate}"></td>
             <td th:text="${order.rentalPrice}"></td>
             <td th:text="${order.orderStatus}"></td>
-            <td sec:authorize="${hasAuthority('USER')}" th:if="${order.orderStatus.name eq 'AWAIT_PAYMENT'}">
-                <form th:action="@{/order/payOrder/{id}(id=${order.id})}" th:method="PUT">
-                    <input type="submit" value="Pay"
-                           th:attr="onclick=|return confirm('Pay $${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|">
-                </form>
+            <td th:if="${order.orderStatus.name eq 'REJECTED'}" th:text="${order.orderStatus.rejectOrderDetails}"></td>
+            <td th:if="${order.repairPayment != null}"
+                th:text="|${order.repairPayment.damageDescription}| ${order.repairPayment.repairCost}"></td>
+            <td>
+                <th:blcok sec:authorize="${hasAuthority('USER')}">
+                    <form th:if="${order.orderStatus.name eq 'AWAIT_PAYMENT'}"
+                          th:action="@{/order/payOrder/{id}(id=${order.id})}" th:method="PUT">
+                        <input type="submit"
+                               th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|">
+                    </form>
+
+                    <form th:if="${order.orderStatus.name eq 'AWAIT_REPAIR'}"
+                          th:action="@{/order/payRepair/{id}(id=${order.id})}" th:method="PUT">
+                        <input type="submit"
+                               th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|">
+                    </form>
+                </th:blcok>
+                <th:blcok sec:authorize="${hasAuthority('MANAGER')}">
+                    <th:blcok th:if="${order.orderStatus.name eq 'PENDING'}">
+                        <form th:action="@{/order/reject/{id}(id=${order.id})}" th:method="GET">
+                            <input type="submit"
+                                   th:attr="onclick=|return confirm('Reject order?')|"
+                                   value="Reject"
+                                   class="btn btn-warning">
+                            <input type="hidden" th:value="${order}"> <!-- look here!  -->
+                        </form>
+                        <form th:action="@{/order/accept/{id}(id=${order.id})}" th:method="PUT">
+                            <input type="submit"
+                                   th:attr="onclick=|return confirm('Accept order')|"
+                                   value="Accept"
+                                   class="btn btn-success">
+                        </form>
+                    </th:blcok>
+                    <form th:if="${order.orderStatus.name eq 'PAID'}"
+                          th:action="@{/order/return/{id}(id=${order.id})}" th:method="GET">
+                        <input type="submit"
+                               th:attr="onclick=|return confirm('Submit return order?')|"
+                               value="Submit return"
+                               class="btn btn-info">
+                    </form>
+                    <form th:if="${order.orderStatus.name eq 'REPAIR_PAID'}"
+                          th:action="@{/order/complete/{id}(id=${order.id})}" th:method="PUT">
+                        <input type="submit"
+                               th:attr="onclick=|return confirm('Submit return order?')|"
+                               value="Complete"
+                               class="btn btn-success">
+                    </form>
+                </th:blcok>
             </td>
         </tr>
         </tbody>

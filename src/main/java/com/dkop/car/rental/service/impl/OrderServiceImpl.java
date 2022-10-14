@@ -71,13 +71,19 @@ public class OrderServiceImpl implements OrderService {
         if (Objects.isNull(paginationAndSortingBean.getSort())) {
             paginationAndSortingBean.setSort("orderDetails.orderStatus");
         }
-        PageRequest of = PageRequest.of(paginationAndSortingBean.getPage() - 1, paginationAndSortingBean.getSize(), Sort.by(Sort.Direction.valueOf(paginationAndSortingBean.getDirection()), paginationAndSortingBean.getSort()));
+        PageRequest of = PageRequest.of(paginationAndSortingBean.getPage() - 1, paginationAndSortingBean.getSize(),
+                Sort.by(Sort.Direction.valueOf(paginationAndSortingBean.getDirection()), paginationAndSortingBean.getSort()));
         return orderRepository.findOrdersByAppUserId(appUserId, of);
     }
 
     @Override
     public Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean) {
-        return null;
+        if (Objects.isNull(paginationAndSortingBean.getSort())) {
+            paginationAndSortingBean.setSort("orderDetails.orderStatus");
+        }
+        PageRequest of = PageRequest.of(paginationAndSortingBean.getPage() - 1,
+                paginationAndSortingBean.getSize(), Sort.by(Sort.Direction.valueOf(paginationAndSortingBean.getDirection()), paginationAndSortingBean.getSort()));
+        return orderRepository.findAll(of);
     }
 
     @Override

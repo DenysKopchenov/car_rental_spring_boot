@@ -50,26 +50,32 @@ public class OrderController {
     @GetMapping("/bookCar")
     public String showPayment(@ModelAttribute("order") OrderDto orderDto) {
         orderService.calculateOrder(orderDto);
-        return "orders/orderForm";
+        return "user/bookCarFrom";
     }
 
     @PostMapping("/bookCar")
     @PreAuthorize("hasAuthority('USER')")
-    public String payPayment(@ModelAttribute("order") @Valid OrderDto orderDto, BindingResult bindingResult) {
+    public String bookCar(@ModelAttribute("order") @Valid OrderDto orderDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "orders/orderForm";
+            return "user/bookCarFrom";
         }
         RentOrder order = orderService.saveOrder(orderDto);
-
         return "redirect:/order/" + order.getId();
     }
 
     @PutMapping("/payOrder/{id}")
     @PreAuthorize("hasAuthority('USER')")
-    public String payPayment(@PathVariable("id") UUID orderId, Model model) {
+    public String payOrder(@PathVariable("id") UUID orderId, Model model) {
         RentOrder rentOrder = orderService.payOrder(orderId);
         model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
-        return "orders/orderForm";
+        return "redirect:/order/{id}";
+    }
+
+    @PutMapping("/payRepair/{id}")
+    @PreAuthorize("hasAuthority('USER')")
+    public String payRepair(@PathVariable("id") UUID orderId, Model model) {
+
+        return "redirect:/order/{id}";
     }
 
     @GetMapping("/{id}")
@@ -89,5 +95,40 @@ public class OrderController {
 
         model.addAttribute("order", orderDto);
         return "orders/orderInfo";
+    }
+
+    @PutMapping("/accept/{id}")
+    @PreAuthorize("hasAuthority('MANAGER')")
+    public String acceptOrder(@PathVariable("id") UUID orderId, @ModelAttribute("order") OrderDto orderDto) {
+
+        return "redirect:/order/{id}";
+    }
+
+    @GetMapping("/reject/{id}")
+    @PreAuthorize("hasAuthority('MANAGER')")
+    public String showRejectOrderForm(@PathVariable("id") UUID orderId, @ModelAttribute("order") OrderDto orderDto) {
+
+        return "manager/rejectOrderForm";
+    }
+
+    @PutMapping("/reject/{id}")
+    @PreAuthorize("hasAuthority('MANAGER')")
+    public String submitReject(@PathVariable("id") UUID orderId, @ModelAttribute("order") OrderDto orderDto) {
+
+        return "redirect:/order/{id}";
+    }
+
+    @GetMapping("/return/{id}")
+    @PreAuthorize("hasAuthority('MANAGER')")
+    public String showReturnOrderForm(@PathVariable("id") UUID orderId, @ModelAttribute("order") OrderDto orderDto) {
+
+        return "manager/returnOrderForm";
+    }
+
+    @PutMapping("/return/{id}")
+    @PreAuthorize("hasAuthority('MANAGER')")
+    public String submitReturn(@PathVariable("id") UUID orderId, @ModelAttribute("order") OrderDto orderDto) {
+
+        return "redirect:/order/{id}";
     }
 }

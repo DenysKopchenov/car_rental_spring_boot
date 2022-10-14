@@ -4,7 +4,6 @@ import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.order.OrderStatus;
 import com.dkop.car.rental.model.order.PassportData;
 import com.dkop.car.rental.model.order.RepairPayment;
-import com.dkop.car.rental.model.user.AppUser;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,7 +16,7 @@ public class OrderDto {
 
     private UUID id;
     private Car car;
-    private AppUser appUser;
+    private AppUserDto appUserDto;
     @Valid
     private PassportData passportData;
     private boolean withDriver;
@@ -28,4 +27,5 @@ public class OrderDto {
     private long rentalPrice;
     private OrderStatus orderStatus;
     private RepairPayment repairPayment;
+    private String rejectOrderDetails;
 }
