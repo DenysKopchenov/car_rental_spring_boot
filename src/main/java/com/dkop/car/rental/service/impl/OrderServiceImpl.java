@@ -6,6 +6,7 @@ import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.OrderStatus;
 import com.dkop.car.rental.model.order.RentOrder;
+import com.dkop.car.rental.model.order.RepairPayment;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.repository.OrderRepository;
 import com.dkop.car.rental.service.OrderService;
@@ -96,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
                 orderDetails.setOrderStatus(OrderStatus.PAID);
                 return orderRepository.save(rentOrder);
             }
+            throw new IllegalArgumentException("Invalid order status, must be AWAIT_PAYMENT");
         }
         throw new EntityNotFoundException("Order not found");
     }
@@ -103,6 +105,72 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public RentOrder findById(UUID orderId) {
         return orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
+    }
+
+//    @Override
+//    public RentOrder changeOrderStatus(UUID orderId, OrderStatus oldStatus, OrderStatus newStatus) {
+//        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
+//        if (orderOptional.isPresent()) {
+//            RentOrder rentOrder = orderOptional.get();
+//            OrderDetails orderDetails = rentOrder.getOrderDetails();
+//            if (orderDetails.getOrderStatus().equals(oldStatus)) {
+//                orderDetails.setOrderStatus(newStatus);
+//                return orderRepository.save(rentOrder);
+//            }
+//            throw new IllegalArgumentException("Invalid order status, must be " + oldStatus.name());
+//        }
+//        throw new EntityNotFoundException("Order not found");
+//    }
+
+    @Override
+    public RentOrder acceptOrder(UUID orderId) {
+        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            RentOrder rentOrder = orderOptional.get();
+            OrderDetails orderDetails = rentOrder.getOrderDetails();
+            if (orderDetails.getOrderStatus().equals(OrderStatus.PENDING)) {
+                orderDetails.setOrderStatus(OrderStatus.AWAIT_PAYMENT);
+                return orderRepository.save(rentOrder);
+            }
+            throw new IllegalArgumentException("Invalid order status, must be PAID");
+        }
+        throw new EntityNotFoundException("Order not found");
+    }
+
+    @Override
+    public RentOrder rejectOrder(UUID orderId, String rejectDetails) {
+        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            RentOrder rentOrder = orderOptional.get();
+            OrderDetails orderDetails = rentOrder.getOrderDetails();
+            if (orderDetails.getOrderStatus().equals(OrderStatus.PENDING)) {
+                orderDetails.setOrderStatus(OrderStatus.REJECTED);
+                orderDetails.setRejectOrderDetails(rejectDetails);
+                return orderRepository.save(rentOrder);
+            }
+            throw new IllegalArgumentException("Invalid order status, must be PENDING");
+        }
+        throw new EntityNotFoundException("Order not found");
+    }
+
+    @Override
+    public RentOrder payRepair(UUID orderId) {
+        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            RentOrder rentOrder = orderOptional.get();
+            OrderDetails orderDetails = rentOrder.getOrderDetails();
+            if (orderDetails.getOrderStatus().equals(OrderStatus.AWAIT_REPAIR_PAYMENT)) {
+                orderDetails.setOrderStatus(OrderStatus.REPAIR_PAID);
+                return orderRepository.save(rentOrder);
+            }
+            throw new IllegalArgumentException("Invalid order status, must be AWAIT_REPAIR_PAYMENT");
+        }
+        throw new EntityNotFoundException("Order not found");
+    }
+
+    @Override
+    public RentOrder returnOrder(UUID orderId, RepairPayment repairPayment) {
+        return null;
     }
 
     private static long calculatePricePerDay(OrderDto orderDto) {

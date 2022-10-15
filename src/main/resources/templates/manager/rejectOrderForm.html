@@ -1,1 +1,73 @@
-reject page
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="/fragments/head"></th:block>
+</head>
+<body>
+<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<div class="container my-2">
+    <h1>Order</h1>
+    <table border="1" class="table table-striped table-responsive-md">
+        <thead>
+        <tr>
+            <th>Client</th>
+            <th>Car</th>
+            <th>With driver</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <th>Rental price total</th>
+            <th>Order status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <div th:text="|${order.appUserDto.firstName} ${order.appUserDto.lastName}|"></div>
+            </td>
+            <td>
+                <div th:text="|${order.car.manufacturer} ${order.car.model}|"></div>
+                <img width="150px" height="100px"
+                     th:src="@{'/cars/image?id=' + ${order.car.id}}">
+            </td>
+            <td th:text="${order.withDriver} ? Yes : No"></td>
+            <td th:text="${order.startDate}"></td>
+            <td th:text="${order.endDate}"></td>
+            <td th:text="${order.rentalPrice}"></td>
+            <td th:text="${order.orderStatus}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="col-md-8 d-flex align-items-center">
+        <div class="col">
+            <div th:text="|${order.car.manufacturer} ${order.car.model}|"></div>
+            <div th:text="|Total price = $${order.rentalPrice}|"></div>
+            <img width="75%" height="100%"
+                 th:src="@{'/cars/image?id=' + ${order.car.id}}">
+        </div>
+        <div class="col">
+            <form th:action="@{/order/reject/{id}(id=${order.id})}" th:method="PUT"
+                  class="request-form ftco-animate fadeInUp ftco-animated">
+                <div class="d-flex">
+                    <div class="form-group mr-2">
+                        <label for="rejectDetails" class="label">RejectDetails</label>
+                        <input type="text" class="form-control" id="rejectDetails" name="rejectDetails"
+                               placeholder="Reject details" required>
+                        <div class="alert alert-danger" th:if="${rejectDetailsError != null}"
+                             th:text="${rejectDetailsError}"></div>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="form-group mr-2">
+                        <input type="submit" class="btn btn-warning" value="Reject">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div th:insert="/fragments/footer :: body"></div>
+</body>
+</html>

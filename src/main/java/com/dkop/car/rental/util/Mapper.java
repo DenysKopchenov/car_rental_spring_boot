@@ -68,6 +68,7 @@ public class Mapper {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(rentOrder.getId());
         orderDto.setCar(rentOrder.getCar());
+        orderDto.setAppUserDto(mapAppUserToAppUserDto(rentOrder.getAppUser()));
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         orderDto.setWithDriver(orderDetails.isWithDriver());
         orderDto.setStartDate(orderDetails.getStartDate());
