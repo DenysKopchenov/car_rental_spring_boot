@@ -79,12 +79,12 @@
                 <td th:text="${order.rentalPrice}"></td>
                 <td th:text="${order.orderStatus}"></td>
                 <td th:if="${order.orderStatus.name eq 'REJECTED'}"
-                    th:text="${order.orderStatus.rejectOrderDetails}"></td>
+                    th:text="${order.rejectOrderDetails}"></td>
                 <td th:if="${order.repairPayment != null}"
-                    th:text="|${order.repairPayment.damageDescription}| ${order.repairPayment.repairCost}"></td>
+                    th:text="|${order.repairPayment.damageDescription} ${order.repairPayment.repairCost}|"></td>
                 <td>
                     <form th:if="${order.orderStatus.name eq 'AWAIT_PAYMENT'}"
-                          th:action="@{/order/payOrder/{id}(id=${order.id})}" th:method="PUT">
+                          th:action="@{/user/payOrder/{id}(id=${order.id})}" th:method="PUT">
                         <input type="submit"
                                th:attr="onclick=|return confirm('Pay $${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|"
                                value="Pay order"
@@ -92,7 +92,7 @@
                     </form>
 
                     <form th:if="${order.orderStatus.name eq 'AWAIT_REPAIR'}"
-                          th:action="@{/order/payRepair/{id}(id=${order.id})}" th:method="PUT">
+                          th:action="@{/user/payRepair/{id}(id=${order.id})}" th:method="PUT">
                         <input type="submit"
                                th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|"
                                value="Pay repair"

@@ -28,4 +28,5 @@ public class OrderDto {
     private OrderStatus orderStatus;
     private RepairPayment repairPayment;
     private String rejectOrderDetails;
+    private int numberOfRentDays;
 }

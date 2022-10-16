@@ -81,13 +81,13 @@
                 <td th:text="${order.orderStatus}"></td>
                 <td>
                     <th:blcok th:if="${order.orderStatus.name eq 'PENDING'}">
-                        <form th:action="@{/order/reject/{id}(id=${order.id})}" th:method="GET">
+                        <form th:action="@{/manager/reject/{id}(id=${order.id})}" th:method="GET">
                             <input type="submit"
                                    th:attr="onclick=|return confirm('Reject order?')|"
                                    value="Reject"
                                    class="btn btn-warning">
                         </form>
-                        <form th:action="@{/order/accept/{id}(id=${order.id})}" th:method="PUT">
+                        <form th:action="@{/manager/accept/{id}(id=${order.id})}" th:method="PUT">
                             <input type="submit"
                                    th:attr="onclick=|return confirm('Accept order')|"
                                    value="Accept"
@@ -95,7 +95,7 @@
                         </form>
                     </th:blcok>
                     <th:blcok th:if="${order.orderStatus.name eq 'PAID'}">
-                        <form th:action="@{/order/return/{id}(id=${order.id})}" th:method="GET">
+                        <form th:action="@{/manager/return/{id}(id=${order.id})}" th:method="GET">
                             <input type="submit"
                                    th:attr="onclick=|return confirm('Return order?')|"
                                    value="Submit return"

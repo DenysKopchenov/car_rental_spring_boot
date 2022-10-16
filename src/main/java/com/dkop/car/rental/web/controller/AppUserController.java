@@ -3,20 +3,26 @@ package com.dkop.car.rental.web.controller;
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.dto.OrderFilterBean;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
-import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.RentOrder;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.OrderService;
+import com.dkop.car.rental.util.Mapper;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -25,9 +31,11 @@ import java.util.stream.Collectors;
 public class AppUserController {
 
     private final OrderService orderService;
+    private final Mapper mapper;
 
-    public AppUserController(OrderService orderService) {
+    public AppUserController(OrderService orderService, Mapper mapper) {
         this.orderService = orderService;
+        this.mapper = mapper;
     }
 
     @GetMapping("/myOrders")
@@ -37,22 +45,36 @@ public class AppUserController {
                                    Model model) {
         Page<RentOrder> userOrdersPaged = orderService.findOrdersByAppUserId(appUser.getId(), paginationAndSortingBean, orderFilterBean);
         List<OrderDto> userOrders = userOrdersPaged.stream()
-                .map(order -> {
-                    OrderDto orderDto = new OrderDto();
-                    orderDto.setId(order.getId());
-                    orderDto.setCar(order.getCar());
-                    OrderDetails orderDetails = order.getOrderDetails();
-                    orderDto.setWithDriver(orderDetails.isWithDriver());
-                    orderDto.setStartDate(orderDetails.getStartDate());
-                    orderDto.setEndDate(orderDetails.getEndDate());
-                    orderDto.setRentalPrice(orderDetails.getRentalPrice());
-                    orderDto.setOrderStatus(orderDetails.getOrderStatus());
-                    orderDto.setRepairPayment(orderDetails.getRepairPayment());
-                    return orderDto;
-                })
+                .map(mapper::mapRentOrderToOrderDto)
                 .collect(Collectors.toList());
         model.addAttribute("userOrders", userOrders);
         model.addAttribute("numberOfPages", userOrdersPaged.getTotalPages());
         return "user/myOrders";
+    }
+
+    @PostMapping("/bookCar")
+    @PreAuthorize("hasAuthority('USER')")
+    public String bookCar(@ModelAttribute("order") @Valid OrderDto orderDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "user/bookCarForm";
+        }
+        RentOrder order = orderService.saveOrder(orderDto);
+        return "redirect:/order/" + order.getId();
+    }
+
+    @PutMapping("/payOrder/{id}")
+    @PreAuthorize("hasAuthority('USER')")
+    public String payOrder(@PathVariable("id") UUID orderId, Model model) {
+        RentOrder rentOrder = orderService.payOrder(orderId);
+//        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
+        return "redirect:/order/{id}";
+    }
+
+    @PutMapping("/payRepair/{id}")
+    @PreAuthorize("hasAuthority('USER')")
+    public String payRepair(@PathVariable("id") UUID orderId, Model model) {
+        RentOrder rentOrder = orderService.payRepair(orderId);
+//        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
+        return "redirect:/order/{id}";
     }
 }

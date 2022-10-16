@@ -3,7 +3,6 @@ package com.dkop.car.rental.web.controller;
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.order.RentOrder;
-import com.dkop.car.rental.model.order.RepairPayment;
 import com.dkop.car.rental.service.CarService;
 import com.dkop.car.rental.service.OrderService;
 import com.dkop.car.rental.util.Mapper;
@@ -11,16 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -53,32 +48,6 @@ public class OrderController {
         return "user/bookCarForm";
     }
 
-    @PostMapping("/bookCar")
-    @PreAuthorize("hasAuthority('USER')")
-    public String bookCar(@ModelAttribute("order") @Valid OrderDto orderDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "user/bookCarForm";
-        }
-        RentOrder order = orderService.saveOrder(orderDto);
-        return "redirect:/order/" + order.getId();
-    }
-
-    @PutMapping("/payOrder/{id}")
-    @PreAuthorize("hasAuthority('USER')")
-    public String payOrder(@PathVariable("id") UUID orderId, Model model) {
-        RentOrder rentOrder = orderService.payOrder(orderId);
-//        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
-        return "redirect:/order/{id}";
-    }
-
-    @PutMapping("/payRepair/{id}")
-    @PreAuthorize("hasAuthority('USER')")
-    public String payRepair(@PathVariable("id") UUID orderId, Model model) {
-        RentOrder rentOrder = orderService.payRepair(orderId);
-//        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
-        return "redirect:/order/{id}";
-    }
-
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public String showOrder(@PathVariable("id") UUID orderId, Model model) {
@@ -87,67 +56,5 @@ public class OrderController {
 
         model.addAttribute("order", orderDto);
         return "orders/orderInfo";
-    }
-
-    @PutMapping("/accept/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
-    public String acceptOrder(@PathVariable("id") UUID orderId, Model model) {
-        orderService.acceptOrder(orderId);
-        return "redirect:/order/{id}";
-    }
-
-    @GetMapping("/reject/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
-    public String showRejectOrderForm(@PathVariable("id") UUID orderId, Model model) {
-        RentOrder order = orderService.findById(orderId);
-        OrderDto orderDto = mapper.mapRentOrderToOrderDto(order);
-
-        model.addAttribute("order", orderDto);
-        return "manager/rejectOrderForm";
-    }
-
-    @PutMapping("/reject/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
-    public String submitReject(@PathVariable("id") UUID orderId,
-                               @ModelAttribute("rejectDetails")
-                               String rejectDetails,
-                               Model model) {
-        if (rejectDetails.isBlank()) {
-            RentOrder rentOrder = orderService.findById(orderId);
-            model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
-            model.addAttribute("rejectDetailsError", "Must not be empty");
-            return "manager/rejectOrderForm";
-        }
-        orderService.rejectOrder(orderId, rejectDetails);
-        return "redirect:/order/{id}";
-    }
-
-    @GetMapping("/return/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
-    public String showReturnOrderForm(@PathVariable("id") UUID orderId, Model model) {
-        RentOrder order = orderService.findById(orderId);
-        OrderDto orderDto = mapper.mapRentOrderToOrderDto(order);
-
-        model.addAttribute("order", orderDto);
-        return "manager/returnOrderForm";
-    }
-
-    @PutMapping("/return/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
-    public String submitReturn(@PathVariable("id") UUID orderId, @ModelAttribute("order") OrderDto orderDto) {
-        RepairPayment repairPayment = orderDto.getRepairPayment();
-        if (repairPayment.getRepairCost() == 0) {
-            orderService.returnOrderWithoutDamage(orderId);
-            return "redirect:/order/{id}";
-        }
-        orderService.returnOrderWithDamage(orderId, orderDto.getRepairPayment());
-        return "redirect:/order/{id}";
-    }
-
-    @PutMapping("/complete/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
-    public String completeRepairPaidOrder(@PathVariable("id") UUID orderId) {
-        orderService.completeRepairPaidOrder(orderId);
-        return "redirect:/order/{id}";
     }
 }

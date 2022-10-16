@@ -45,7 +45,7 @@
                  th:src="@{'/cars/image?id=' + ${order.car.id}}">
         </div>
         <div class="col">
-            <form th:action="@{/order/reject/{id}(id=${order.id})}" th:method="PUT"
+            <form th:action="@{/manager/reject/{id}(id=${order.id})}" th:method="PUT"
                   class="request-form ftco-animate fadeInUp ftco-animated">
                 <div class="d-flex">
                     <div class="form-group mr-2">

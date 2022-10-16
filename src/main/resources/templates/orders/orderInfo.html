@@ -43,27 +43,31 @@
             <td>
                 <th:blcok sec:authorize="${hasAuthority('USER')}">
                     <form th:if="${order.orderStatus.name eq 'AWAIT_PAYMENT'}"
-                          th:action="@{/order/payOrder/{id}(id=${order.id})}" th:method="PUT">
+                          th:action="@{/user/payOrder/{id}(id=${order.id})}" th:method="PUT">
                         <input type="submit"
-                               th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|">
+                               th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|"
+                               value="Pay for car"
+                               class="btn btn-success">
                     </form>
 
                     <form th:if="${order.orderStatus.name eq 'AWAIT_REPAIR_PAYMENT'}"
-                          th:action="@{/order/payRepair/{id}(id=${order.id})}" th:method="PUT">
+                          th:action="@{/user/payRepair/{id}(id=${order.id})}" th:method="PUT">
                         <input type="submit"
-                               th:attr="onclick=|return confirm('Pay$${order.repairPayment.repairCost} for car damage ${order.car.manufacturer} ${order.car.model} ${order.repairPayment.damageDescription}')|">
+                               th:attr="onclick=|return confirm('Pay$${order.repairPayment.repairCost} for car damage ${order.car.manufacturer} ${order.car.model} ${order.repairPayment.damageDescription}')|"
+                               value="Pay for car DAMAGE"
+                               class="btn btn-success">
                     </form>
                 </th:blcok>
                 <th:blcok sec:authorize="${hasAuthority('MANAGER')}">
                     <th:blcok th:if="${order.orderStatus.name eq 'PENDING'}">
-                        <form th:action="@{/order/reject/{id}(id=${order.id})}" th:method="GET">
+                        <form th:action="@{/manager/reject/{id}(id=${order.id})}" th:method="GET">
                             <input type="submit"
                                    th:attr="onclick=|return confirm('Reject order?')|"
                                    value="Reject"
                                    class="btn btn-warning">
                             <input type="hidden" th:value="${order}"> <!-- look here!  -->
                         </form>
-                        <form th:action="@{/order/accept/{id}(id=${order.id})}" th:method="PUT">
+                        <form th:action="@{/manager/accept/{id}(id=${order.id})}" th:method="PUT">
                             <input type="submit"
                                    th:attr="onclick=|return confirm('Accept order')|"
                                    value="Accept"
@@ -71,14 +75,14 @@
                         </form>
                     </th:blcok>
                     <form th:if="${order.orderStatus.name eq 'PAID'}"
-                          th:action="@{/order/return/{id}(id=${order.id})}" th:method="GET">
+                          th:action="@{/manager/return/{id}(id=${order.id})}" th:method="GET">
                         <input type="submit"
                                th:attr="onclick=|return confirm('Submit return order?')|"
                                value="Submit return"
                                class="btn btn-info">
                     </form>
                     <form th:if="${order.orderStatus.name eq 'REPAIR_PAID'}"
-                          th:action="@{/order/complete/{id}(id=${order.id})}" th:method="PUT">
+                          th:action="@{/manager/complete/{id}(id=${order.id})}" th:method="PUT">
                         <input type="submit"
                                th:attr="onclick=|return confirm('Submit return order?')|"
                                value="Complete"

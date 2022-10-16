@@ -45,7 +45,7 @@ return page<!doctype html>
                  th:src="@{'/cars/image?id=' + ${order.car.id}}">
         </div>
         <div class="col">
-            <form th:action="@{/order/return/{id}(id=${order.id})}" th:object="${order.repairPayment}" th:method="PUT"
+            <form th:action="@{/manager/return/{id}(id=${order.id})}" th:object="${order.repairPayment}" th:method="PUT"
                   class="request-form ftco-animate fadeInUp ftco-animated">
                 <div class="d-flex">
                     <div class="form-group mr-2">

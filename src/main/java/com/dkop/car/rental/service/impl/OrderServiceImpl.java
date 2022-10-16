@@ -41,8 +41,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void calculateOrder(OrderDto orderDto) {
         long pricePerDay = calculatePricePerDay(orderDto);
-        long totalRentalPrice = pricePerDay * Period.between(orderDto.getStartDate(), orderDto.getEndDate()).getDays();
-        orderDto.setRentalPrice(totalRentalPrice);
+        int days = Period.between(orderDto.getStartDate(), orderDto.getEndDate()).getDays();
+        orderDto.setRentalPrice(pricePerDay * days);
+        orderDto.setNumberOfRentDays(days);
+
     }
 
     @Override
@@ -153,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
                 orderDetails.setOrderStatus(OrderStatus.REPAIR_PAID);
                 RepairPayment repairPayment = orderDetails.getRepairPayment();
                 String damageDescription = repairPayment.getDamageDescription();
-                repairPayment.setDamageDescription(damageDescription + " PAID");
+                repairPayment.setDamageDescription("PAID " + damageDescription);
                 return orderRepository.save(rentOrder);
             }
             throw new IllegalArgumentException("Invalid order status, must be AWAIT_REPAIR_PAYMENT");
