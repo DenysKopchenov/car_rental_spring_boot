@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -39,7 +40,7 @@ public class AppUser implements UserDetails {
     private String lastName;
     private Role role;
     private boolean isActive;
-    @OneToMany(mappedBy = "appUser",
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "appUser",
             fetch = FetchType.LAZY)
     private Set<RentOrder> rentOrders;
 

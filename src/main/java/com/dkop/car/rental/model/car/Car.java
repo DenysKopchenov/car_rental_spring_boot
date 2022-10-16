@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class Car {
     private Fuel fuel;
     private String model;
     private long pricePerDay;
-    @OneToMany(mappedBy = "car",
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "car",
             fetch = FetchType.LAZY)
     private Set<RentOrder> rentOrders;
     @Lob
