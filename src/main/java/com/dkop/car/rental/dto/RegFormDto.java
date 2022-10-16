@@ -17,20 +17,23 @@ import javax.validation.constraints.Pattern;
 @FieldMatch
 public class RegFormDto {
 
+    private static final String PASSWORD_REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,20}$";
+    private static final String NAME_REGEX = "[A-Za-z]{2,20}";
+
     @NotBlank
     @Email
     private String email;
     @NotBlank
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,20}$")
+    @Pattern(regexp = PASSWORD_REGEX)
     private String password;
     @NotBlank
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,20}$")
+    @Pattern(regexp = PASSWORD_REGEX)
     private String confPassword;
     @NotBlank
-    @Pattern(regexp = "[A-Za-z]{2,20}")
+    @Pattern(regexp = NAME_REGEX)
     private String firstName;
     @NotBlank
-    @Pattern(regexp = "[A-Za-z]{2,20}")
+    @Pattern(regexp = NAME_REGEX)
     private String lastName;
     @NotNull
     @AssertTrue

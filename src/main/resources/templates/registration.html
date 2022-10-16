@@ -6,58 +6,53 @@
     </th:block>
 </head>
 <body>
-<th:block th:insert="/fragments/navbar :: navbar">
-</th:block>
-
-<div class="container">
-    <div class="py-3 text-center">
-        <img class="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg"
-             alt="" width="72" height="72">
-        <h2>Checkout form</h2>
-        <p class="lead">Below is an example form built entirely with Bootstrap's form controls. Each required form group
-            has a validation state that can be triggered by attempting to submit the form without completing it.</p>
-    </div>
-
-    <div class="row justify-content-md-center">
-        <div class="col-md-6 order-md-5">
-            <div th:if="${param.success}" class="alert alert-success">Registration success</div>
-            <div th:if="${param.failed}" class="alert alert-danger"
-                 th:text="|Registration failed ${appUser.email} already exists|"></div>
-            <form id="regForm" th:method="POST" th:action="@{/registration}"
-                  th:object="${appUser}">
-                <div class="mb-3">
-                    <div class="col mb-3">
+<div class="bg-image"
+     th:style="|
+    background-image: url(@{/images/bg.jpg});
+    height: 100%;
+  |">
+    <th:block th:insert="/fragments/navbar :: navbar">
+    </th:block>
+    <div class="container">
+        <div class="py-2 text-center">
+            <img class="d-block m-auto" th:src="@{/images/logo.png}"
+                 alt="" width="200px" height="150px">
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-4 p-2 bg-light rounded">
+                <div th:if="${param.success}" class="alert alert-success">Registration success</div>
+                <div th:if="${param.failed}" class="alert alert-danger"
+                     th:text="|Registration failed ${appUser.email} already exists|"></div>
+                <form id="regForm" th:method="POST" th:action="@{/registration}"
+                      th:object="${appUser}">
+                    <div class="col m-2 p-2">
                         <label for="firstName">First name</label>
                         <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('firstName')}"
                              th:errors="*{firstName}"></div>
                     </div>
-                    <div class="col mb-3">
+                    <div class="col m-2 p-2">
                         <label for="lastName">Last name</label>
                         <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('lastName')}"
                              th:errors="*{lastName}"></div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <div class="col mb-3">
+                    <div class="col m-2 p-2">
                         <label for="email">Email</label>
                         <input type="email" class="form-control" id="email" th:field="*{email}"
                                placeholder="email@example.com" required>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('email')}"
                              th:errors="*{email}"></div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <div class="col mb-3">
+                    <div class="col m-2 p-2">
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" th:field="*{password}" required>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('password')}"
                              th:errors="*{password}"></div>
                     </div>
-                    <div class="col mb-3">
+                    <div class="col m-2 p-2">
                         <label for="confPassword">Confirm password</label>
                         <input type="password" class="form-control" id="confPassword" th:field="*{confPassword}"
                                required>
@@ -66,25 +61,25 @@
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}"
                              th:errors="*{global}"></div>
                     </div>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="same-address" th:field="*{termsOfUse}"
-                           required>
-                    <label class="custom-control-label" for="same-address">Terms of use</label>
-                    <div class="alert alert-danger" th:if="${#fields.hasErrors('termsOfUse')}"
-                         th:errors="*{termsOfUse}"></div>
-                </div>
+                    <div class="col custom-control custom-checkbox m-2 p-2">
+                        <input type="checkbox" class="custom-control-input" id="same-address" th:field="*{termsOfUse}"
+                               required>
+                        <label class="custom-control-label" for="same-address">Terms of use</label>
+                        <div class="alert alert-danger" th:if="${#fields.hasErrors('termsOfUse')}"
+                             th:errors="*{termsOfUse}"></div>
+                    </div>
 
-                <hr class="mb-4">
-                <button class="btn btn-primary btn-lg btn-block" type="submit">Register</button>
-            </form>
-            <p class="text-center text-muted mt-4 mb-2">Have already an account? <a
-                    href="#!" class="fw-bold text-body"><u>Login
-                here</u></a></p>
+                    <hr>
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Register</button>
+
+                </form>
+                <p class="text-center text-muted mt-4 mb-2">Have already an account? <a
+                        th:href="@{/login}" class="fw-bold text-body"><u>Login
+                    here</u></a></p>
+            </div>
         </div>
     </div>
+    <th:block th:insert="/fragments/footer :: footer"></th:block>
 </div>
-
-<th:block th:insert="/fragments/footer :: footer"></th:block>
 </body>
 </html>

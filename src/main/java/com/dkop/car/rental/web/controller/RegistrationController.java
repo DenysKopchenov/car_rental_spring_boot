@@ -2,11 +2,10 @@ package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.exception.UserAlreadyExists;
+import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,18 +26,17 @@ public class RegistrationController {
     private static final String USER = "appUser";
     private static final String TITLE_ATTRIBUTE = "title";
     private static final String TITLE_VALUE = "Registration";
+    private static final String SUCCESS_REGISTRATION = "redirect:/registration?success";
+    private static final String FAILED_REGISTRATION = "redirect:/registration?failed";
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
 
 
     @Autowired
-    public RegistrationController(UserService userService, AuthenticationManager authenticationManager) {
+    public RegistrationController(UserService userService) {
         this.userService = userService;
-        this.authenticationManager = authenticationManager;
     }
 
     @GetMapping
-    @PreAuthorize("!isAuthenticated()")
     public String showRegistrationForm(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
         model.addAttribute(TITLE_ATTRIBUTE, TITLE_VALUE);
         return REGISTRATION_PAGE;
@@ -52,11 +50,12 @@ public class RegistrationController {
             return REGISTRATION_PAGE;
         }
         try {
-            userService.saveAppUser(regFormDto);
-            return "redirect:/registration?success";
+            AppUser appUser = userService.saveAppUser(regFormDto);
+            log.info("{} successfully registered", appUser.getEmail());
+            return SUCCESS_REGISTRATION;
         } catch (UserAlreadyExists ex) {
             redirectAttributes.addFlashAttribute(USER, regFormDto);
-            return "redirect:/registration?failed";
+            return FAILED_REGISTRATION;
         }
     }
 }

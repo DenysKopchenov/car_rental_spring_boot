@@ -6,17 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.UUID;
 
-/**
- * A DTO for the {@link com.dkop.car.rental.model.user.AppUser} entity
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppUserDto implements Serializable {
+public class AppUserDto {
 
     private UUID id;
     private String email;
