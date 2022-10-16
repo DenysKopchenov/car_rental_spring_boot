@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.Period;
@@ -88,6 +89,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public RentOrder payOrder(UUID orderId) {
         Optional<RentOrder> byId = orderRepository.findById(orderId);
         if (byId.isPresent()) {
@@ -107,22 +109,8 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
     }
 
-//    @Override
-//    public RentOrder changeOrderStatus(UUID orderId, OrderStatus oldStatus, OrderStatus newStatus) {
-//        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
-//        if (orderOptional.isPresent()) {
-//            RentOrder rentOrder = orderOptional.get();
-//            OrderDetails orderDetails = rentOrder.getOrderDetails();
-//            if (orderDetails.getOrderStatus().equals(oldStatus)) {
-//                orderDetails.setOrderStatus(newStatus);
-//                return orderRepository.save(rentOrder);
-//            }
-//            throw new IllegalArgumentException("Invalid order status, must be " + oldStatus.name());
-//        }
-//        throw new EntityNotFoundException("Order not found");
-//    }
-
     @Override
+    @Transactional
     public RentOrder acceptOrder(UUID orderId) {
         Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
@@ -138,6 +126,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public RentOrder rejectOrder(UUID orderId, String rejectDetails) {
         Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
@@ -154,6 +143,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public RentOrder payRepair(UUID orderId) {
         Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
@@ -161,6 +151,9 @@ public class OrderServiceImpl implements OrderService {
             OrderDetails orderDetails = rentOrder.getOrderDetails();
             if (orderDetails.getOrderStatus().equals(OrderStatus.AWAIT_REPAIR_PAYMENT)) {
                 orderDetails.setOrderStatus(OrderStatus.REPAIR_PAID);
+                RepairPayment repairPayment = orderDetails.getRepairPayment();
+                String damageDescription = repairPayment.getDamageDescription();
+                repairPayment.setDamageDescription(damageDescription + " PAID");
                 return orderRepository.save(rentOrder);
             }
             throw new IllegalArgumentException("Invalid order status, must be AWAIT_REPAIR_PAYMENT");
@@ -169,8 +162,54 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public RentOrder returnOrder(UUID orderId, RepairPayment repairPayment) {
-        return null;
+    @Transactional
+    public RentOrder returnOrderWithoutDamage(UUID orderId) {
+        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            RentOrder rentOrder = orderOptional.get();
+            OrderDetails orderDetails = rentOrder.getOrderDetails();
+            if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
+                orderDetails.setOrderStatus(OrderStatus.COMPLETED);
+                return orderRepository.save(rentOrder);
+            }
+            throw new IllegalArgumentException("Invalid order status, must be PAID");
+        }
+        throw new EntityNotFoundException("Order not found");
+    }
+
+    @Override
+    @Transactional
+    public RentOrder returnOrderWithDamage(UUID orderId, RepairPayment repairPayment) {
+        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            RentOrder rentOrder = orderOptional.get();
+            OrderDetails orderDetails = rentOrder.getOrderDetails();
+            if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
+                orderDetails.setRepairPayment(repairPayment);
+                orderDetails.setOrderStatus(OrderStatus.AWAIT_REPAIR_PAYMENT);
+                return orderRepository.save(rentOrder);
+            }
+
+            throw new IllegalArgumentException("Invalid order status, must be PAID");
+        }
+        throw new EntityNotFoundException("Order not found");
+    }
+
+    @Override
+    @Transactional
+    public RentOrder completeRepairPaidOrder(UUID orderId) {
+        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            RentOrder rentOrder = orderOptional.get();
+            OrderDetails orderDetails = rentOrder.getOrderDetails();
+            if (orderDetails.getOrderStatus().equals(OrderStatus.REPAIR_PAID)) {
+                orderDetails.setOrderStatus(OrderStatus.COMPLETED);
+                return orderRepository.save(rentOrder);
+            }
+
+            throw new IllegalArgumentException("Invalid order status, must be REPAIR_PAID");
+        }
+        throw new EntityNotFoundException("Order not found");
     }
 
     private static long calculatePricePerDay(OrderDto orderDto) {

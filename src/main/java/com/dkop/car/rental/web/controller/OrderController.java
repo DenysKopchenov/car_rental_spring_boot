@@ -3,6 +3,7 @@ package com.dkop.car.rental.web.controller;
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.order.RentOrder;
+import com.dkop.car.rental.model.order.RepairPayment;
 import com.dkop.car.rental.service.CarService;
 import com.dkop.car.rental.service.OrderService;
 import com.dkop.car.rental.util.Mapper;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -67,7 +67,7 @@ public class OrderController {
     @PreAuthorize("hasAuthority('USER')")
     public String payOrder(@PathVariable("id") UUID orderId, Model model) {
         RentOrder rentOrder = orderService.payOrder(orderId);
-        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
+//        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
         return "redirect:/order/{id}";
     }
 
@@ -75,7 +75,7 @@ public class OrderController {
     @PreAuthorize("hasAuthority('USER')")
     public String payRepair(@PathVariable("id") UUID orderId, Model model) {
         RentOrder rentOrder = orderService.payRepair(orderId);
-        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
+//        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
         return "redirect:/order/{id}";
     }
 
@@ -91,7 +91,7 @@ public class OrderController {
 
     @PutMapping("/accept/{id}")
     @PreAuthorize("hasAuthority('MANAGER')")
-    public String acceptOrder(@PathVariable("id") UUID orderId) {
+    public String acceptOrder(@PathVariable("id") UUID orderId, Model model) {
         orderService.acceptOrder(orderId);
         return "redirect:/order/{id}";
     }
@@ -110,10 +110,13 @@ public class OrderController {
     @PreAuthorize("hasAuthority('MANAGER')")
     public String submitReject(@PathVariable("id") UUID orderId,
                                @ModelAttribute("rejectDetails")
-                               String rejectDetails, RedirectAttributes redirectAttributes) {
+                               String rejectDetails,
+                               Model model) {
         if (rejectDetails.isBlank()) {
-            redirectAttributes.addFlashAttribute("rejectDetailsError", "Must not be empty");
-            return "redirect:/order/reject/{id}";
+            RentOrder rentOrder = orderService.findById(orderId);
+            model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
+            model.addAttribute("rejectDetailsError", "Must not be empty");
+            return "manager/rejectOrderForm";
         }
         orderService.rejectOrder(orderId, rejectDetails);
         return "redirect:/order/{id}";
@@ -132,7 +135,19 @@ public class OrderController {
     @PutMapping("/return/{id}")
     @PreAuthorize("hasAuthority('MANAGER')")
     public String submitReturn(@PathVariable("id") UUID orderId, @ModelAttribute("order") OrderDto orderDto) {
-        orderService.returnOrder(orderId, orderDto.getRepairPayment());
+        RepairPayment repairPayment = orderDto.getRepairPayment();
+        if (repairPayment.getRepairCost() == 0) {
+            orderService.returnOrderWithoutDamage(orderId);
+            return "redirect:/order/{id}";
+        }
+        orderService.returnOrderWithDamage(orderId, orderDto.getRepairPayment());
+        return "redirect:/order/{id}";
+    }
+
+    @PutMapping("/complete/{id}")
+    @PreAuthorize("hasAuthority('MANAGER')")
+    public String completeRepairPaidOrder(@PathVariable("id") UUID orderId) {
+        orderService.completeRepairPaidOrder(orderId);
         return "redirect:/order/{id}";
     }
 }

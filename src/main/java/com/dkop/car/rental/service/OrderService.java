@@ -21,8 +21,6 @@ public interface OrderService {
 
     RentOrder findById(UUID orderId);
 
-//    RentOrder changeOrderStatus(UUID orderId, OrderStatus oldStatus, OrderStatus newStatus);
-
     RentOrder payOrder(UUID orderId);
 
     RentOrder acceptOrder(UUID orderId);
@@ -31,5 +29,9 @@ public interface OrderService {
 
     RentOrder payRepair(UUID orderId);
 
-    RentOrder returnOrder(UUID orderId, RepairPayment repairPayment);
+    RentOrder returnOrderWithoutDamage(UUID orderId);
+
+    RentOrder returnOrderWithDamage(UUID orderId, RepairPayment repairPayment);
+
+    RentOrder completeRepairPaidOrder(UUID orderId);
 }

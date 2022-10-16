@@ -39,7 +39,7 @@
             <td th:text="${order.orderStatus}"></td>
             <td th:if="${order.orderStatus.name eq 'REJECTED'}" th:text="${order.rejectOrderDetails}"></td>
             <td th:if="${order.repairPayment != null}"
-                th:text="|${order.repairPayment.damageDescription}| ${order.repairPayment.repairCost}"></td>
+                th:text="|${order.repairPayment.damageDescription} ${order.repairPayment.repairCost}$|"></td>
             <td>
                 <th:blcok sec:authorize="${hasAuthority('USER')}">
                     <form th:if="${order.orderStatus.name eq 'AWAIT_PAYMENT'}"
@@ -48,10 +48,10 @@
                                th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|">
                     </form>
 
-                    <form th:if="${order.orderStatus.name eq 'AWAIT_REPAIR'}"
+                    <form th:if="${order.orderStatus.name eq 'AWAIT_REPAIR_PAYMENT'}"
                           th:action="@{/order/payRepair/{id}(id=${order.id})}" th:method="PUT">
                         <input type="submit"
-                               th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|">
+                               th:attr="onclick=|return confirm('Pay$${order.repairPayment.repairCost} for car damage ${order.car.manufacturer} ${order.car.model} ${order.repairPayment.damageDescription}')|">
                     </form>
                 </th:blcok>
                 <th:blcok sec:authorize="${hasAuthority('MANAGER')}">

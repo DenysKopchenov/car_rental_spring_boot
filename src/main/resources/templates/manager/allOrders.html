@@ -94,6 +94,14 @@
                                    class="btn btn-success">
                         </form>
                     </th:blcok>
+                    <th:blcok th:if="${order.orderStatus.name eq 'PAID'}">
+                        <form th:action="@{/order/return/{id}(id=${order.id})}" th:method="GET">
+                            <input type="submit"
+                                   th:attr="onclick=|return confirm('Return order?')|"
+                                   value="Submit return"
+                                   class="btn btn-info">
+                        </form>
+                    </th:blcok>
                     <a th:href="@{/order/{id}(id=${order.id})}" class="btn btn-info">Details</a>
                 </td>
             </tr>
