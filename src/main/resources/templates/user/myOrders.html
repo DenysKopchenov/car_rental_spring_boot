@@ -6,9 +6,8 @@
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
 
-<div th:if="${!userOrders.isEmpty()} ?: 'Not found'">
+<div th:if="${!userOrders.isEmpty()}">
     <div class="container my-2">
-
         <h1>Orders</h1>
         <div class="row">
             <div class="col">

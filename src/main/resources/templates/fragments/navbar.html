@@ -8,49 +8,41 @@
     <title>Document</title>
 </head>
 <body>
-<header class="p-3 bg-dark text-white" th:fragment="navbar">
+<header class="bg-dark text-white" th:fragment="navbar">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <a th:href="@{/}" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
-                <img src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" srcset=""
-                     class="bi me-2" width="80" height="55">
+                <img th:src="@{/images/logo.png}" alt="" srcset=""
+                     class="bi m-2" width="100" height="75">
             </a>
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a class="nav-link px-2  px-2 text-secondary" th:href="@{/}">Home</a></li>
-                <li><a th:href="@{/cars}" class="nav-link px-2 text-white">Cars</a></li>
+                <li><a class="nav-link p-2 text-secondary" th:href="@{/}">Home</a></li>
+                <li><a class="nav-link p-2 text-white" th:href="@{/cars}">Cars</a></li>
                 <th:block sec:authorize="hasAuthority('ADMIN')">
-                    <li class="text-end">
-                        <a type="button" class="btn btn-warning" th:href="@{/admin/newManager}">Create new
-                            manager</a>
-                    </li>
-                    <li class="text-end">
-                        <a class="btn btn-primary" th:href="@{/admin/newCar}">New car</a>
-                    </li>
-                    <li class="text-end">
-                        <a class="btn btn-info" th:href="@{/admin/showUsers}">Show users</a>
-                    </li>
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/newManager}">Create new
+                        manager</a></li>
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/newCar}">New car</a></li>
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/showUsers}">Show users</a></li>
                 </th:block>
                 <li sec:authorize="hasAuthority('USER')" class="text-end">
-                    <a type="button" class="btn btn-info" th:href="@{/user/myOrders}">My orders</a>
+                    <a class="nav-link p-2 text-white" th:href="@{/user/myOrders}">My orders</a>
                 </li>
                 <li sec:authorize="hasAuthority('MANAGER')" class="text-end">
-                    <a type="button" class="btn btn-info" th:href="@{/manager/allOrders}">All orders</a>
+                    <a class="nav-link p-2 text-white" th:href="@{/manager/allOrders}">All orders</a>
                 </li>
             </ul>
-
-            <form th:action="@{/cars}" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-                <input type="search" class="form-control form-control-dark" placeholder="Search car" name="model"
+            <form th:action="@{/cars}" class="d-flex">
+                <input type="search" class="form-control m-2 form-control-dark" placeholder="Search car" name="model"
                        id="model" aria-label="Search">
-                <input type="submit" value="Search" class="btn btn-light">
+                <input type="submit" value="Search" class="btn m-2 btn-light">
             </form>
 
-
             <div sec:authorize="!isAuthenticated()" class="text-end">
-                <a type="button" class="btn btn-warning" th:href="@{/login}">Login</a>
-                <a type="button" class="btn btn-warning" th:href="@{/registration}">Sign-up</a>
+                <a type="button" class="btn m-2 btn-warning" th:href="@{/login}">Login</a>
+                <a type="button" class="btn m-2 btn-warning" th:href="@{/registration}">Sign-up</a>
             </div>
-            <div sec:authorize="isAuthenticated()" class="text-end">
-                <div th:text="${#authentication.principal.firstName}">
+            <div sec:authorize="isAuthenticated()" class="text-center">
+                <div th:text="${#authentication.principal.role}">
                 </div>
                 <th:block sec:authorize="hasAuthority('USER')">
                     <a type="button" class="btn btn-warning" th:href="@{/profile}">Profile</a>
