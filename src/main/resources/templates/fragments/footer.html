@@ -8,7 +8,7 @@
     <title>Document</title>
 </head>
 <body>
-<div th:fragment="footer">
+<th:block th:fragment="footer">
     <footer class="py-2 text-center text-small">
         <p class="mb-1">© 2022 Company Name</p>
         <ul class="list-inline">
@@ -28,6 +28,6 @@
             integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz"
             crossorigin="anonymous"></script>
     <script type="text/javascript" th:src="@{/js/changePage.js}"></script>
-</div>
+</th:block>
 </body>
 </html>

@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private static final String DEFAULT_USER_SORT = "email";
+    private static final String USER_ALREADY_EXIST_PATTERN = "%s already exists";
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final Mapper mapper;
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public AppUser saveAppUser(RegFormDto regFormDto) throws UserAlreadyExists {
         checkIsUserExists(regFormDto);
 
@@ -58,12 +61,6 @@ public class UserServiceImpl implements UserService {
         appUser.setEncodedPassword(passwordEncoder.encode(regFormDto.getPassword()));
         appUser.setRole(Role.MANAGER);
         return appUserRepository.save(appUser);
-    }
-
-    private void checkIsUserExists(RegFormDto regFormDto) throws UserAlreadyExists {
-        if (appUserRepository.existsByEmail(regFormDto.getEmail())) {
-            throw new UserAlreadyExists(regFormDto.getEmail() + " already exist");
-        }
     }
 
     @Override
@@ -91,5 +88,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return appUserRepository.findByEmail(username).orElseThrow(EntityNotFoundException::new);
+    }
+
+    private void checkIsUserExists(RegFormDto regFormDto) throws UserAlreadyExists {
+        if (appUserRepository.existsByEmail(regFormDto.getEmail())) {
+            throw new UserAlreadyExists(String.format(USER_ALREADY_EXIST_PATTERN, (regFormDto.getEmail())));
+        }
     }
 }

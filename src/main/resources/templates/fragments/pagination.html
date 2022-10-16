@@ -4,7 +4,7 @@
 </head>
 <body>
 <th:block th:if="${numberOfPages > 1}" th:fragment="pagination">
-    <nav>
+    <nav class="mt-3">
         <ul class="pagination pagination-sm">
             <th:block th:if="${numberOfPages > 1 && pagination.page != 1}">
                 <li class="page-item"><a class="page-link" onclick="changePage(1)">First</a></li>

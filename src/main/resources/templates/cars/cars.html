@@ -4,69 +4,87 @@
     <th:block th:replace="/fragments/head :: head"></th:block>
 </head>
 <body>
-<th:block th:insert="/fragments/navbar :: navbar"></th:block>
-<div th:if="${param.success}">
-    <div class="alert alert-success">Car created</div>
-</div>
-<th:block th:if="${cars.isEmpty()}">NOT FOUND</th:block>
-<div class="container" th:if="${!cars.isEmpty()}">
-    <div class="row">
-        <div class="col-3">
-            <form th:action="@{/cars}" th:object="${filter}" th:method="GET">
-                <label>Categories</label>
-                <div class="form-check" th:each="category : ${class}">
-                    <input type="checkbox"
-                           th:id="${category}"
-                           th:value="${category}"
-                           th:cheked="*{categories}"
-                           th:field="*{categories}">
-                    <label class="form-check-label" th:for="${category}" th:text="${category}"/>
-                </div>
-                <label>Manufacturers</label>
-                <div class="form-check" th:each="manufacturer : ${manufacturers}">
-                    <input type="checkbox"
-                           th:id="${manufacturer}"
-                           th:value="${manufacturer}"
-                           th:checked="*{manufacturers}"
-                           th:field="*{manufacturers}">
-                    <label class="form-check-label" th:for="${manufacturer}" th:text="${manufacturer}"/>
-                </div>
-                <label for="minPrice">Min price</label>
-                <input type="number" th:field="*{minPrice}" id="minPrice">
-                <label for="maxPrice">Max price</label>
-                <input type="number" th:field="*{maxPrice}" id="maxPrice" th:attr="min=*{minPrice} + 1"
-                       th:required="*{minPrice} > 0">
-                <label for="model">Model</label>
-                <input type="text" th:field="*{model}" id="model">
-                <input type="hidden" th:value="${pagination.size}" th:field="${pagination.size}">
-                <input type="hidden" th:value="${pagination.sort}" th:field="${pagination.sort}">
-                <input type="hidden" th:value="${pagination.direction}" th:field="${pagination.direction}">
-                <input type="submit" value="Apply">
-            </form>
-        </div>
-        <div class="col-8">
-            <div class="row">
-                <div class="col m-auto">
-                    <th:block th:insert="/fragments/pagination :: pagination"></th:block>
-                </div>
-                <div class="col m-auto">
-                    <form th:action="@{/cars}" th:method="GET" th:object="${pagination}" onchange="submit()">
-                        <input type="hidden" th:value="${filter.categories}" th:field="${filter.categories}">
-                        <input type="hidden" th:value="${filter.manufacturers}" th:field="${filter.manufacturers}">
-                        <input type="hidden" th:value="${filter.minPrice}" th:field="${filter.minPrice}">
-                        <input type="hidden" th:value="${filter.maxPrice}" th:field="${filter.maxPrice}">
-                        <input type="hidden" th:value="${filter.model}" th:field="${filter.model}">
-                        <label class="form-label" for="size">Page size
-                            <select class="form-select" name="size" id="size">
+<div class="bg-image"
+     th:style="|
+    background-image: url(@{/images/bg.jpg});
+    height: 100vh;
+  |">
+    <th:block th:insert="/fragments/navbar :: navbar"></th:block>
+    <div th:if="${param.success}">
+        <div class="alert alert-success">Car created</div>
+    </div>
+    <th:block th:if="${cars.isEmpty()}">NOT FOUND</th:block>
+    <div class="container-fluid" th:if="${!cars.isEmpty()}">
+        <div class="row">
+            <div class="col-sm-2 m-2 p-2 bg-light border rounded">
+                <form th:action="@{/cars}" th:object="${filter}" th:method="GET">
+                    <div class="border border-1 border-primary rounded mb-2">
+                        <label class="p-2">Categories</label>
+                        <div class="form-check" th:each="category : ${class}">
+                            <input type="checkbox"
+                                   th:id="${category}"
+                                   th:value="${category}"
+                                   th:cheked="*{categories}"
+                                   th:field="*{categories}">
+                            <label class="form-check-label" th:for="${category}" th:text="${category}"/>
+                        </div>
+                    </div>
+                    <div class="border border-1 border-primary rounded mb-2">
+                        <label class="p-2">Manufacturers</label>
+                        <div class="form-check" th:each="manufacturer : ${manufacturers}">
+                            <input type="checkbox"
+                                   th:id="${manufacturer}"
+                                   th:value="${manufacturer}"
+                                   th:checked="*{manufacturers}"
+                                   th:field="*{manufacturers}">
+                            <label class="form-check-label" th:for="${manufacturer}" th:text="${manufacturer}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col mb-2">
+                            <label class="form-label" for="minPrice">Min price</label>
+                            <input class="form-control" type="number" th:field="*{minPrice}" id="minPrice">
+                        </div>
+                        <div class="col mb-2">
+                            <label class="form-label" for="maxPrice">Max price</label>
+                            <input class="form-control" type="number" th:field="*{maxPrice}" id="maxPrice"
+                                   th:attr="min=*{minPrice} + 1"
+                                   th:required="*{minPrice} > 0">
+                        </div>
+                    </div>
+                    <div class="col mb-2">
+                        <label class="form-label" for="model">Model</label>
+                        <input class="form-control" type="text" th:field="*{model}" id="model">
+                    </div>
+                    <input type="hidden" th:value="${pagination.size}" th:field="${pagination.size}">
+                    <input type="hidden" th:value="${pagination.sort}" th:field="${pagination.sort}">
+                    <input type="hidden" th:value="${pagination.direction}" th:field="${pagination.direction}">
+                    <input class="btn btn-primary" type="submit" value="Apply">
+                </form>
+            </div>
+            <div class="col col-lg">
+                <div class="container d-flex flex-row justify-content-between mb-0 px-3">
+                    <div>
+                        <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+                    </div>
+                    <div class="m-2 pt-2">
+                        <form th:action="@{/cars}" th:method="GET" th:object="${pagination}" onchange="submit()">
+                            <input type="hidden" th:value="${filter.categories}" th:field="${filter.categories}">
+                            <input type="hidden" th:value="${filter.manufacturers}" th:field="${filter.manufacturers}">
+                            <input type="hidden" th:value="${filter.minPrice}" th:field="${filter.minPrice}">
+                            <input type="hidden" th:value="${filter.maxPrice}" th:field="${filter.maxPrice}">
+                            <input type="hidden" th:value="${filter.model}" th:field="${filter.model}">
+                            <label class="form-label" for="size">Page size</label>
+                            <select class="form-select-sm" name="size" id="size">
                                 <option th:value="1" th:selected="*{size} == 1">1</option>
                                 <option th:value="5" th:selected="*{size} == 5">5</option>
                                 <option th:value="10" th:selected="*{size} == 10">10</option>
                                 <option th:value="20" th:selected="*{size} == 20">20</option>
                             </select>
-                        </label>
-                        <label class="form-label" for="sort">Sort
-                            <select class="form-select" name="sort" id="sort">
-                                <option th:value="model" th:selected="*{sort eq 'model'}">Model a-z</option>
+
+                            <label class="form-label" for="sort">Sort</label>
+                            <select class="form-select-sm" name="sort" id="sort">
+                                <option th:value="model" th:selected="*{sort eq 'model'}">Model</option>
                                 <option th:value="categoryClass" th:selected="*{sort eq 'categoryClass'}">Category
                                 </option>
                                 <option th:value="manufacturer" th:selected="*{sort eq 'manufacturer'}">Manufacturer
@@ -74,63 +92,70 @@
                                 <option th:value="pricePerDay" th:selected="*{sort eq 'pricePerDay'}">Price per day
                                 </option>
                             </select>
-                        </label>
-                        <label class="form-label" for="direction">Sort direction
-                            <select class="form-select" name="direction" id="direction">
+
+                            <label class="form-label" for="direction">Sort direction</label>
+                            <select class="form-select-sm" name="direction" id="direction">
                                 <option th:value="ASC" th:selected="*{direction eq 'ASC'}">ASC</option>
                                 <option th:value="DESC" th:selected="*{direction eq 'DESC'}">DESC</option>
                             </select>
-                        </label>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xl-4" th:each="car : ${cars}">
-                    <div class="product-container">
-                        <div class="card-body">
-                            <h2 class="card-title">
+                <div class="container">
+                    <div class="row grid-view">
+                        <div class="col-4 mb-3" th:each="car : ${cars}">
+                            <div class="card border rounded bg-light">
                                 <a th:href="@{/cars/{id}(id=${car.id})}">
-                                    <img class="card-img-top" width="75%" height="50%"
+                                    <img class="card-img-top" width="75%"
                                          th:src="@{'/cars/image?id=' + ${car.id}}">
                                 </a>
-                            </h2>
-                            <div class="card-text">
-                                <p class="price ml-auto" th:text="|${car.manufacturer}|"></p>
-                                <a th:href="@{/cars/{id}(id=${car.id})}" th:text="${car.model}">CAR
-                                    MANUFACTURER</a>
-                                <p class="price ml-auto" th:text="|Class: ${car.categoryClass}|"></p>
-                                <p class="price ml-auto" th:text="'$' + ${car.pricePerDay} + '/day'"></p>
-                            </div>
-                            <div class="row">
-                                <div class="col m-auto" sec:authorize="hasAuthority('ADMIN')">
-                                    <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}" th:method="DELETE">
-                                        <input class="btn btn-danger" type="submit" value="Delete">
-                                    </form>
-                                    <div class="col m-auto">
-                                        <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit
-                                            car</a>
+                                <div class="card-body pt-0 px-0 bg-light">
+                                    <div class="d-flex flex-row justify-content-center mb-0 px-3">
+                                        <p class="ml-auto" th:text="|${car.manufacturer} ${car.model}|"></p>
                                     </div>
-                                </div>
-
-                                <div sec:authorize="!isAuthenticated || hasAuthority('USER')" class="col m-auto">
-                                    <a th:href="@{/order?carId={id}(id=${car.id})}" class="btn btn-primary py-2 mr-1">Book
-                                        now</a>
-                                </div>
-                                <div class="col m-auto">
-                                    <a th:href="@{/cars/{id}(id=${car.id})}"
-                                       class="btn btn-secondary py-2 ml-1">Details</a>
+                                    <div class="d-flex flex-row justify-content-center mb-0 px-3">
+                                        <p class="price ml-auto" th:text="|Class: ${car.categoryClass}|"></p>
+                                    </div>
+                                    <div class="d-flex flex-row justify-content-center mb-0 px-3">
+                                        <p class="price ml-auto" th:text="'$' + ${car.pricePerDay} + '/day'"></p>
+                                    </div>
+                                    <div class="d-flex flex-row justify-content-between mb-0 px-3">
+                                        <th:block sec:authorize="hasAuthority('ADMIN')">
+                                            <div class="col m-auto text-center">
+                                                <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}"
+                                                      th:method="DELETE">
+                                                    <input class="btn btn-danger" type="submit" value="Delete">
+                                                </form>
+                                            </div>
+                                            <div div class="col m-auto text-center">
+                                                <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit
+                                                    car</a>
+                                            </div>
+                                        </th:block>
+                                        <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
+                                            <div class="col m-auto text-center">
+                                                <a th:href="@{/order?carId={id}(id=${car.id})}"
+                                                   class="btn btn-primary py-2 mr-1">Book
+                                                    now</a>
+                                            </div>
+                                        </th:block>
+                                        <div class="col m-auto text-center">
+                                            <a th:href="@{/cars/{id}(id=${car.id})}"
+                                               class="btn btn-secondary py-2 ml-1">Details</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col m-auto">
-                <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+                <div class="col m-2 float-start">
+                    <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+                </div>
             </div>
         </div>
     </div>
+    <th:block th:insert="/fragments/footer :: footer"></th:block>
 </div>
-<th:block th:insert="/fragments/footer :: footer"></th:block>
 </body>
 </html>

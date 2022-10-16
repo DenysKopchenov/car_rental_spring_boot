@@ -5,34 +5,50 @@
 </head>
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
-<div class="col-md-3">
-    <div class="card">
-        <div class="card-body">
-            <h2 class="card-title">
-                <img th:src="@{'/cars/image?id=' + ${car.id}}" width="100%" height="30%">
-            </h2>
-            <div class="card-text">
-                <a th:href="@{/cars/{id}(id=${car.id})}" th:text="${car.manufacturer}">CAR
-                    MANUFACTURER</a>
-                <span class="cat" th:text="${car.categoryClass}">CAR MODEL</span>
-                <span class="cat" th:text="${car.model}">CAR MODEL</span>
-                <p class="price ml-auto" th:text="'$' + ${car.pricePerDay} + '/day'"></p>
-            </div>
-            <th:block sec:authorize="hasAuthority('ADMIN')">
-                <div>
-                    <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}" th:method="DELETE">
-                        <input class="btn btn-danger" type="submit" value="Delete">
-                    </form>
+
+<div class="container">
+    <div class="d-flex flex-row justify-content-center mb-0 px-3">
+        <div class="card border rounded bg-light">
+            <div class="row">
+                <div class="col-6">
+                    <img class="card-img-top" width="75%"
+                         th:src="@{'/cars/image?id=' + ${car.id}}">
                 </div>
-                <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit car</a>
-            </th:block>
-            <p class="d-flex mb-0 d-block">
-                <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
-                    <a th:href="@{/order?carId={id}(id=${car.id})}" class="btn btn-primary py-2 mr-1">Book
-                        now</a>
-                </th:block>
-                <a th:href="@{/cars/{id}(id=${car.id})}" class="btn btn-secondary py-2 ml-1">Details</a>
-            </p>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col" th:text="${car.manufacturer}">
+                        </div>
+                        <div class="col" th:text="${car.categoryClass}">
+                        </div>
+                        <div class="col" th:text="${car.model}">
+                        </div>
+
+                    </div>
+                    <div class="col" th:text="'$' + ${car.pricePerDay} + '/day'">
+                    </div>
+                    <div class="d-flex flex-row justify-content-between mb-0 px-3">
+                        <th:block sec:authorize="hasAuthority('ADMIN')">
+                            <div class="col m-auto text-center">
+                                <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}"
+                                      th:method="DELETE">
+                                    <input class="btn btn-danger" type="submit" value="Delete">
+                                </form>
+                            </div>
+                            <div div class="col m-auto text-center">
+                                <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit
+                                    car</a>
+                            </div>
+                        </th:block>
+                        <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
+                            <div class="col m-auto text-center">
+                                <a th:href="@{/order?carId={id}(id=${car.id})}"
+                                   class="btn btn-primary py-2 mr-1">Book
+                                    now</a>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
