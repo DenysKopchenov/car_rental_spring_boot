@@ -100,8 +100,13 @@ public class AdminController {
 
     @SneakyThrows
     @PostMapping("/newCar")
-    public String createNewCar(@ModelAttribute("car") CarDto carDto, Model model,
+    public String createNewCar(@ModelAttribute("car") CarDto carDto, RedirectAttributes redirectAttributes,
                                @RequestParam("image") MultipartFile multipartImage) {
+        if (multipartImage.getBytes().length == 0) {
+            redirectAttributes.addFlashAttribute("noImage", "Cant create car w/o image!");
+            redirectAttributes.addFlashAttribute("car", carDto);
+            return "redirect:/admin/newCar";
+        }
         Car car = carService.saveCar(carDto);
         return "redirect:/cars/" + car.getId() + "?success";
     }

@@ -19,9 +19,9 @@
                 <li><a class="nav-link p-2 text-secondary" th:href="@{/}">Home</a></li>
                 <li><a class="nav-link p-2 text-white" th:href="@{/cars}">Cars</a></li>
                 <th:block sec:authorize="hasAuthority('ADMIN')">
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/newCar}">New car</a></li>
                     <li><a class="nav-link p-2 text-white" th:href="@{/admin/newManager}">Create new
                         manager</a></li>
-                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/newCar}">New car</a></li>
                     <li><a class="nav-link p-2 text-white" th:href="@{/admin/showUsers}">Show users</a></li>
                 </th:block>
                 <li sec:authorize="hasAuthority('USER')" class="text-end">

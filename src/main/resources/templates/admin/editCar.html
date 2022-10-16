@@ -5,62 +5,142 @@
 </head>
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
-<div class="col-md-3">
-    <div class="card">
-        <div class="card-body">
-            <h2 class="card-title">
-                <img th:src="@{'/cars/image?id=' + ${updated.id}}" width="100%" height="30%">
-            </h2>
-            <div class="card-text">
-                <a th:text="${updated.manufacturer}">CAR
-                    MANUFACTURER</a>
-                <span class="cat" th:text="|Category: ${updated.categoryClass}|">CAR MODEL</span>
-                <span class="cat" th:text="${updated.model}">CAR MODEL</span>
-                <p class="price ml-auto" th:text="'$' + ${updated.pricePerDay} + '/day'"></p>
+
+<div class="container">
+    <div class="d-flex flex-row justify-content-center mb-0 px-3">
+        <div class="card border rounded bg-light">
+            <div class="row">
+                <div class="col-6">
+                    <img class="card-img-top" width="75%"
+                         th:src="@{'/cars/image?id=' + ${updated.id}}">
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col" th:text="${updated.manufacturer}">
+                        </div>
+                        <div class="col" th:text="${updated.categoryClass}">
+                        </div>
+                        <div class="col" th:text="${updated.model}">
+                        </div>
+
+                    </div>
+                    <div class="col" th:text="'$' + ${updated.pricePerDay} + '/day'">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <div class="row justify-content-center">
+        <div class="col-6 m-auto p-auto d-flex justify-content-center">
+            <form th:action="@{/admin/editCar/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT"
+                  enctype="multipart/form-data">
+                <div class="col">
+                    <label for="manufacturers">Manufacturers</label>
+                    <select class="form-select" id="manufacturers" th:field="*{manufacturer}" required>
+                        <option th:each="manufacturer : ${manufacturers}"
+                                th:text="${manufacturer}"
+                                th:value="${manufacturer}"></option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="model">Car model</label>
+                    <input class="form-control" type="text" name="model" id="model" th:field="*{model}" required><br>
+                </div>
+                <div class="col">
+                    <label for="class">Class</label>
+                    <select class="form-select" id="class" th:field="*{categoryClass}" required>
+                        <option th:each="class : ${class}"
+                                th:text="${class}"
+                                th:value="${class}"></option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="fuelType">Fuel</label>
+                    <select class="form-select" id="fuelType" th:field="*{fuel}" required>
+                        <option th:each="fuel : ${fuelTypes}"
+                                th:text="${fuel}"
+                                th:value="${fuel}"></option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="transmission">Transmission</label>
+                    <select class="form-select" id="transmission" th:field="*{transmission}" required>
+                        <option th:each="transmission : ${transmissionTypes}"
+                                th:text="${transmission}"
+                                th:value="${transmission}"></option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="pricePerDay">Price per day $</label>
+                    <input class="form-control" type="number" name="pricePerDay" id="pricePerDay"
+                           th:field="*{pricePerDay}" required>
+                </div>
+                <div class="col">
+                    <input class="form-control" type="file" name="image" accept="image/png, image/jpeg"/>
+                </div>
+                <input type="hidden" name="id" id="id" th:field="*{id}" th:value="*{id}" required>
+                <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Edit information">
+            </form>
+        </div>
+    </div>
 </div>
-<form th:action="@{/admin/editCar/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT"
-      enctype="multipart/form-data">
-    <label for="model">Car model</label>
-    <input type="text" name="model" id="model" th:field="*{model}" required>
-    <label for="manufacturers">Manufacturers</label>
-    <select class="form-select" id="manufacturers" th:field="*{manufacturer}" required>
-        <option th:each="manufacturer : ${manufacturers}"
-                th:text="${manufacturer}"
-                th:value="${manufacturer}"
-        ></option>
-    </select>
-    <label for="class">Class</label>
-    <select class="form-select" id="class" th:field="*{categoryClass}" required>
-        <option th:each="class : ${class}"
-                th:text="${class}"
-                th:value="${class}"
-        ></option>
-    </select>
-    <div class="col">
-        <label for="fuelType">Fuel</label>
-        <select class="form-select" id="fuelType" th:field="*{fuel}" required>
-            <option th:each="fuel : ${fuelTypes}"
-                    th:text="${fuel}"
-                    th:value="${fuel}"></option>
-        </select>
-    </div>
-    <div class="col">
-        <label for="transmission">Transmission</label>
-        <select class="form-select" id="transmission" th:field="*{transmission}" required>
-            <option th:each="transmission : ${transmissionTypes}"
-                    th:text="${transmission}"
-                    th:value="${transmission}"></option>
-        </select>
-    </div>
-    <label for="pricePerDay">Price per day $</label>
-    <input type="number" name="pricePerDay" id="pricePerDay" th:field="*{pricePerDay}" required>
-    <input type="file" name="image" accept="image/png, image/jpeg"/>
-    <input type="hidden" name="id" id="id" th:field="*{id}" th:value="*{id}" required>
-    <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Edit">
-</form>
+
+<!--<div class="col-md-3">-->
+<!--    <div class="card">-->
+<!--        <div class="card-body">-->
+<!--            <h2 class="card-title">-->
+<!--                <img th:src="@{'/cars/image?id=' + ${updated.id}}" width="100%" height="30%">-->
+<!--            </h2>-->
+<!--            <div class="card-text">-->
+<!--                <a th:text="${updated.manufacturer}">CAR-->
+<!--                    MANUFACTURER</a>-->
+<!--                <span class="cat" th:text="|Category: ${updated.categoryClass}|">CAR MODEL</span>-->
+<!--                <span class="cat" th:text="${updated.model}">CAR MODEL</span>-->
+<!--                <p class="price ml-auto" th:text="'$' + ${updated.pricePerDay} + '/day'"></p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<form th:action="@{/admin/editCar/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT"-->
+<!--      enctype="multipart/form-data">-->
+<!--    <label for="model">Car model</label>-->
+<!--    <input type="text" name="model" id="model" th:field="*{model}" required>-->
+<!--    <label for="manufacturers">Manufacturers</label>-->
+<!--    <select class="form-select" id="manufacturers" th:field="*{manufacturer}" required>-->
+<!--        <option th:each="manufacturer : ${manufacturers}"-->
+<!--                th:text="${manufacturer}"-->
+<!--                th:value="${manufacturer}"-->
+<!--        ></option>-->
+<!--    </select>-->
+<!--    <label for="class">Class</label>-->
+<!--    <select class="form-select" id="class" th:field="*{categoryClass}" required>-->
+<!--        <option th:each="class : ${class}"-->
+<!--                th:text="${class}"-->
+<!--                th:value="${class}"-->
+<!--        ></option>-->
+<!--    </select>-->
+<!--    <div class="col">-->
+<!--        <label for="fuelType">Fuel</label>-->
+<!--        <select class="form-select" id="fuelType" th:field="*{fuel}" required>-->
+<!--            <option th:each="fuel : ${fuelTypes}"-->
+<!--                    th:text="${fuel}"-->
+<!--                    th:value="${fuel}"></option>-->
+<!--        </select>-->
+<!--    </div>-->
+<!--    <div class="col">-->
+<!--        <label for="transmission">Transmission</label>-->
+<!--        <select class="form-select" id="transmission" th:field="*{transmission}" required>-->
+<!--            <option th:each="transmission : ${transmissionTypes}"-->
+<!--                    th:text="${transmission}"-->
+<!--                    th:value="${transmission}"></option>-->
+<!--        </select>-->
+<!--    </div>-->
+<!--    <label for="pricePerDay">Price per day $</label>-->
+<!--    <input type="number" name="pricePerDay" id="pricePerDay" th:field="*{pricePerDay}" required>-->
+<!--    <input type="file" name="image" accept="image/png, image/jpeg" required/>-->
+<!--    <input type="hidden" name="id" id="id" th:field="*{id}" th:value="*{id}" required>-->
+<!--    <input type="submit" class="btn btn-primary" name="submit" id="submit" value="Edit">-->
+<!--</form>-->
 
 <div th:insert="/fragments/footer :: footer"></div>
 </body>

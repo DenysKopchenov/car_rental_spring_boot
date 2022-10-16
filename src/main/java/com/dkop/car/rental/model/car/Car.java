@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,6 +40,7 @@ public class Car {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "car",
             fetch = FetchType.LAZY)
     private Set<RentOrder> rentOrders;
+    @NotNull
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] image;

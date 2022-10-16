@@ -8,6 +8,7 @@ import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Manufacturer;
 import com.dkop.car.rental.repository.CarRepository;
 import com.dkop.car.rental.service.CarService;
+import com.dkop.car.rental.util.Mapper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,11 +28,13 @@ import java.util.stream.Collectors;
 public class CarServiceImpl implements CarService {
 
     private static final String DEFAULT_CAR_SORT = "model";
-    private CarRepository carRepository;
+    private final CarRepository carRepository;
+    private final Mapper mapper;
 
     @Autowired
-    public CarServiceImpl(CarRepository carRepository) {
+    public CarServiceImpl(CarRepository carRepository, Mapper mapper) {
         this.carRepository = carRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -44,42 +47,23 @@ public class CarServiceImpl implements CarService {
         if (Objects.isNull(pagination.getSort())) {
             pagination.setSort(DEFAULT_CAR_SORT);
         }
-
-        List<CategoryClass> categories = carFilterBean.getCategories();
-        if (categories.isEmpty()) {
-            categories = Arrays.stream(CategoryClass.values()).collect(Collectors.toList());
-        }
-        List<Manufacturer> manufacturers = carFilterBean.getManufacturers();
-        if (manufacturers.isEmpty()) {
-            manufacturers = Arrays.stream(Manufacturer.values()).collect(Collectors.toList());
-        }
+        List<CategoryClass> categories = getCategoryClassListFromFilter(carFilterBean);
+        List<Manufacturer> manufacturers = getManufacturersFromFilter(carFilterBean);
         String model = carFilterBean.getModel();
-        long minPrice = carFilterBean.getMinPrice();
-        if (minPrice <= 0) {
-            minPrice = carRepository.findMinPrice();
-            carFilterBean.setMinPrice(minPrice);
-        }
-        long maxPrice = carFilterBean.getMaxPrice();
-        if (maxPrice < minPrice) {
-            maxPrice = carRepository.findMaxPrice();
-            carFilterBean.setMaxPrice(maxPrice);
-        }
+
+        long minPrice = getMinPriceFromFilter(carFilterBean);
+
+        long maxPrice = getMaxPriceFromFilter(carFilterBean, minPrice);
 
         PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
         return carRepository.findByManufacturerInAndCategoryClassInAndModelContainsIgnoreCaseAndPricePerDayBetween(manufacturers,
                 categories, model, minPrice, maxPrice, of);
     }
 
-
     @SneakyThrows
     @Override
     public Car saveCar(CarDto carDto) {
-        Car car = new Car();
-        car.setCategoryClass(carDto.getCategoryClass());
-        car.setManufacturer(carDto.getManufacturer());
-        car.setModel(carDto.getModel());
-        car.setPricePerDay(carDto.getPricePerDay());
-        car.setImage(carDto.getImage().getBytes());
+        Car car = mapper.mapCarDtoToCar(carDto);
         return carRepository.save(car);
     }
 
@@ -96,18 +80,49 @@ public class CarServiceImpl implements CarService {
     @SneakyThrows
     @Override
     public Car updateCar(CarDto carDto) {
-        Car car = new Car();
-        car.setId(carDto.getId());
-        car.setCategoryClass(carDto.getCategoryClass());
-        car.setManufacturer(carDto.getManufacturer());
-        car.setModel(carDto.getModel());
-        car.setPricePerDay(carDto.getPricePerDay());
-        car.setImage(carDto.getImage().getBytes());
+        Car car = mapper.mapCarDtoToCar(carDto);
+        if (Objects.isNull(car.getImage())) {
+            car.setImage(findImageByCarId(car.getId()));
+        }
         return carRepository.save(car);
     }
 
     @Override
     public void deleteCar(UUID id) {
         carRepository.deleteById(id);
+    }
+
+    private long getMaxPriceFromFilter(CarFilterBean carFilterBean, long minPrice) {
+        long maxPrice = carFilterBean.getMaxPrice();
+        if (maxPrice < minPrice) {
+            maxPrice = carRepository.findMaxPrice();
+            carFilterBean.setMaxPrice(maxPrice);
+        }
+        return maxPrice;
+    }
+
+    private long getMinPriceFromFilter(CarFilterBean carFilterBean) {
+        long minPrice = carFilterBean.getMinPrice();
+        if (minPrice <= 0) {
+            minPrice = carRepository.findMinPrice();
+            carFilterBean.setMinPrice(minPrice);
+        }
+        return minPrice;
+    }
+
+    private static List<CategoryClass> getCategoryClassListFromFilter(CarFilterBean carFilterBean) {
+        List<CategoryClass> categories = carFilterBean.getCategories();
+        if (categories.isEmpty()) {
+            categories = Arrays.stream(CategoryClass.values()).collect(Collectors.toList());
+        }
+        return categories;
+    }
+
+    private static List<Manufacturer> getManufacturersFromFilter(CarFilterBean carFilterBean) {
+        List<Manufacturer> manufacturers = carFilterBean.getManufacturers();
+        if (manufacturers.isEmpty()) {
+            manufacturers = Arrays.stream(Manufacturer.values()).collect(Collectors.toList());
+        }
+        return manufacturers;
     }
 }

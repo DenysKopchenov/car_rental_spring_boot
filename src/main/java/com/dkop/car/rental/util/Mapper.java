@@ -8,18 +8,26 @@ import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.RentOrder;
 import com.dkop.car.rental.model.user.AppUser;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Mapper {
 
+    @SneakyThrows
     public Car mapCarDtoToCar(CarDto carDto) {
         Car car = new Car();
         car.setId(carDto.getId());
         car.setModel(carDto.getModel());
         car.setManufacturer(carDto.getManufacturer());
         car.setCategoryClass(carDto.getCategoryClass());
+        car.setFuel(carDto.getFuel());
+        car.setTransmission(carDto.getTransmission());
         car.setPricePerDay(carDto.getPricePerDay());
+        byte[] image = carDto.getImage().getBytes();
+        if (image.length > 0) {
+            car.setImage(image);
+        }
         return car;
     }
 

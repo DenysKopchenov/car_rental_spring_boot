@@ -5,6 +5,7 @@
 </head>
 <body>
 <th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<div class="alert alert-danger" th:if="${noImage != null}" th:text="${noImage}"></div>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-6 m-auto p-auto d-flex justify-content-center">

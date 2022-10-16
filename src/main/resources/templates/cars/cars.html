@@ -4,12 +4,12 @@
     <th:block th:replace="/fragments/head :: head"></th:block>
 </head>
 <body>
+<th:block th:insert="/fragments/navbar :: navbar"></th:block>
 <div class="bg-image"
      th:style="|
     background-image: url(@{/images/bg.jpg});
     height: 100vh;
   |">
-    <th:block th:insert="/fragments/navbar :: navbar"></th:block>
     <div th:if="${param.success}">
         <div class="alert alert-success">Car created</div>
     </div>
@@ -77,9 +77,9 @@
                             <label class="form-label" for="size">Page size</label>
                             <select class="form-select-sm" name="size" id="size">
                                 <option th:value="1" th:selected="*{size} == 1">1</option>
-                                <option th:value="5" th:selected="*{size} == 5">5</option>
-                                <option th:value="10" th:selected="*{size} == 10">10</option>
-                                <option th:value="20" th:selected="*{size} == 20">20</option>
+                                <option th:value="4" th:selected="*{size} == 4">4</option>
+                                <option th:value="8" th:selected="*{size} == 8">8</option>
+                                <option th:value="16" th:selected="*{size} == 16">16</option>
                             </select>
 
                             <label class="form-label" for="sort">Sort</label>
@@ -103,7 +103,7 @@
                 </div>
                 <div class="container">
                     <div class="row grid-view">
-                        <div class="col-4 mb-3" th:each="car : ${cars}">
+                        <div class="col-sm-3 mb-3" th:each="car : ${cars}">
                             <div class="card border rounded bg-light">
                                 <a th:href="@{/cars/{id}(id=${car.id})}">
                                     <img class="card-img-top" width="75%"
@@ -149,7 +149,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col m-2 float-start">
+                <div class="container d-flex flex-row justify-content-between mb-0 px-3">
                     <th:block th:insert="/fragments/pagination :: pagination"></th:block>
                 </div>
             </div>
