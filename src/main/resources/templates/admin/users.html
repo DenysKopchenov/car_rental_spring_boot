@@ -58,6 +58,7 @@
                 <form th:if="${!user.isActive}" th:action="@{/admin/unblockUser/{id}(id=${user.id})}" th:method="PUT">
                     <input class="btn btn-success" type="submit"
                            th:attr="onclick=|return confirm('unblock ${user.email}?')|" value="Unblock">
+<!--                    <input type="hidden" name="queryString" th:value="${#request.queryString}">-->
                 </form>
             </td>
         </tr>

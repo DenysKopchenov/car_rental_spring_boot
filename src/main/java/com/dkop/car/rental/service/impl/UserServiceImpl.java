@@ -21,12 +21,14 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+    private static final String DEFAULT_USER_SORT = "email";
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final Mapper mapper;
@@ -71,9 +73,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<AppUser> findAllByRole(PaginationAndSortingBean pagination, Role role) {
-        String currentSort = pagination.getSort() == null ? "email" : pagination.getSort();
+        if (Objects.isNull(pagination.getSort())) {
+            pagination.setSort(DEFAULT_USER_SORT);
+        }
         PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(),
-                Sort.by(Sort.Direction.valueOf(pagination.getDirection()), currentSort));
+                Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
         return appUserRepository.findByRoleIn(List.of(role), of);
     }
 

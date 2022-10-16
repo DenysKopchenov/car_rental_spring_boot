@@ -12,6 +12,7 @@ import com.dkop.car.rental.repository.OrderRepository;
 import com.dkop.car.rental.service.OrderService;
 import com.dkop.car.rental.util.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,6 +30,12 @@ import java.util.UUID;
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    private static final String DEFAULT_ORDER_SORT = "orderDetails.orderStatus";
+    private static final String ORDER_NOT_FOUND = "Order not found";
+    private static final String ORDER_ALREADY_EXISTS = "Order already exist";
+    private static final String INVALID_ORDER_STATUS_PATTERN = "Invalid order status, must be %s";
+    @Value("${price.for.driver}")
+    private int priceForDriver;
     private final OrderRepository orderRepository;
     private final Mapper mapper;
 
@@ -41,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void calculateOrder(OrderDto orderDto) {
         long pricePerDay = calculatePricePerDay(orderDto);
-        int days = Period.between(orderDto.getStartDate(), orderDto.getEndDate()).getDays();
+        int days = countRentDays(orderDto);
         orderDto.setRentalPrice(pricePerDay * days);
         orderDto.setNumberOfRentDays(days);
 
@@ -55,8 +62,8 @@ public class OrderServiceImpl implements OrderService {
         rentOrder.setCar(orderDto.getCar());
 
         long pricePerDay = calculatePricePerDay(orderDto);
-        if (orderDto.getRentalPrice() != pricePerDay * Period.between(orderDto.getStartDate(), orderDto.getEndDate()).getDays()) {
-            throw new IllegalArgumentException("Wrong total price!?!?!?!?");
+        if (orderDto.getRentalPrice() != pricePerDay * countRentDays(orderDto)) {
+            throw new IllegalArgumentException();
         }
 
         OrderDetails orderDetails = mapper.mapOrderDtoToOrderDetails(orderDto);
@@ -64,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
         rentOrder.setOrderDetails(orderDetails);
 
         if (isOrderAlreadyExist(rentOrder)) {
-            throw new IllegalArgumentException("Order already exist");
+            throw new IllegalArgumentException(ORDER_ALREADY_EXISTS);
         }
 
         return orderRepository.save(rentOrder);
@@ -73,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<RentOrder> findOrdersByAppUserId(UUID appUserId, PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean) {
         if (Objects.isNull(paginationAndSortingBean.getSort())) {
-            paginationAndSortingBean.setSort("orderDetails.orderStatus");
+            paginationAndSortingBean.setSort(DEFAULT_ORDER_SORT);
         }
         PageRequest of = PageRequest.of(paginationAndSortingBean.getPage() - 1, paginationAndSortingBean.getSize(),
                 Sort.by(Sort.Direction.valueOf(paginationAndSortingBean.getDirection()), paginationAndSortingBean.getSort()));
@@ -83,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean) {
         if (Objects.isNull(paginationAndSortingBean.getSort())) {
-            paginationAndSortingBean.setSort("orderDetails.orderStatus");
+            paginationAndSortingBean.setSort(DEFAULT_ORDER_SORT);
         }
         PageRequest of = PageRequest.of(paginationAndSortingBean.getPage() - 1,
                 paginationAndSortingBean.getSize(), Sort.by(Sort.Direction.valueOf(paginationAndSortingBean.getDirection()), paginationAndSortingBean.getSort()));
@@ -101,9 +108,9 @@ public class OrderServiceImpl implements OrderService {
                 orderDetails.setOrderStatus(OrderStatus.PAID);
                 return orderRepository.save(rentOrder);
             }
-            throw new IllegalArgumentException("Invalid order status, must be AWAIT_PAYMENT");
+            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_PAYMENT));
         }
-        throw new EntityNotFoundException("Order not found");
+        throw new EntityNotFoundException(ORDER_NOT_FOUND);
     }
 
     @Override
@@ -122,9 +129,9 @@ public class OrderServiceImpl implements OrderService {
                 orderDetails.setOrderStatus(OrderStatus.AWAIT_PAYMENT);
                 return orderRepository.save(rentOrder);
             }
-            throw new IllegalArgumentException("Invalid order status, must be PAID");
+            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
         }
-        throw new EntityNotFoundException("Order not found");
+        throw new EntityNotFoundException(ORDER_NOT_FOUND);
     }
 
     @Override
@@ -139,9 +146,9 @@ public class OrderServiceImpl implements OrderService {
                 orderDetails.setRejectOrderDetails(rejectDetails);
                 return orderRepository.save(rentOrder);
             }
-            throw new IllegalArgumentException("Invalid order status, must be PENDING");
+            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PENDING));
         }
-        throw new EntityNotFoundException("Order not found");
+        throw new EntityNotFoundException(ORDER_NOT_FOUND);
     }
 
     @Override
@@ -158,9 +165,9 @@ public class OrderServiceImpl implements OrderService {
                 repairPayment.setDamageDescription("PAID " + damageDescription);
                 return orderRepository.save(rentOrder);
             }
-            throw new IllegalArgumentException("Invalid order status, must be AWAIT_REPAIR_PAYMENT");
+            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_REPAIR_PAYMENT));
         }
-        throw new EntityNotFoundException("Order not found");
+        throw new EntityNotFoundException(ORDER_NOT_FOUND);
     }
 
     @Override
@@ -174,9 +181,9 @@ public class OrderServiceImpl implements OrderService {
                 orderDetails.setOrderStatus(OrderStatus.COMPLETED);
                 return orderRepository.save(rentOrder);
             }
-            throw new IllegalArgumentException("Invalid order status, must be PAID");
+            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
         }
-        throw new EntityNotFoundException("Order not found");
+        throw new EntityNotFoundException(ORDER_NOT_FOUND);
     }
 
     @Override
@@ -192,9 +199,9 @@ public class OrderServiceImpl implements OrderService {
                 return orderRepository.save(rentOrder);
             }
 
-            throw new IllegalArgumentException("Invalid order status, must be PAID");
+            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
         }
-        throw new EntityNotFoundException("Order not found");
+        throw new EntityNotFoundException(ORDER_NOT_FOUND);
     }
 
     @Override
@@ -209,17 +216,21 @@ public class OrderServiceImpl implements OrderService {
                 return orderRepository.save(rentOrder);
             }
 
-            throw new IllegalArgumentException("Invalid order status, must be REPAIR_PAID");
+            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
         }
-        throw new EntityNotFoundException("Order not found");
+        throw new EntityNotFoundException(ORDER_NOT_FOUND);
     }
 
-    private static long calculatePricePerDay(OrderDto orderDto) {
+    private long calculatePricePerDay(OrderDto orderDto) {
         long pricePerDay = orderDto.getCar().getPricePerDay();
         if (orderDto.isWithDriver()) {
-            pricePerDay += 30;
+            pricePerDay += priceForDriver;
         }
         return pricePerDay;
+    }
+
+    private int countRentDays(OrderDto orderDto) {
+        return Period.between(orderDto.getStartDate(), orderDto.getEndDate()).getDays();
     }
 
     private boolean isOrderAlreadyExist(RentOrder rentOrder) {

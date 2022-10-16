@@ -52,7 +52,9 @@
             <div sec:authorize="isAuthenticated()" class="text-end">
                 <div th:text="${#authentication.principal.firstName}">
                 </div>
-                <a type="button" class="btn btn-warning" th:href="@{/profile}">Profile</a>
+                <th:block sec:authorize="hasAuthority('USER')">
+                    <a type="button" class="btn btn-warning" th:href="@{/profile}">Profile</a>
+                </th:block>
                 <a type="button" class="btn btn-warning" th:href="@{/logout}">Logout</a>
             </div>
         </div>

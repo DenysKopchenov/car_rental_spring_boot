@@ -92,6 +92,7 @@
             <div>
                 <div th:text="|${order.car.manufacturer} ${order.car.model}|"></div>
                 <div th:text="|Total days = ${order.numberOfRentDays}|"></div>
+                <div th:text="|With driver = ${order.withDriver ? 'Yes' : 'No'}|"></div>
                 <div th:text="|Total price = $${order.rentalPrice}|"></div>
                 <img width="75%" height="100%"
                      th:src="@{'/cars/image?id=' + ${order.car.id}}">

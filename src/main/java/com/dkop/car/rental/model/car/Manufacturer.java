@@ -1,5 +1,5 @@
 package com.dkop.car.rental.model.car;
 
 public enum Manufacturer {
-    AUDI, BMW, NISSAN, MAZDA, TOYOTA, VOLKSWAGEN;
+    OPEL, FORD, SKODA, VOLKSWAGEN, HYUNDAI, KIA, PEUGEOT, NISSAN, TOYOTA, SUZUKI, SEAT, AUDI, LEXUS, BMW
 }

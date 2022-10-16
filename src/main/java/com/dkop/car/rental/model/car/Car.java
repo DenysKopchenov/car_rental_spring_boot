@@ -31,6 +31,8 @@ public class Car {
     private UUID id;
     private Manufacturer manufacturer;
     private CategoryClass categoryClass;
+    private Transmission transmission;
+    private Fuel fuel;
     private String model;
     private long pricePerDay;
     @OneToMany(mappedBy = "car",

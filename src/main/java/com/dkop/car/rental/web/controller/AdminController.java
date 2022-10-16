@@ -7,7 +7,9 @@ import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.exception.UserAlreadyExists;
 import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.car.CategoryClass;
+import com.dkop.car.rental.model.car.Fuel;
 import com.dkop.car.rental.model.car.Manufacturer;
+import com.dkop.car.rental.model.car.Transmission;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.model.user.Role;
 import com.dkop.car.rental.service.CarService;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
@@ -92,7 +95,7 @@ public class AdminController {
     public String showNewCarForm(@ModelAttribute("car") CarDto carDto, Model model) {
         model.addAttribute(TITLE_ATTRIBUTE, NEW_CAR_TITLE);
         setManufacturersAndCategoryClassAttributes(model);
-        return "cars/newCar";
+        return "admin/newCar";
     }
 
     @SneakyThrows
@@ -113,7 +116,7 @@ public class AdminController {
     public String showEditCarForm(@PathVariable("id") UUID id, Model model) {
         model.addAttribute("updated", carService.findById(id));
         setManufacturersAndCategoryClassAttributes(model);
-        return "cars/editCar";
+        return "admin/editCar";
     }
 
     @PutMapping("/editCar/{id}")
@@ -135,22 +138,24 @@ public class AdminController {
     }
 
     @PutMapping("/blockUser/{id}")
-    public String blockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes) {
+    public String blockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         AppUser appUser = userService.changeUserIsActive(Boolean.FALSE, id);
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
-        return "redirect:/admin/showUsers?blocked";
+        return "redirect:" + request.getHeader("referer");
     }
 
     @PutMapping("/unblockUser/{id}")
-    public String unblockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes) {
+    public String unblockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         AppUser appUser = userService.changeUserIsActive(Boolean.TRUE, id);
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
-        return "redirect:/admin/showUsers?unblocked";
+        return "redirect:" + request.getHeader("referer");
     }
 
 
     private static void setManufacturersAndCategoryClassAttributes(Model model) {
         model.addAttribute("manufacturers", Arrays.stream(Manufacturer.values()).collect(Collectors.toList()));
         model.addAttribute("class", Arrays.stream(CategoryClass.values()).collect(Collectors.toList()));
+        model.addAttribute("fuelTypes", Arrays.stream(Fuel.values()).collect(Collectors.toList()));
+        model.addAttribute("transmissionTypes", Arrays.stream(Transmission.values()).collect(Collectors.toList()));
     }
 }

@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class CarServiceImpl implements CarService {
 
+    private static final String DEFAULT_CAR_SORT = "model";
     private CarRepository carRepository;
 
     @Autowired
@@ -39,14 +40,10 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Page<Car> findAll(PaginationAndSortingBean paginationAndSortingBean, CarFilterBean carFilterBean) {
-        if (Objects.isNull(paginationAndSortingBean.getSort())) {
-            paginationAndSortingBean.setSort("model");
+    public Page<Car> findAll(PaginationAndSortingBean pagination, CarFilterBean carFilterBean) {
+        if (Objects.isNull(pagination.getSort())) {
+            pagination.setSort(DEFAULT_CAR_SORT);
         }
-        int currentPage = paginationAndSortingBean.getPage();
-        int currentSize = paginationAndSortingBean.getSize();
-        String currentSort = paginationAndSortingBean.getSort();
-        String direction = paginationAndSortingBean.getDirection();
 
         List<CategoryClass> categories = carFilterBean.getCategories();
         if (categories.isEmpty()) {
@@ -68,7 +65,7 @@ public class CarServiceImpl implements CarService {
             carFilterBean.setMaxPrice(maxPrice);
         }
 
-        PageRequest of = PageRequest.of(currentPage - 1, currentSize, Sort.by(Sort.Direction.valueOf(direction), currentSort));
+        PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
         return carRepository.findByManufacturerInAndCategoryClassInAndModelContainsIgnoreCaseAndPricePerDayBetween(manufacturers,
                 categories, model, minPrice, maxPrice, of);
     }

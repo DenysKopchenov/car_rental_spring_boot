@@ -78,7 +78,7 @@ public class CarsController {
         return "cars/carInfo";
     }
 
-    private static void setManufacturersAndCategoryClassAttributes(Model model) {
+    private void setManufacturersAndCategoryClassAttributes(Model model) {
         model.addAttribute("manufacturers", Arrays.stream(Manufacturer.values()).collect(Collectors.toList()));
         model.addAttribute("class", Arrays.stream(CategoryClass.values()).collect(Collectors.toList()));
     }

@@ -39,6 +39,22 @@
                 th:value="${class}"
         ></option>
     </select>
+    <div class="col">
+        <label for="fuelType">Fuel</label>
+        <select class="form-select" id="fuelType" th:field="*{fuel}" required>
+            <option th:each="fuel : ${fuelTypes}"
+                    th:text="${fuel}"
+                    th:value="${fuel}"></option>
+        </select>
+    </div>
+    <div class="col">
+        <label for="transmission">Transmission</label>
+        <select class="form-select" id="transmission" th:field="*{transmission}" required>
+            <option th:each="transmission : ${transmissionTypes}"
+                    th:text="${transmission}"
+                    th:value="${transmission}"></option>
+        </select>
+    </div>
     <label for="pricePerDay">Price per day $</label>
     <input type="number" name="pricePerDay" id="pricePerDay" th:field="*{pricePerDay}" required>
     <input type="file" name="image" accept="image/png, image/jpeg"/>
