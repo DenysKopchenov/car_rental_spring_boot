@@ -46,10 +46,15 @@ import java.util.stream.Collectors;
 public class AdminController {
 
     private static final String REGISTRATION_PAGE = "registration";
-    private static final String USER = "appUser";
     private static final String TITLE_ATTRIBUTE = "title";
-    private static final String TITLE_REGISTER_NEW_MANAGER = "Register new manager";
-    private static final String NEW_CAR_TITLE = "Add new car";
+    private static final String ADMIN_PAGE = "title";
+    private static final String REGISTER_NEW_MANAGER_TITLE = "Register new manager";
+    private static final String ADD_NEW_CAR_TITLE = "Add new car";
+    private static final String USER = "appUser";
+    private static final String MANUFACTURERS_ATTRIBUTE = "manufacturers";
+    private static final String CATEGORIES_ATTRIBUTE = "class";
+    private static final String FUEL_TYPES_ATTRIBUTE = "fuelTypes";
+    private static final String TRANSMISSION_TYPES_ATTRIBUTE = "transmissionTypes";
 
     private final CarService carService;
     private final UserService userService;
@@ -64,14 +69,14 @@ public class AdminController {
 
 
     @GetMapping
-    public String showAdminPage(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
-        model.addAttribute(TITLE_ATTRIBUTE, TITLE_REGISTER_NEW_MANAGER);
+    public String showAdminPage(Model model) {
+        model.addAttribute(TITLE_ATTRIBUTE, ADMIN_PAGE);
         return "admin/admin";
     }
 
     @GetMapping("/newManager")
     public String showNewManagerRegistrationForm(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
-        model.addAttribute(TITLE_ATTRIBUTE, TITLE_REGISTER_NEW_MANAGER);
+        model.addAttribute(TITLE_ATTRIBUTE, REGISTER_NEW_MANAGER_TITLE);
         return REGISTRATION_PAGE;
     }
 
@@ -93,7 +98,7 @@ public class AdminController {
 
     @GetMapping("/newCar")
     public String showNewCarForm(@ModelAttribute("car") CarDto carDto, Model model) {
-        model.addAttribute(TITLE_ATTRIBUTE, NEW_CAR_TITLE);
+        model.addAttribute(TITLE_ATTRIBUTE, ADD_NEW_CAR_TITLE);
         setManufacturersAndCategoryClassAttributes(model);
         return "admin/newCar";
     }
@@ -144,23 +149,23 @@ public class AdminController {
 
     @PutMapping("/blockUser/{id}")
     public String blockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        AppUser appUser = userService.changeUserIsActive(Boolean.FALSE, id);
+        AppUser appUser = userService.changeUserActiveStatus(Boolean.FALSE, id);
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
         return "redirect:" + request.getHeader("referer");
     }
 
     @PutMapping("/unblockUser/{id}")
     public String unblockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        AppUser appUser = userService.changeUserIsActive(Boolean.TRUE, id);
+        AppUser appUser = userService.changeUserActiveStatus(Boolean.TRUE, id);
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
         return "redirect:" + request.getHeader("referer");
     }
 
 
     private static void setManufacturersAndCategoryClassAttributes(Model model) {
-        model.addAttribute("manufacturers", Arrays.stream(Manufacturer.values()).collect(Collectors.toList()));
-        model.addAttribute("class", Arrays.stream(CategoryClass.values()).collect(Collectors.toList()));
-        model.addAttribute("fuelTypes", Arrays.stream(Fuel.values()).collect(Collectors.toList()));
-        model.addAttribute("transmissionTypes", Arrays.stream(Transmission.values()).collect(Collectors.toList()));
+        model.addAttribute(MANUFACTURERS_ATTRIBUTE, Arrays.stream(Manufacturer.values()).collect(Collectors.toList()));
+        model.addAttribute(CATEGORIES_ATTRIBUTE, Arrays.stream(CategoryClass.values()).collect(Collectors.toList()));
+        model.addAttribute(FUEL_TYPES_ATTRIBUTE, Arrays.stream(Fuel.values()).collect(Collectors.toList()));
+        model.addAttribute(TRANSMISSION_TYPES_ATTRIBUTE, Arrays.stream(Transmission.values()).collect(Collectors.toList()));
     }
 }

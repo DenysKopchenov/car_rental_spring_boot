@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AppUser changeUserIsActive(Boolean isActive, UUID id) {
+    public AppUser changeUserActiveStatus(Boolean isActive, UUID id) {
         AppUser appUser = appUserRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         appUser.setActive(isActive);
         return appUserRepository.save(appUser);

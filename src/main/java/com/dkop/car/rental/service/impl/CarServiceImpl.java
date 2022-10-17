@@ -49,11 +49,9 @@ public class CarServiceImpl implements CarService {
         }
         List<CategoryClass> categories = getCategoryClassListFromFilter(carFilterBean);
         List<Manufacturer> manufacturers = getManufacturersFromFilter(carFilterBean);
-        String model = carFilterBean.getModel();
-
         long minPrice = getMinPriceFromFilter(carFilterBean);
-
         long maxPrice = getMaxPriceFromFilter(carFilterBean, minPrice);
+        String model = carFilterBean.getModel();
 
         PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
         return carRepository.findByManufacturerInAndCategoryClassInAndModelContainsIgnoreCaseAndPricePerDayBetween(manufacturers,

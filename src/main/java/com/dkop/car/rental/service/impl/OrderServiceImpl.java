@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.time.Period;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -56,8 +55,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public RentOrder saveOrder(OrderDto orderDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         RentOrder rentOrder = new RentOrder();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         rentOrder.setAppUser((AppUser) authentication.getPrincipal());
         rentOrder.setCar(orderDto.getCar());
 
@@ -100,17 +99,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public RentOrder payOrder(UUID orderId) {
-        Optional<RentOrder> byId = orderRepository.findById(orderId);
-        if (byId.isPresent()) {
-            RentOrder rentOrder = byId.get();
-            OrderDetails orderDetails = rentOrder.getOrderDetails();
-            if (orderDetails.getOrderStatus().equals(OrderStatus.AWAIT_PAYMENT)) {
-                orderDetails.setOrderStatus(OrderStatus.PAID);
-                return orderRepository.save(rentOrder);
-            }
-            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_PAYMENT));
+        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        OrderDetails orderDetails = rentOrder.getOrderDetails();
+        if (orderDetails.getOrderStatus().equals(OrderStatus.AWAIT_PAYMENT)) {
+            orderDetails.setOrderStatus(OrderStatus.PAID);
+            return orderRepository.save(rentOrder);
         }
-        throw new EntityNotFoundException(ORDER_NOT_FOUND);
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_PAYMENT));
     }
 
     @Override
@@ -121,104 +116,78 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public RentOrder acceptOrder(UUID orderId) {
-        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
-        if (orderOptional.isPresent()) {
-            RentOrder rentOrder = orderOptional.get();
-            OrderDetails orderDetails = rentOrder.getOrderDetails();
-            if (orderDetails.getOrderStatus().equals(OrderStatus.PENDING)) {
-                orderDetails.setOrderStatus(OrderStatus.AWAIT_PAYMENT);
-                return orderRepository.save(rentOrder);
-            }
-            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
+        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        OrderDetails orderDetails = rentOrder.getOrderDetails();
+        if (orderDetails.getOrderStatus().equals(OrderStatus.PENDING)) {
+            orderDetails.setOrderStatus(OrderStatus.AWAIT_PAYMENT);
+            return orderRepository.save(rentOrder);
         }
-        throw new EntityNotFoundException(ORDER_NOT_FOUND);
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
     }
 
     @Override
     @Transactional
     public RentOrder rejectOrder(UUID orderId, String rejectDetails) {
-        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
-        if (orderOptional.isPresent()) {
-            RentOrder rentOrder = orderOptional.get();
-            OrderDetails orderDetails = rentOrder.getOrderDetails();
-            if (orderDetails.getOrderStatus().equals(OrderStatus.PENDING)) {
-                orderDetails.setOrderStatus(OrderStatus.REJECTED);
-                orderDetails.setRejectOrderDetails(rejectDetails);
-                return orderRepository.save(rentOrder);
-            }
-            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PENDING));
+        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        OrderDetails orderDetails = rentOrder.getOrderDetails();
+        if (orderDetails.getOrderStatus().equals(OrderStatus.PENDING)) {
+            orderDetails.setOrderStatus(OrderStatus.REJECTED);
+            orderDetails.setRejectOrderDetails(rejectDetails);
+            return orderRepository.save(rentOrder);
         }
-        throw new EntityNotFoundException(ORDER_NOT_FOUND);
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PENDING));
     }
 
     @Override
     @Transactional
     public RentOrder payRepair(UUID orderId) {
-        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
-        if (orderOptional.isPresent()) {
-            RentOrder rentOrder = orderOptional.get();
-            OrderDetails orderDetails = rentOrder.getOrderDetails();
-            if (orderDetails.getOrderStatus().equals(OrderStatus.AWAIT_REPAIR_PAYMENT)) {
-                orderDetails.setOrderStatus(OrderStatus.REPAIR_PAID);
-                RepairPayment repairPayment = orderDetails.getRepairPayment();
-                String damageDescription = repairPayment.getDamageDescription();
-                repairPayment.setDamageDescription("PAID " + damageDescription);
-                return orderRepository.save(rentOrder);
-            }
-            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_REPAIR_PAYMENT));
+        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        OrderDetails orderDetails = rentOrder.getOrderDetails();
+        if (orderDetails.getOrderStatus().equals(OrderStatus.AWAIT_REPAIR_PAYMENT)) {
+            orderDetails.setOrderStatus(OrderStatus.REPAIR_PAID);
+            RepairPayment repairPayment = orderDetails.getRepairPayment();
+            String damageDescription = repairPayment.getDamageDescription();
+            repairPayment.setDamageDescription("PAID " + damageDescription);
+            return orderRepository.save(rentOrder);
         }
-        throw new EntityNotFoundException(ORDER_NOT_FOUND);
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_REPAIR_PAYMENT));
     }
 
     @Override
     @Transactional
     public RentOrder returnOrderWithoutDamage(UUID orderId) {
-        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
-        if (orderOptional.isPresent()) {
-            RentOrder rentOrder = orderOptional.get();
-            OrderDetails orderDetails = rentOrder.getOrderDetails();
-            if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
-                orderDetails.setOrderStatus(OrderStatus.COMPLETED);
-                return orderRepository.save(rentOrder);
-            }
-            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
+        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        OrderDetails orderDetails = rentOrder.getOrderDetails();
+        if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
+            orderDetails.setOrderStatus(OrderStatus.COMPLETED);
+            return orderRepository.save(rentOrder);
         }
-        throw new EntityNotFoundException(ORDER_NOT_FOUND);
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
     }
 
     @Override
     @Transactional
     public RentOrder returnOrderWithDamage(UUID orderId, RepairPayment repairPayment) {
-        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
-        if (orderOptional.isPresent()) {
-            RentOrder rentOrder = orderOptional.get();
-            OrderDetails orderDetails = rentOrder.getOrderDetails();
-            if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
-                orderDetails.setRepairPayment(repairPayment);
-                orderDetails.setOrderStatus(OrderStatus.AWAIT_REPAIR_PAYMENT);
-                return orderRepository.save(rentOrder);
-            }
-
-            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
+        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        OrderDetails orderDetails = rentOrder.getOrderDetails();
+        if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
+            orderDetails.setRepairPayment(repairPayment);
+            orderDetails.setOrderStatus(OrderStatus.AWAIT_REPAIR_PAYMENT);
+            return orderRepository.save(rentOrder);
         }
-        throw new EntityNotFoundException(ORDER_NOT_FOUND);
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
     }
 
     @Override
     @Transactional
     public RentOrder completeRepairPaidOrder(UUID orderId) {
-        Optional<RentOrder> orderOptional = orderRepository.findById(orderId);
-        if (orderOptional.isPresent()) {
-            RentOrder rentOrder = orderOptional.get();
-            OrderDetails orderDetails = rentOrder.getOrderDetails();
-            if (orderDetails.getOrderStatus().equals(OrderStatus.REPAIR_PAID)) {
-                orderDetails.setOrderStatus(OrderStatus.COMPLETED);
-                return orderRepository.save(rentOrder);
-            }
-
-            throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
+        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        OrderDetails orderDetails = rentOrder.getOrderDetails();
+        if (orderDetails.getOrderStatus().equals(OrderStatus.REPAIR_PAID)) {
+            orderDetails.setOrderStatus(OrderStatus.COMPLETED);
+            return orderRepository.save(rentOrder);
         }
-        throw new EntityNotFoundException(ORDER_NOT_FOUND);
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
     }
 
     private long calculatePricePerDay(OrderDto orderDto) {
