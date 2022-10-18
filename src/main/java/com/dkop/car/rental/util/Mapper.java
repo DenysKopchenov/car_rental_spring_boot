@@ -28,6 +28,7 @@ public class Mapper {
         if (image.length > 0) {
             car.setImage(image);
         }
+        car.setAvailable(carDto.isAvailable());
         return car;
     }
 
@@ -38,6 +39,7 @@ public class Mapper {
         carDto.setCategoryClass(car.getCategoryClass());
         carDto.setModel(car.getModel());
         carDto.setPricePerDay(car.getPricePerDay());
+        carDto.setAvailable(car.isAvailable());
         return carDto;
     }
 

@@ -7,8 +7,9 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -31,13 +32,16 @@ public class Car {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
+    @Enumerated(EnumType.STRING)
     private Manufacturer manufacturer;
+    @Enumerated(EnumType.STRING)
     private CategoryClass categoryClass;
     private Transmission transmission;
     private Fuel fuel;
     private String model;
     private long pricePerDay;
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "car",
+    private boolean isAvailable;
+    @OneToMany(mappedBy = "car",
             fetch = FetchType.LAZY)
     private Set<RentOrder> rentOrders;
     @NotNull

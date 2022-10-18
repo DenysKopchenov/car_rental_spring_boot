@@ -34,9 +34,15 @@
                         <div class="d-flex flex-row justify-content-between mb-0 px-3">
                             <th:block sec:authorize="hasAuthority('ADMIN')">
                                 <div class="col m-auto text-center">
-                                    <form th:action="@{/admin/deleteCar/{id}(id=${car.id})}"
-                                          th:method="DELETE">
-                                        <input class="btn btn-danger" type="submit" value="Delete">
+                                    <form th:if="${car.isAvailable}"
+                                          th:action="@{/admin/setUnavailable/{id}(id=${car.id})}"
+                                          th:method="PUT">
+                                        <input class="btn btn-danger" type="submit" value="Set unavailable">
+                                    </form>
+                                    <form th:if="${!car.isAvailable}"
+                                          th:action="@{/admin/setAvailable/{id}(id=${car.id})}"
+                                          th:method="PUT">
+                                        <input class="btn btn-success" type="submit" value="Set available">
                                     </form>
                                 </div>
                                 <div div class="col m-auto text-center">

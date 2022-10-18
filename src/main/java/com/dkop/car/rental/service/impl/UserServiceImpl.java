@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AppUser findByEmail(String email) {
-        return appUserRepository.findByEmail(email).orElseThrow(IllegalArgumentException::new);
+        return appUserRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override

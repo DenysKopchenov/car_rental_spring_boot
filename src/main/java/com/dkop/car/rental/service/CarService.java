@@ -25,4 +25,8 @@ public interface CarService {
     Page<Car> findPaginated(Pageable pageable);
 
     Page<Car> findAll(PaginationAndSortingBean paginationAndSortingBean, CarFilterBean carFilterBean);
+
+    Page<Car> findAllAvailable(PaginationAndSortingBean paginationAndSortingBean, CarFilterBean carFilterBean);
+
+    void setAvailability(UUID id, Boolean available);
 }

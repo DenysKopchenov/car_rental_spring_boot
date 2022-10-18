@@ -23,7 +23,7 @@
                 <div th:if="${param.success}" class="alert alert-success">Registration success</div>
                 <div th:if="${param.failed}" class="alert alert-danger"
                      th:text="|Registration failed ${appUser.email} already exists|"></div>
-                <form id="regForm" th:method="POST" th:action="@{/registration}"
+                <form id="regForm" th:method="POST"
                       th:object="${appUser}">
                     <div class="col m-2 p-2">
                         <label for="firstName">First name</label>
@@ -70,8 +70,16 @@
                     </div>
 
                     <hr>
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Register</button>
-
+                    <th:block sec:authorize="hasAuthority('ADMIN')">
+                        <button class="btn btn-primary btn-lg btn-block" th:action="@{/admin/newManager}" type="submit">
+                            Register
+                        </button>
+                    </th:block>
+                    <th:block sec:authorize="!isAuthenticated">
+                        <button class="btn btn-primary btn-lg btn-block" th:action="@{/registration}" type="submit">
+                            Register
+                        </button>
+                    </th:block>
                 </form>
                 <p class="text-center text-muted mt-4 mb-2">Have already an account? <a
                         th:href="@{/login}" class="fw-bold text-body"><u>Login

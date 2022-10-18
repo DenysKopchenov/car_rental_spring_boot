@@ -22,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -116,15 +115,22 @@ public class AdminController {
         return "redirect:/cars/" + car.getId() + "?success";
     }
 
-    @DeleteMapping("/deleteCar/{id}")
-    public String deleteCar(@PathVariable("id") UUID id) {
-        carService.deleteCar(id);
-        return "redirect:/cars";
+    @PutMapping("/setUnavailable/{id}")
+    public String setUnavailable(@PathVariable("id") UUID id, HttpServletRequest request) {
+        carService.setAvailability(id, Boolean.FALSE);
+        return "redirect:" + request.getHeader("referer");
+    }
+
+    @PutMapping("/setAvailable/{id}")
+    public String setAvailable(@PathVariable("id") UUID id, HttpServletRequest request) {
+        carService.setAvailability(id, Boolean.TRUE);
+        return "redirect:" + request.getHeader("referer");
     }
 
     @GetMapping("/editCar/{id}")
     public String showEditCarForm(@PathVariable("id") UUID id, Model model) {
-        model.addAttribute("updated", carService.findById(id));
+        Car car = carService.findById(id);
+        model.addAttribute("updated", mapper.mapCarToCarDto(car));
         setManufacturersAndCategoryClassAttributes(model);
         return "admin/editCar";
     }

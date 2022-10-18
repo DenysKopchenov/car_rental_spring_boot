@@ -18,7 +18,21 @@ public interface CarRepository extends JpaRepository<Car, UUID> {
 
     @Query("select c from Car c " +
             "where c.manufacturer in :manufacturers and c.categoryClass in :categoryClasses and upper(c.model) like upper(concat('%', :model, '%')) and c.pricePerDay between :pricePerDayStart and :pricePerDayEnd")
-    Page<Car> findByManufacturerInAndCategoryClassInAndModelContainsIgnoreCaseAndPricePerDayBetween(@Param("manufacturers") Collection<Manufacturer> manufacturers, @Param("categoryClasses") Collection<CategoryClass> categoryClasses, @Param("model") String model, @Param("pricePerDayStart") long pricePerDayStart, @Param("pricePerDayEnd") long pricePerDayEnd, Pageable pageable);
+    Page<Car> findAllFilteredPaged(@Param("manufacturers") Collection<Manufacturer> manufacturers,
+                                   @Param("categoryClasses") Collection<CategoryClass> categoryClasses,
+                                   @Param("model") String model,
+                                   @Param("pricePerDayStart") long pricePerDayStart,
+                                   @Param("pricePerDayEnd") long pricePerDayEnd,
+                                   Pageable pageable);
+
+    @Query("select c from Car c " +
+            "where c.manufacturer in :manufacturers and c.categoryClass in :categoryClasses and upper(c.model) like upper(concat('%', :model, '%')) and c.pricePerDay between :pricePerDayStart and :pricePerDayEnd and c.isAvailable = true")
+    Page<Car> findAllAvailableFilteredPaged(@Param("manufacturers") Collection<Manufacturer> manufacturers,
+                                            @Param("categoryClasses") Collection<CategoryClass> categoryClasses,
+                                            @Param("model") String model,
+                                            @Param("pricePerDayStart") long pricePerDayStart,
+                                            @Param("pricePerDayEnd") long pricePerDayEnd,
+                                            Pageable pageable);
 
     @Query("SELECT min(pricePerDay) FROM Car")
     long findMinPrice();

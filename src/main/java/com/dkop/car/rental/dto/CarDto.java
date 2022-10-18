@@ -28,4 +28,5 @@ public class CarDto {
     private String model;
     private long pricePerDay;
     private MultipartFile image;
+    private boolean isAvailable;
 }

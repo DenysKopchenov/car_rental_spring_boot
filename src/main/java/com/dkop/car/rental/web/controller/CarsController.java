@@ -7,9 +7,12 @@ import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Manufacturer;
+import com.dkop.car.rental.model.user.Role;
 import com.dkop.car.rental.service.CarService;
 import com.dkop.car.rental.util.Mapper;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +21,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -46,24 +49,25 @@ public class CarsController {
     public String showCarList(Model model,
                               @ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean,
                               @ModelAttribute("filter") CarFilterBean carFilterBean) {
-        model.addAttribute(TITLE_ATTRIBUTE, CARS_TITLE);
-        Page<Car> pagedCars = carService.findAll(paginationAndSortingBean, carFilterBean);
-        List<CarDto> cars = pagedCars.map(car -> mapper.mapCarToCarDto(car))
+        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        Page<Car> pagedCars;
+        if (authorities.contains(Role.ADMIN)) {
+            pagedCars = carService.findAll(paginationAndSortingBean, carFilterBean);
+        } else {
+            pagedCars = carService.findAllAvailable(paginationAndSortingBean, carFilterBean);
+        }
+        List<CarDto> cars = pagedCars.map(mapper::mapCarToCarDto)
                 .toList();
+
+        model.addAttribute(TITLE_ATTRIBUTE, CARS_TITLE);
         model.addAttribute("cars", cars);
-//        model.addAttribute("currentPage", paginationAndSortingBean.getPage());
-//        model.addAttribute("size", paginationAndSortingBean.getSize());
-//        model.addAttribute("sort", paginationAndSortingBean.getSort());
-//        model.addAttribute("direction", paginationAndSortingBean.getDirection());
         model.addAttribute("numberOfPages", pagedCars.getTotalPages());
         setManufacturersAndCategoryClassAttributes(model);
         return "cars/cars";
     }
 
     @GetMapping("/image")
-    public void showImage(@RequestParam("id") UUID id, HttpServletResponse response)
-            throws ServletException, IOException {
-//        Car byId = carService.findById(id);
+    public void showImage(@RequestParam("id") UUID id, HttpServletResponse response) throws IOException {
         response.setContentType("image/jpeg, image/jpg, image/png, image/gif, image/pdf");
         response.getOutputStream().write(carService.findImageByCarId(id));
         response.getOutputStream().close();

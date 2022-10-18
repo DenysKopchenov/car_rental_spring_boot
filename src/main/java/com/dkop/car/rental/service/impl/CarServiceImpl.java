@@ -54,14 +54,38 @@ public class CarServiceImpl implements CarService {
         String model = carFilterBean.getModel();
 
         PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
-        return carRepository.findByManufacturerInAndCategoryClassInAndModelContainsIgnoreCaseAndPricePerDayBetween(manufacturers,
+        return carRepository.findAllFilteredPaged(manufacturers,
                 categories, model, minPrice, maxPrice, of);
+    }
+
+    @Override
+    public Page<Car> findAllAvailable(PaginationAndSortingBean pagination, CarFilterBean carFilterBean) {
+        if (Objects.isNull(pagination.getSort())) {
+            pagination.setSort(DEFAULT_CAR_SORT);
+        }
+        List<CategoryClass> categories = getCategoryClassListFromFilter(carFilterBean);
+        List<Manufacturer> manufacturers = getManufacturersFromFilter(carFilterBean);
+        long minPrice = getMinPriceFromFilter(carFilterBean);
+        long maxPrice = getMaxPriceFromFilter(carFilterBean, minPrice);
+        String model = carFilterBean.getModel();
+
+        PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
+        return carRepository.findAllAvailableFilteredPaged(manufacturers,
+                categories, model, minPrice, maxPrice, of);
+    }
+
+    @Override
+    public void setAvailability(UUID id, Boolean available) {
+        Car car = carRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        car.setAvailable(available);
+        carRepository.save(car);
     }
 
     @SneakyThrows
     @Override
     public Car saveCar(CarDto carDto) {
         Car car = mapper.mapCarDtoToCar(carDto);
+        car.setAvailable(Boolean.TRUE);
         return carRepository.save(car);
     }
 
