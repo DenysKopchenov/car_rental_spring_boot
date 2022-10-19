@@ -29,7 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-//        return NoOpPasswordEncoder.getInstance();
     }
 
     @Bean
@@ -48,23 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication()
-//                .withUser("admin")
-//                .password("admin")
-//                .roles(Role.ADMIN.name())
-//                .and()
-//                .withUser("manager")
-//                .password("manager")
-//                .roles(Role.MANAGER.name())
-//                .and()
-//                .withUser("user")
-//                .password("user")
-//                .roles(Role.USER.name())
-//                .and()
-//                .passwordEncoder(NoOpPasswordEncoder.getInstance());
-//        auth.userDetailsService(clientService)
-//                .passwordEncoder(passwordEncoder());
-//        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
@@ -73,12 +55,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .formLogin()
+                .loginPage("/login")
                 .and()
                 .logout().clearAuthentication(Boolean.TRUE)
                 .and()
                 .authorizeRequests()
                 .mvcMatchers("/registration", "/login").anonymous()
                 .antMatchers("/logout").authenticated()
+                .antMatchers("/resources/**").permitAll()
                 .anyRequest().permitAll();
     }
 }

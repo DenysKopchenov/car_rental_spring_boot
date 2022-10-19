@@ -38,7 +38,7 @@ public class AppUserController {
         this.mapper = mapper;
     }
 
-    @GetMapping("/myOrders")
+    @GetMapping("/orders")
     public String showClientOrders(@ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean,
                                    @ModelAttribute("filter") OrderFilterBean orderFilterBean,
                                    @AuthenticationPrincipal AppUser appUser,
@@ -52,7 +52,7 @@ public class AppUserController {
         return "user/myOrders";
     }
 
-    @PostMapping("/bookCar")
+    @PostMapping("/booking")
     @PreAuthorize("hasAuthority('USER')")
     public String bookCar(@ModelAttribute("order") @Valid OrderDto orderDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -62,19 +62,17 @@ public class AppUserController {
         return "redirect:/order/" + order.getId();
     }
 
-    @PutMapping("/payOrder/{id}")
+    @PutMapping("/pay/order/{id}")
     @PreAuthorize("hasAuthority('USER')")
     public String payOrder(@PathVariable("id") UUID orderId, Model model) {
         RentOrder rentOrder = orderService.payOrder(orderId);
-//        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
         return "redirect:/order/{id}";
     }
 
-    @PutMapping("/payRepair/{id}")
+    @PutMapping("/pay/repair/{id}")
     @PreAuthorize("hasAuthority('USER')")
     public String payRepair(@PathVariable("id") UUID orderId, Model model) {
         RentOrder rentOrder = orderService.payRepair(orderId);
-//        model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
         return "redirect:/order/{id}";
     }
 }

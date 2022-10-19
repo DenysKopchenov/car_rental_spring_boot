@@ -11,7 +11,7 @@
      class="alert alert-success"></div>
 <div class="container my-2">
     <h1>Users</h1>
-    <form th:action="@{/admin/showUsers}" th:method="GET" th:object="${pagination}" onchange="submit()">
+    <form th:action="@{/admin/users}" th:method="GET" th:object="${pagination}" onchange="submit()">
         <label class="form-label" for="size">Page size
             <select class="form-select" name="size" id="size">
                 <option th:value="1" th:selected="*{size} == 1">1</option>
@@ -51,11 +51,11 @@
             <td th:text="${user.lastName}"></td>
             <td th:text="${user.email}"></td>
             <td>
-                <form th:if="${user.isActive}" th:action="@{/admin/blockUser/{id}(id=${user.id})}" th:method="PUT">
+                <form th:if="${user.isActive}" th:action="@{/admin/block/{id}(id=${user.id})}" th:method="PUT">
                     <input class="btn btn-danger" type="submit"
                            th:attr="onclick=|return confirm('block ${user.email}?')|" value="Block">
                 </form>
-                <form th:if="${!user.isActive}" th:action="@{/admin/unblockUser/{id}(id=${user.id})}" th:method="PUT">
+                <form th:if="${!user.isActive}" th:action="@{/admin/unblock/{id}(id=${user.id})}" th:method="PUT">
                     <input class="btn btn-success" type="submit"
                            th:attr="onclick=|return confirm('unblock ${user.email}?')|" value="Unblock">
                 </form>

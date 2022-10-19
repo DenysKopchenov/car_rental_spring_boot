@@ -1,5 +1,6 @@
 package com.dkop.car.rental.service;
 
+import com.dkop.car.rental.dto.AppUserDto;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.exception.UserAlreadyExists;
@@ -21,4 +22,6 @@ public interface UserService extends UserDetailsService {
     Page<AppUser> findAllByRole(PaginationAndSortingBean paginationAndSortingBean, Role role);
 
     AppUser changeUserActiveStatus(Boolean isActive, UUID id);
+
+    AppUser updateUserProfile(AppUserDto appUserDto);
 }

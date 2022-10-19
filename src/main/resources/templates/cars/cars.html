@@ -123,18 +123,18 @@
                                         <th:block sec:authorize="hasAuthority('ADMIN')">
                                             <div class="col m-auto text-center">
                                                 <form th:if="${car.isAvailable}"
-                                                      th:action="@{/admin/setUnavailable/{id}(id=${car.id})}"
+                                                      th:action="@{/admin/car/unavailable/{id}(id=${car.id})}"
                                                       th:method="PUT">
                                                     <input class="btn btn-danger" type="submit" value="Set unavailable">
                                                 </form>
                                                 <form th:if="${!car.isAvailable}"
-                                                      th:action="@{/admin/setAvailable/{id}(id=${car.id})}"
+                                                      th:action="@{/admin/car/available/{id}(id=${car.id})}"
                                                       th:method="PUT">
                                                     <input class="btn btn-success" type="submit" value="Set available">
                                                 </form>
                                             </div>
                                             <div div class="col m-auto text-center">
-                                                <a th:href="@{/admin/editCar/{id}(id=${car.id})}" class="btn btn-info">Edit
+                                                <a th:href="@{/admin/edit/car/{id}(id=${car.id})}" class="btn btn-info">Edit
                                                     car</a>
                                             </div>
                                         </th:block>

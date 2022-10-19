@@ -16,7 +16,7 @@
             <th:block sec:authorize="hasAuthority('USER')">
                 <div class="col md-4 d-flex align-items-center">
                     <div class="col p-2 rounded bg-light">
-                        <form th:action="@{/user/bookCar}" th:object="${order}" th:method="POST">
+                        <form th:action="@{/user/booking}" th:object="${order}" th:method="POST">
                             <div class="d-flex flex-row m-2">
                                 <div class="col px-2">
                                     <label for="startDate" class="label">Start date</label>

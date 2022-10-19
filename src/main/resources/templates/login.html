@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="/fragments/head"></th:block>
+</head>
+<body class="d-flex flex-column h-100">
+<div class="bg-image"
+     th:style="|
+    background-image: url(@{/images/bg.jpg});
+    height: 100vh;
+  |">
+    <th:block th:insert="/fragments/navbar :: navbar"></th:block>
+
+    <div class="container">
+        <div class="py-2 text-center">
+            <img class="d-block m-auto" th:src="@{/images/logo.png}"
+                 alt="" width="200px" height="150px">
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col-md-4 p-2 bg-light rounded">
+                <form th:action="@{/login}" th:method="POST">
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        Invalid username and password.
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-success">
+                        You have been logged out.
+                    </div>
+                    <div class="col m-2 p-2">
+                        <label for="username">Email</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               placeholder="email@example.com" required>
+                    </div>
+                    <div class="col m-2 p-2">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button class="btn btn-primary btn-lg btn-block" th:action="@{/registration}" type="submit">
+                        Login
+                    </button>
+                </form>
+                <p class="text-center text-muted mt-4 mb-2">Does not have an account?
+                    <a th:href="@{/registration}" class="fw-bold text-body"><u>Sign up</u></a></p>
+            </div>
+        </div>
+    </div>
+
+    <div th:insert="/fragments/footer :: body" class="fixed-bottom"></div>
+</div>
+</body>
+</html>

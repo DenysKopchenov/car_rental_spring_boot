@@ -19,13 +19,13 @@
                 <li><a class="nav-link p-2 text-secondary" th:href="@{/}">Home</a></li>
                 <li><a class="nav-link p-2 text-white" th:href="@{/cars}">Cars</a></li>
                 <th:block sec:authorize="hasAuthority('ADMIN')">
-                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/newCar}">New car</a></li>
-                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/newManager}">Create new
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/new/car}">New car</a></li>
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/new/manager}">Create new
                         manager</a></li>
-                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/showUsers}">Show users</a></li>
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/users}">Show users</a></li>
                 </th:block>
                 <li sec:authorize="hasAuthority('USER')" class="text-end">
-                    <a class="nav-link p-2 text-white" th:href="@{/user/myOrders}">My orders</a>
+                    <a class="nav-link p-2 text-white" th:href="@{/user/orders}">My orders</a>
                 </li>
                 <li sec:authorize="hasAuthority('MANAGER')" class="text-end">
                     <a class="nav-link p-2 text-white" th:href="@{/manager/allOrders}">All orders</a>
@@ -37,17 +37,21 @@
                 <input type="submit" value="Search" class="btn m-2 btn-light">
             </form>
 
-            <div sec:authorize="!isAuthenticated()" class="text-end">
+            <div sec:authorize="!isAuthenticated" class="text-end">
                 <a type="button" class="btn m-2 btn-warning" th:href="@{/login}">Login</a>
                 <a type="button" class="btn m-2 btn-warning" th:href="@{/registration}">Sign-up</a>
             </div>
-            <div sec:authorize="isAuthenticated()" class="text-center">
-                <div th:text="${#authentication.principal.role}">
+            <div sec:authorize="isAuthenticated" class="text-center">
+                <div th:text="|${#authentication.principal.firstName} ${#authentication.principal.lastName}">
                 </div>
-                <th:block sec:authorize="hasAuthority('USER')">
-                    <a type="button" class="btn btn-warning" th:href="@{/profile}">Profile</a>
-                </th:block>
-                <a type="button" class="btn btn-warning" th:href="@{/logout}">Logout</a>
+                <div class="d-flex">
+                    <th:block sec:authorize="hasAuthority('USER')">
+                        <a type="button" class="btn m-2 btn-warning" th:href="@{/profile}">Profile</a>
+                    </th:block>
+                    <form method="post" th:action="@{/logout}">
+                        <input class="btn m-2 btn-warning" type="submit" value="Logout"/>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

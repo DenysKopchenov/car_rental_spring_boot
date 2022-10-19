@@ -42,7 +42,7 @@ public class OrderController {
         return "orders/calculateForm";
     }
 
-    @GetMapping("/bookCar")
+    @GetMapping("/booking")
     public String showPayment(@ModelAttribute("order") OrderDto orderDto) {
         orderService.calculateOrder(orderDto);
         return "user/bookCarForm";

@@ -14,7 +14,7 @@
                 <th:block th:insert="/fragments/pagination :: pagination"></th:block>
             </div>
             <div class="col">
-                <form th:action="@{/manager/allOrders}" th:method="GET" th:object="${pagination}" onchange="submit()">
+                <form th:action="@{/manager/orders}" th:method="GET" th:object="${pagination}" onchange="submit()">
                     <label class="form-label" for="size">Page size
                         <select class="form-select" name="size" id="size">
                             <option th:value="1" th:selected="*{size} == 1">1</option>

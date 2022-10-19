@@ -1,5 +1,6 @@
 package com.dkop.car.rental.service.impl;
 
+import com.dkop.car.rental.dto.AppUserDto;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.exception.UserAlreadyExists;
@@ -82,6 +83,15 @@ public class UserServiceImpl implements UserService {
     public AppUser changeUserActiveStatus(Boolean isActive, UUID id) {
         AppUser appUser = appUserRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         appUser.setActive(isActive);
+        return appUserRepository.save(appUser);
+    }
+
+    @Override
+    public AppUser updateUserProfile(AppUserDto appUserDto) {
+        AppUser appUser = appUserRepository.findById(appUserDto.getId()).orElseThrow(EntityNotFoundException::new);
+        appUser.setEmail(appUserDto.getEmail());
+        appUser.setFirstName(appUserDto.getFirstName());
+        appUser.setLastName(appUserDto.getLastName());
         return appUserRepository.save(appUser);
     }
 

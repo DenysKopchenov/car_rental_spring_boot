@@ -32,7 +32,7 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-6 m-auto p-auto d-flex justify-content-center">
-            <form th:action="@{/admin/editCar/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT"
+            <form th:action="@{/admin/edit/car/{id}(id=${updated.id})}" th:object="${updated}" th:method="PUT"
                   enctype="multipart/form-data">
                 <div class="col">
                     <label for="manufacturers">Manufacturers</label>

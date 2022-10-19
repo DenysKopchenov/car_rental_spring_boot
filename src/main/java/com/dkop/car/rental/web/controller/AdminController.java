@@ -73,13 +73,13 @@ public class AdminController {
         return "admin/admin";
     }
 
-    @GetMapping("/newManager")
+    @GetMapping("/new/manager")
     public String showNewManagerRegistrationForm(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
         model.addAttribute(TITLE_ATTRIBUTE, REGISTER_NEW_MANAGER_TITLE);
         return REGISTRATION_PAGE;
     }
 
-    @PostMapping("/newManager")
+    @PostMapping("/new/manager")
     public String registerNewManager(@ModelAttribute(USER) @Valid RegFormDto regFormDto,
                                      BindingResult bindingResult,
                                      RedirectAttributes redirectAttributes) {
@@ -95,7 +95,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/newCar")
+    @GetMapping("/new/car")
     public String showNewCarForm(@ModelAttribute("car") CarDto carDto, Model model) {
         model.addAttribute(TITLE_ATTRIBUTE, ADD_NEW_CAR_TITLE);
         setManufacturersAndCategoryClassAttributes(model);
@@ -103,7 +103,7 @@ public class AdminController {
     }
 
     @SneakyThrows
-    @PostMapping("/newCar")
+    @PostMapping("/new/car")
     public String createNewCar(@ModelAttribute("car") CarDto carDto, RedirectAttributes redirectAttributes,
                                @RequestParam("image") MultipartFile multipartImage) {
         if (multipartImage.getBytes().length == 0) {
@@ -115,19 +115,19 @@ public class AdminController {
         return "redirect:/cars/" + car.getId() + "?success";
     }
 
-    @PutMapping("/setUnavailable/{id}")
+    @PutMapping("/car/unavailable/{id}")
     public String setUnavailable(@PathVariable("id") UUID id, HttpServletRequest request) {
         carService.setAvailability(id, Boolean.FALSE);
         return "redirect:" + request.getHeader("referer");
     }
 
-    @PutMapping("/setAvailable/{id}")
+    @PutMapping("/car/available/{id}")
     public String setAvailable(@PathVariable("id") UUID id, HttpServletRequest request) {
         carService.setAvailability(id, Boolean.TRUE);
         return "redirect:" + request.getHeader("referer");
     }
 
-    @GetMapping("/editCar/{id}")
+    @GetMapping("/edit/car/{id}")
     public String showEditCarForm(@PathVariable("id") UUID id, Model model) {
         Car car = carService.findById(id);
         model.addAttribute("updated", mapper.mapCarToCarDto(car));
@@ -135,14 +135,14 @@ public class AdminController {
         return "admin/editCar";
     }
 
-    @PutMapping("/editCar/{id}")
+    @PutMapping("/edit/car/{id}")
     public String editCar(@ModelAttribute("updated") CarDto updated, Model model,
                           @RequestParam("image") MultipartFile multipartImage) {
         carService.updateCar(updated);
         return "redirect:/cars/{id}?success";
     }
 
-    @GetMapping("/showUsers")
+    @GetMapping("/users")
     public String showUsers(@ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean, Model model) {
         Page<AppUser> allUserPage = userService.findAllByRole(paginationAndSortingBean, Role.USER);
         List<AppUserDto> allUsers = allUserPage.stream()
@@ -153,14 +153,14 @@ public class AdminController {
         return "admin/users";
     }
 
-    @PutMapping("/blockUser/{id}")
+    @PutMapping("/block/{id}")
     public String blockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         AppUser appUser = userService.changeUserActiveStatus(Boolean.FALSE, id);
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
         return "redirect:" + request.getHeader("referer");
     }
 
-    @PutMapping("/unblockUser/{id}")
+    @PutMapping("/unblock/{id}")
     public String unblockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         AppUser appUser = userService.changeUserActiveStatus(Boolean.TRUE, id);
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));

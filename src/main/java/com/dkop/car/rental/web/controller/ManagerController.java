@@ -34,7 +34,7 @@ public class ManagerController {
         this.mapper = mapper;
     }
 
-    @GetMapping("/allOrders")
+    @GetMapping("/orders")
     public String showClientOrders(@ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean,
                                    @ModelAttribute("filter") OrderFilterBean orderFilterBean,
                                    Model model) {
