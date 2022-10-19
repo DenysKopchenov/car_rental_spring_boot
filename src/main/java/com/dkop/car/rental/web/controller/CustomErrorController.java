@@ -18,7 +18,7 @@ public class CustomErrorController implements ErrorController {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
         if (status != null) {
-            Integer statusCode = Integer.valueOf(status.toString());
+            int statusCode = Integer.parseInt(status.toString());
 
             if (statusCode == HttpStatus.FORBIDDEN.value()) {
                 model.addAttribute("title", "403");

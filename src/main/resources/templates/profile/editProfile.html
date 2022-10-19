@@ -11,7 +11,7 @@
         <div th:if="${param.success}" class="alert alert-success">Registration success</div>
         <div th:if="${param.failed}" class="alert alert-danger"
              th:text="|Registration failed ${appUser.email} already exists|"></div>
-        <form id="regForm" th:method="POST" th:action="@{/profile/edit}"
+        <form th:method="POST" th:action="@{/profile/edit}"
               th:object="${appUser}">
             <div class="mb-3">
                 <div class="col mb-3">
@@ -37,7 +37,7 @@
                          th:errors="*{email}"></div>
                 </div>
             </div>
-            <input type="hidden" th:value="*{id}" th:field="*{email}">
+            <input type="hidden" th:value="${appUser.id}" th:field="*{id}">
             <hr class="mb-4">
             <button class="btn btn-primary btn-lg btn-block" type="submit">Edit profile</button>
         </form>

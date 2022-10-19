@@ -42,8 +42,6 @@
                 <a type="button" class="btn m-2 btn-warning" th:href="@{/registration}">Sign-up</a>
             </div>
             <div sec:authorize="isAuthenticated" class="text-center">
-                <div th:text="|${#authentication.principal.firstName} ${#authentication.principal.lastName}">
-                </div>
                 <div class="d-flex">
                     <th:block sec:authorize="hasAuthority('USER')">
                         <a type="button" class="btn m-2 btn-warning" th:href="@{/profile}">Profile</a>

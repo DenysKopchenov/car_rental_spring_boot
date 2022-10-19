@@ -37,6 +37,8 @@ public class Mapper {
         carDto.setId(car.getId());
         carDto.setManufacturer(car.getManufacturer());
         carDto.setCategoryClass(car.getCategoryClass());
+        carDto.setTransmission(car.getTransmission());
+        carDto.setFuel(car.getFuel());
         carDto.setModel(car.getModel());
         carDto.setPricePerDay(car.getPricePerDay());
         carDto.setAvailable(car.isAvailable());

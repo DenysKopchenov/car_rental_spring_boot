@@ -19,6 +19,8 @@ public interface UserService extends UserDetailsService {
 
     AppUser findByEmail(String email);
 
+    AppUser findById(UUID id);
+
     Page<AppUser> findAllByRole(PaginationAndSortingBean paginationAndSortingBean, Role role);
 
     AppUser changeUserActiveStatus(Boolean isActive, UUID id);

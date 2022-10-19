@@ -70,6 +70,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public AppUser findById(UUID id) {
+        return appUserRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
     public Page<AppUser> findAllByRole(PaginationAndSortingBean pagination, Role role) {
         if (Objects.isNull(pagination.getSort())) {
             pagination.setSort(DEFAULT_USER_SORT);
