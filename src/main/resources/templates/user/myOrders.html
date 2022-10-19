@@ -97,6 +97,15 @@
                                value="Pay repair"
                                class="btn btn-warning">
                     </form>
+
+                    <form class="col" th:if="${order.orderStatus.name eq 'PAID'}"
+                          th:action="@{/user/return/{id}(id=${order.id})}" th:method="PUT">
+                        <input type="submit"
+                               th:attr="onclick=|return confirm('Want return car?)|"
+                               value="Return car"
+                               class="btn btn-success">
+                    </form>
+
                     <a th:href="@{/order/{id}(id=${order.id})}" class="btn btn-info">Details</a>
                 </td>
             </tr>

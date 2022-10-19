@@ -1,7 +1,6 @@
 package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.OrderDto;
-import com.dkop.car.rental.dto.OrderFilterBean;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.model.order.RentOrder;
 import com.dkop.car.rental.model.user.AppUser;
@@ -40,10 +39,9 @@ public class AppUserController {
 
     @GetMapping("/orders")
     public String showClientOrders(@ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean,
-                                   @ModelAttribute("filter") OrderFilterBean orderFilterBean,
                                    @AuthenticationPrincipal AppUser appUser,
                                    Model model) {
-        Page<RentOrder> userOrdersPaged = orderService.findOrdersByAppUserId(appUser.getId(), paginationAndSortingBean, orderFilterBean);
+        Page<RentOrder> userOrdersPaged = orderService.findOrdersByAppUserId(appUser.getId(), paginationAndSortingBean);
         List<OrderDto> userOrders = userOrdersPaged.stream()
                 .map(mapper::mapRentOrderToOrderDto)
                 .collect(Collectors.toList());
@@ -60,6 +58,13 @@ public class AppUserController {
         }
         RentOrder order = orderService.saveOrder(orderDto);
         return "redirect:/order/" + order.getId();
+    }
+
+    @PutMapping("/return/{id}")
+    @PreAuthorize("hasAuthority('USER')")
+    public String returnCar(@PathVariable("id") UUID orderId) {
+        RentOrder order = orderService.askForReturn(orderId);
+        return "redirect:/order/{id}";
     }
 
     @PutMapping("/pay/order/{id}")

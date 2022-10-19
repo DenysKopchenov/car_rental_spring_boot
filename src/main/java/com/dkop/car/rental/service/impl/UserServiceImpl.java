@@ -65,11 +65,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AppUser findByEmail(String email) {
-        return appUserRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
-    }
-
-    @Override
     public AppUser findById(UUID id) {
         return appUserRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }

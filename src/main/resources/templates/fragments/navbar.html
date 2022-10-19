@@ -28,7 +28,7 @@
                     <a class="nav-link p-2 text-white" th:href="@{/user/orders}">My orders</a>
                 </li>
                 <li sec:authorize="hasAuthority('MANAGER')" class="text-end">
-                    <a class="nav-link p-2 text-white" th:href="@{/manager/allOrders}">All orders</a>
+                    <a class="nav-link p-2 text-white" th:href="@{/manager/orders}">All orders</a>
                 </li>
             </ul>
             <form th:action="@{/cars}" class="d-flex">

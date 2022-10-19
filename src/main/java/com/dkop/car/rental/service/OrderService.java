@@ -1,7 +1,6 @@
 package com.dkop.car.rental.service;
 
 import com.dkop.car.rental.dto.OrderDto;
-import com.dkop.car.rental.dto.OrderFilterBean;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.model.order.RentOrder;
 import com.dkop.car.rental.model.order.RepairPayment;
@@ -15,9 +14,9 @@ public interface OrderService {
 
     RentOrder saveOrder(OrderDto orderDto);
 
-    Page<RentOrder> findOrdersByAppUserId(UUID appUserId, PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean);
+    Page<RentOrder> findOrdersByAppUserId(UUID appUserId, PaginationAndSortingBean paginationAndSortingBean);
 
-    Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean);
+    Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean);
 
     RentOrder findById(UUID orderId);
 
@@ -34,4 +33,6 @@ public interface OrderService {
     RentOrder returnOrderWithDamage(UUID orderId, RepairPayment repairPayment);
 
     RentOrder completeRepairPaidOrder(UUID orderId);
+
+    RentOrder askForReturn(UUID orderId);
 }

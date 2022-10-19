@@ -1,7 +1,6 @@
 package com.dkop.car.rental.service.impl;
 
 import com.dkop.car.rental.dto.OrderDto;
-import com.dkop.car.rental.dto.OrderFilterBean;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.OrderStatus;
@@ -77,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<RentOrder> findOrdersByAppUserId(UUID appUserId, PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean) {
+    public Page<RentOrder> findOrdersByAppUserId(UUID appUserId, PaginationAndSortingBean paginationAndSortingBean) {
         if (Objects.isNull(paginationAndSortingBean.getSort())) {
             paginationAndSortingBean.setSort(DEFAULT_ORDER_SORT);
         }
@@ -87,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean, OrderFilterBean orderFilterBean) {
+    public Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean) {
         if (Objects.isNull(paginationAndSortingBean.getSort())) {
             paginationAndSortingBean.setSort(DEFAULT_ORDER_SORT);
         }
@@ -158,11 +157,11 @@ public class OrderServiceImpl implements OrderService {
     public RentOrder returnOrderWithoutDamage(UUID orderId) {
         RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
         OrderDetails orderDetails = rentOrder.getOrderDetails();
-        if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
+        if (orderDetails.getOrderStatus().equals(OrderStatus.CLIENT_WANT_RETURN)) {
             orderDetails.setOrderStatus(OrderStatus.COMPLETED);
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.CLIENT_WANT_RETURN));
     }
 
     @Override
@@ -170,12 +169,12 @@ public class OrderServiceImpl implements OrderService {
     public RentOrder returnOrderWithDamage(UUID orderId, RepairPayment repairPayment) {
         RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
         OrderDetails orderDetails = rentOrder.getOrderDetails();
-        if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
+        if (orderDetails.getOrderStatus().equals(OrderStatus.CLIENT_WANT_RETURN)) {
             orderDetails.setRepairPayment(repairPayment);
             orderDetails.setOrderStatus(OrderStatus.AWAIT_REPAIR_PAYMENT);
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.CLIENT_WANT_RETURN));
     }
 
     @Override
@@ -185,6 +184,17 @@ public class OrderServiceImpl implements OrderService {
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         if (orderDetails.getOrderStatus().equals(OrderStatus.REPAIR_PAID)) {
             orderDetails.setOrderStatus(OrderStatus.COMPLETED);
+            return orderRepository.save(rentOrder);
+        }
+        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.REPAIR_PAID));
+    }
+
+    @Override
+    public RentOrder askForReturn(UUID orderId) {
+        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        OrderDetails orderDetails = rentOrder.getOrderDetails();
+        if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
+            orderDetails.setOrderStatus(OrderStatus.CLIENT_WANT_RETURN);
             return orderRepository.save(rentOrder);
         }
         throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));

@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -38,19 +37,14 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Page<Car> findPaginated(Pageable pageable) {
-        return carRepository.findAll(pageable);
-    }
-
-    @Override
     public Page<Car> findAll(PaginationAndSortingBean pagination, CarFilterBean carFilterBean) {
         if (Objects.isNull(pagination.getSort())) {
             pagination.setSort(DEFAULT_CAR_SORT);
         }
-        List<CategoryClass> categories = getCategoryClassListFromFilter(carFilterBean);
-        List<Manufacturer> manufacturers = getManufacturersFromFilter(carFilterBean);
-        long minPrice = getMinPriceFromFilter(carFilterBean);
-        long maxPrice = getMaxPriceFromFilter(carFilterBean, minPrice);
+        List<CategoryClass> categories = getCategoryClassListFromFilterOrDefault(carFilterBean);
+        List<Manufacturer> manufacturers = getManufacturersFromFilterOrDefault(carFilterBean);
+        long minPrice = getMinPriceFromFilterOrMinFromRepository(carFilterBean);
+        long maxPrice = getMaxPriceFromFilterOrMaxFromRepository(carFilterBean, minPrice);
         String model = carFilterBean.getModel();
 
         PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
@@ -63,10 +57,10 @@ public class CarServiceImpl implements CarService {
         if (Objects.isNull(pagination.getSort())) {
             pagination.setSort(DEFAULT_CAR_SORT);
         }
-        List<CategoryClass> categories = getCategoryClassListFromFilter(carFilterBean);
-        List<Manufacturer> manufacturers = getManufacturersFromFilter(carFilterBean);
-        long minPrice = getMinPriceFromFilter(carFilterBean);
-        long maxPrice = getMaxPriceFromFilter(carFilterBean, minPrice);
+        List<CategoryClass> categories = getCategoryClassListFromFilterOrDefault(carFilterBean);
+        List<Manufacturer> manufacturers = getManufacturersFromFilterOrDefault(carFilterBean);
+        long minPrice = getMinPriceFromFilterOrMinFromRepository(carFilterBean);
+        long maxPrice = getMaxPriceFromFilterOrMaxFromRepository(carFilterBean, minPrice);
         String model = carFilterBean.getModel();
 
         PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
@@ -109,12 +103,7 @@ public class CarServiceImpl implements CarService {
         return carRepository.save(car);
     }
 
-    @Override
-    public void deleteCar(UUID id) {
-        carRepository.deleteById(id);
-    }
-
-    private long getMaxPriceFromFilter(CarFilterBean carFilterBean, long minPrice) {
+    private long getMaxPriceFromFilterOrMaxFromRepository(CarFilterBean carFilterBean, long minPrice) {
         long maxPrice = carFilterBean.getMaxPrice();
         if (maxPrice < minPrice) {
             maxPrice = carRepository.findMaxPrice();
@@ -123,7 +112,7 @@ public class CarServiceImpl implements CarService {
         return maxPrice;
     }
 
-    private long getMinPriceFromFilter(CarFilterBean carFilterBean) {
+    private long getMinPriceFromFilterOrMinFromRepository(CarFilterBean carFilterBean) {
         long minPrice = carFilterBean.getMinPrice();
         if (minPrice <= 0) {
             minPrice = carRepository.findMinPrice();
@@ -132,7 +121,7 @@ public class CarServiceImpl implements CarService {
         return minPrice;
     }
 
-    private static List<CategoryClass> getCategoryClassListFromFilter(CarFilterBean carFilterBean) {
+    private static List<CategoryClass> getCategoryClassListFromFilterOrDefault(CarFilterBean carFilterBean) {
         List<CategoryClass> categories = carFilterBean.getCategories();
         if (categories.isEmpty()) {
             categories = Arrays.stream(CategoryClass.values()).collect(Collectors.toList());
@@ -140,7 +129,7 @@ public class CarServiceImpl implements CarService {
         return categories;
     }
 
-    private static List<Manufacturer> getManufacturersFromFilter(CarFilterBean carFilterBean) {
+    private static List<Manufacturer> getManufacturersFromFilterOrDefault(CarFilterBean carFilterBean) {
         List<Manufacturer> manufacturers = carFilterBean.getManufacturers();
         if (manufacturers.isEmpty()) {
             manufacturers = Arrays.stream(Manufacturer.values()).collect(Collectors.toList());

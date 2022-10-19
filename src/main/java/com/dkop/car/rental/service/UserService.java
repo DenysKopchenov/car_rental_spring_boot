@@ -17,8 +17,6 @@ public interface UserService extends UserDetailsService {
 
     AppUser saveManager(RegFormDto regFormDto) throws UserAlreadyExists;
 
-    AppUser findByEmail(String email);
-
     AppUser findById(UUID id);
 
     Page<AppUser> findAllByRole(PaginationAndSortingBean paginationAndSortingBean, Role role);

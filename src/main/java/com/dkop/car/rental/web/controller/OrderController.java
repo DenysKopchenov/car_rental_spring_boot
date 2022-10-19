@@ -53,7 +53,6 @@ public class OrderController {
     public String showOrder(@PathVariable("id") UUID orderId, Model model) {
         RentOrder order = orderService.findById(orderId);
         OrderDto orderDto = mapper.mapRentOrderToOrderDto(order);
-
         model.addAttribute("order", orderDto);
         return "orders/orderInfo";
     }

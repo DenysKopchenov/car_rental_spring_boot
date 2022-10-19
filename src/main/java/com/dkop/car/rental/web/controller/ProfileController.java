@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.validation.Valid;
+
 @Controller
 @RequestMapping("/profile")
 @PreAuthorize("hasAuthority('USER')")
@@ -42,6 +44,7 @@ public class ProfileController {
 
     @PostMapping("/edit")
     public String editProfile(@ModelAttribute("appUser")
+                                  @Valid
                               AppUserDto appUserDto) {
         userService.updateUserProfile(appUserDto);
         return "redirect:/profile";

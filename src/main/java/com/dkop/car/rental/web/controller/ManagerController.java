@@ -1,7 +1,6 @@
 package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.OrderDto;
-import com.dkop.car.rental.dto.OrderFilterBean;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.RentOrder;
@@ -36,9 +35,8 @@ public class ManagerController {
 
     @GetMapping("/orders")
     public String showClientOrders(@ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean,
-                                   @ModelAttribute("filter") OrderFilterBean orderFilterBean,
                                    Model model) {
-        Page<RentOrder> allOrdersPaged = orderService.findAllOrders(paginationAndSortingBean, orderFilterBean);
+        Page<RentOrder> allOrdersPaged = orderService.findAllOrders(paginationAndSortingBean);
         List<OrderDto> allOrders = allOrdersPaged.stream()
                 .map(order -> {
                     OrderDto orderDto = new OrderDto();

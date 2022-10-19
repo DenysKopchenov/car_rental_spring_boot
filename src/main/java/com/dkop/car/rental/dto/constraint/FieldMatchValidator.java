@@ -1,4 +1,4 @@
-package com.dkop.car.rental.constraint;
+package com.dkop.car.rental.dto.constraint;
 
 import com.dkop.car.rental.dto.RegFormDto;
 

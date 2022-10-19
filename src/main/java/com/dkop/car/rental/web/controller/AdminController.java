@@ -87,7 +87,7 @@ public class AdminController {
             return REGISTRATION_PAGE;
         }
         try {
-            userService.saveAppUser(regFormDto);
+            userService.saveManager(regFormDto);
             return "redirect:/registration/manager?success";
         } catch (UserAlreadyExists ex) {
             redirectAttributes.addFlashAttribute(USER, regFormDto);
@@ -104,7 +104,9 @@ public class AdminController {
 
     @SneakyThrows
     @PostMapping("/new/car")
-    public String createNewCar(@ModelAttribute("car") CarDto carDto, RedirectAttributes redirectAttributes,
+    public String createNewCar(@ModelAttribute("car")
+                               @Valid CarDto carDto,
+                               RedirectAttributes redirectAttributes,
                                @RequestParam("image") MultipartFile multipartImage) {
         if (multipartImage.getBytes().length == 0) {
             redirectAttributes.addFlashAttribute("noImage", "Cant create car w/o image!");
@@ -136,7 +138,7 @@ public class AdminController {
     }
 
     @PutMapping("/edit/car/{id}")
-    public String editCar(@ModelAttribute("updated") CarDto updated, Model model,
+    public String editCar(@ModelAttribute("updated") @Valid CarDto updated,
                           @RequestParam("image") MultipartFile multipartImage) {
         carService.updateCar(updated);
         return "redirect:/cars/{id}?success";

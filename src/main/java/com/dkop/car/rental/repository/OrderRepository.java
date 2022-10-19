@@ -29,6 +29,4 @@ public interface OrderRepository extends JpaRepository<RentOrder, UUID> {
 
 
     Page<RentOrder> findOrdersByAppUserId(UUID appUserId, Pageable pageable);
-
-    List<RentOrder> findByOrderDetails_EndDateLessThanEqual(LocalDate endDate);
 }

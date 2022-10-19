@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Getter
@@ -21,12 +23,19 @@ import java.util.UUID;
 public class CarDto {
 
     private UUID id;
+    @NotNull
     private Manufacturer manufacturer;
+    @NotNull
     private CategoryClass categoryClass;
+    @NotNull
     private Fuel fuel;
+    @NotNull
     private Transmission transmission;
+    @NotBlank
     private String model;
+    @NotNull
     private long pricePerDay;
     private MultipartFile image;
+    @NotNull
     private boolean isAvailable;
 }
