@@ -23,5 +23,5 @@ public interface UserService extends UserDetailsService {
 
     AppUser changeUserActiveStatus(Boolean isActive, UUID id);
 
-    AppUser updateUserProfile(AppUserDto appUserDto);
+    AppUser updateUserProfile(AppUserDto appUserDto) throws UserAlreadyExists;
 }

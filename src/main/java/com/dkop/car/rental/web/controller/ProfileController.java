@@ -1,6 +1,7 @@
 package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.AppUserDto;
+import com.dkop.car.rental.exception.UserAlreadyExists;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.UserService;
 import com.dkop.car.rental.util.Mapper;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -44,9 +46,15 @@ public class ProfileController {
 
     @PostMapping("/edit")
     public String editProfile(@ModelAttribute("appUser")
-                                  @Valid
-                              AppUserDto appUserDto) {
-        userService.updateUserProfile(appUserDto);
-        return "redirect:/profile";
+                              @Valid
+                              AppUserDto appUserDto,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            userService.updateUserProfile(appUserDto);
+        } catch (UserAlreadyExists e) {
+            redirectAttributes.addFlashAttribute("appUser", appUserDto);
+            return "redirect:/profile?failed";
+        }
+        return "redirect:/profile?success";
     }
 }

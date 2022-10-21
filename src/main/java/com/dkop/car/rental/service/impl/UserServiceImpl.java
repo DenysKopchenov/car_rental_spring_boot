@@ -87,7 +87,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AppUser updateUserProfile(AppUserDto appUserDto) {
+    public AppUser updateUserProfile(AppUserDto appUserDto) throws UserAlreadyExists {
+        if (appUserRepository.existsByEmail(appUserDto.getEmail())) {
+            throw new UserAlreadyExists(String.format(USER_ALREADY_EXIST_PATTERN, (appUserDto.getEmail())));
+        }
         AppUser appUser = appUserRepository.findById(appUserDto.getId()).orElseThrow(EntityNotFoundException::new);
         appUser.setEmail(appUserDto.getEmail());
         appUser.setFirstName(appUserDto.getFirstName());

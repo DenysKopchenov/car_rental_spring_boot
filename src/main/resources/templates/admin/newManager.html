@@ -4,7 +4,6 @@
 <head>
     <th:block th:insert="/fragments/head">
     </th:block>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 <div class="bg-image"
@@ -24,7 +23,7 @@
                 <div th:if="${param.success}" class="alert alert-success">Registration success</div>
                 <div th:if="${param.failed}" class="alert alert-danger"
                      th:text="|Registration failed ${appUser.email} already exists|"></div>
-                <form id="regForm" th:method="POST" th:action="@{/registration}"
+                <form id="regForm" th:method="POST" th:action="@{/admin/new/manager}"
                       th:object="${appUser}">
                     <div class="col m-2 p-2">
                         <label for="firstName">First name</label>
@@ -71,17 +70,10 @@
                     </div>
 
                     <hr>
-                    <div class="alert alert-danger" th:if="${captcha != null}"
-                         th:text="${captcha}"></div>
-                    <div class="g-recaptcha" th:data-sitekey="${@environment.getProperty('recaptcha.key')}"></div>
-                    <br/>
                     <button class="btn btn-primary btn-lg btn-block" type="submit">
-                        Register
+                        Register new manager
                     </button>
                 </form>
-                <p class="text-center text-muted mt-4 mb-2">Have already an account? <a
-                        th:href="@{/login}" class="fw-bold text-body"><u>Login
-                    here</u></a></p>
             </div>
         </div>
     </div>

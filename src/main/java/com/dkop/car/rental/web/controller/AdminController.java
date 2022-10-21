@@ -76,7 +76,7 @@ public class AdminController {
     @GetMapping("/new/manager")
     public String showNewManagerRegistrationForm(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
         model.addAttribute(TITLE_ATTRIBUTE, REGISTER_NEW_MANAGER_TITLE);
-        return REGISTRATION_PAGE;
+        return "admin/newManager";
     }
 
     @PostMapping("/new/manager")
