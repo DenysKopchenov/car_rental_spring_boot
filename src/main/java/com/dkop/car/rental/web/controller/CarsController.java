@@ -35,7 +35,6 @@ public class CarsController {
 
     private static final String TITLE_ATTRIBUTE = "title";
     private static final String CARS_TITLE = "Cars";
-    private static final String NEW_CAR_TITLE = "Add new car";
 
     private final CarService carService;
     private final Mapper mapper;

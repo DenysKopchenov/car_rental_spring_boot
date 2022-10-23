@@ -30,6 +30,9 @@
                                        th:field="*{startDate}"
                                        th:attr="min=*{startDate}"
                                        placeholder="Date" required>
+                                <div class="alert alert-danger"
+                                     th:if="${#fields.hasErrors('startDate')}"
+                                     th:errors="*{startDate}"></div>
                             </div>
                             <div class="col px-2">
                                 <label for="endDate" class="label">End date</label>

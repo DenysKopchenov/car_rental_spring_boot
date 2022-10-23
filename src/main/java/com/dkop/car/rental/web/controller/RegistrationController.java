@@ -77,6 +77,7 @@ public class RegistrationController {
                            RedirectAttributes redirectAttributes) {
         if (!verifyReCaptcha(gRecaptchaResponse)) {
             model.addAttribute("captcha", "First validate captcha");
+            log.info("{} captcha error", regFormDto.getEmail());
             return REGISTRATION_PAGE;
         }
 

@@ -44,6 +44,5 @@ public class PassportData {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate issueDate;
     @NotBlank
-    @Pattern(regexp = "[A-Za-z]{2,20}")
     private String issueDepartment;
 }

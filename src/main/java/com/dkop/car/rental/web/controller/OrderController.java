@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +44,11 @@ public class OrderController {
     }
 
     @GetMapping("/booking")
-    public String showPayment(@ModelAttribute("order") OrderDto orderDto) {
+    public String showPayment(@ModelAttribute("order") OrderDto orderDto, BindingResult bindingResult) {
+        if (orderDto.getStartDate().isAfter(orderDto.getEndDate())) {
+            bindingResult.rejectValue("startDate", "startDate", "Start date can be after end date");
+            return "orders/calculateForm";
+        }
         orderService.calculateOrder(orderDto);
         return "user/bookCarForm";
     }

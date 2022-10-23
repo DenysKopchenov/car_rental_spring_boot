@@ -16,6 +16,7 @@ import com.dkop.car.rental.service.CarService;
 import com.dkop.car.rental.service.UserService;
 import com.dkop.car.rental.util.Mapper;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,18 +43,23 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/admin")
 @PreAuthorize("hasAuthority('ADMIN')")
+@Slf4j
 public class AdminController {
 
     private static final String REGISTRATION_PAGE = "registration";
     private static final String TITLE_ATTRIBUTE = "title";
-    private static final String ADMIN_PAGE = "title";
+    private static final String ADMIN_PAGE = "Administrator";
     private static final String REGISTER_NEW_MANAGER_TITLE = "Register new manager";
     private static final String ADD_NEW_CAR_TITLE = "Add new car";
+    private static final String EDIT_CAR_TITLE = "Edit car";
+    private static final String USERS_TITLE = "Users";
     private static final String USER = "appUser";
     private static final String MANUFACTURERS_ATTRIBUTE = "manufacturers";
     private static final String CATEGORIES_ATTRIBUTE = "class";
     private static final String FUEL_TYPES_ATTRIBUTE = "fuelTypes";
     private static final String TRANSMISSION_TYPES_ATTRIBUTE = "transmissionTypes";
+    private static final String REDIRECT = "redirect:";
+    private static final String HEADER_REFERER = "referer";
 
     private final CarService carService;
     private final UserService userService;
@@ -88,10 +94,10 @@ public class AdminController {
         }
         try {
             userService.saveManager(regFormDto);
-            return "redirect:/registration/manager?success";
+            return "redirect:/admin/new/manager?success";
         } catch (UserAlreadyExists ex) {
             redirectAttributes.addFlashAttribute(USER, regFormDto);
-            return "redirect:/registration/manager?failed";
+            return "redirect:/admin/new/manager?failed";
         }
     }
 
@@ -109,30 +115,32 @@ public class AdminController {
                                RedirectAttributes redirectAttributes,
                                @RequestParam("image") MultipartFile multipartImage) {
         if (multipartImage.getBytes().length == 0) {
-            redirectAttributes.addFlashAttribute("noImage", "Cant create car w/o image!");
+            redirectAttributes.addFlashAttribute("noImage", "Cant create car without image!");
             redirectAttributes.addFlashAttribute("car", carDto);
             return "redirect:/admin/newCar";
         }
         Car car = carService.saveCar(carDto);
+        log.info("Car with id = {} created", car.getId());
         return "redirect:/cars/" + car.getId() + "?success";
     }
 
     @PutMapping("/car/unavailable/{id}")
     public String setUnavailable(@PathVariable("id") UUID id, HttpServletRequest request) {
         carService.setAvailability(id, Boolean.FALSE);
-        return "redirect:" + request.getHeader("referer");
+        return REDIRECT + request.getHeader(HEADER_REFERER);
     }
 
     @PutMapping("/car/available/{id}")
     public String setAvailable(@PathVariable("id") UUID id, HttpServletRequest request) {
         carService.setAvailability(id, Boolean.TRUE);
-        return "redirect:" + request.getHeader("referer");
+        return REDIRECT + request.getHeader(HEADER_REFERER);
     }
 
     @GetMapping("/edit/car/{id}")
     public String showEditCarForm(@PathVariable("id") UUID id, Model model) {
         Car car = carService.findById(id);
         model.addAttribute("updated", mapper.mapCarToCarDto(car));
+        model.addAttribute(TITLE_ATTRIBUTE, EDIT_CAR_TITLE);
         setManufacturersAndCategoryClassAttributes(model);
         return "admin/editCar";
     }
@@ -152,6 +160,7 @@ public class AdminController {
                 .collect(Collectors.toList());
         model.addAttribute("numberOfPages", allUserPage.getTotalPages());
         model.addAttribute("users", allUsers);
+        model.addAttribute(TITLE_ATTRIBUTE, USERS_TITLE);
         return "admin/users";
     }
 
@@ -159,14 +168,14 @@ public class AdminController {
     public String blockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         AppUser appUser = userService.changeUserActiveStatus(Boolean.FALSE, id);
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
-        return "redirect:" + request.getHeader("referer");
+        return REDIRECT + request.getHeader(HEADER_REFERER);
     }
 
     @PutMapping("/unblock/{id}")
     public String unblockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         AppUser appUser = userService.changeUserActiveStatus(Boolean.TRUE, id);
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
-        return "redirect:" + request.getHeader("referer");
+        return REDIRECT + request.getHeader(HEADER_REFERER);
     }
 
 

@@ -6,6 +6,7 @@ import com.dkop.car.rental.model.order.RentOrder;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.OrderService;
 import com.dkop.car.rental.util.Mapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,8 +28,10 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/user")
 @PreAuthorize("hasAuthority('USER')")
+@Slf4j
 public class AppUserController {
 
+    private static final String REDIRECT_ORDER_INFO_PAGE = "redirect:/order/{id}";
     private final OrderService orderService;
     private final Mapper mapper;
 
@@ -53,10 +56,16 @@ public class AppUserController {
     @PostMapping("/booking")
     @PreAuthorize("hasAuthority('USER')")
     public String bookCar(@ModelAttribute("order") @Valid OrderDto orderDto, BindingResult bindingResult) {
+        if (orderDto.getStartDate().isAfter(orderDto.getEndDate())) {
+            bindingResult.rejectValue("startDate", "startDate", "Start date can be after end date");
+        }
         if (bindingResult.hasErrors()) {
             return "user/bookCarForm";
         }
+
+
         RentOrder order = orderService.saveOrder(orderDto);
+        log.info("User {} created order {}", order.getAppUser().getId(), order.getId());
         return "redirect:/order/" + order.getId();
     }
 
@@ -64,20 +73,23 @@ public class AppUserController {
     @PreAuthorize("hasAuthority('USER')")
     public String returnCar(@PathVariable("id") UUID orderId) {
         RentOrder order = orderService.askForReturn(orderId);
-        return "redirect:/order/{id}";
+        log.info("User {} asked for return order {}", order.getAppUser().getId(), order.getId());
+        return REDIRECT_ORDER_INFO_PAGE;
     }
 
     @PutMapping("/pay/order/{id}")
     @PreAuthorize("hasAuthority('USER')")
-    public String payOrder(@PathVariable("id") UUID orderId, Model model) {
-        RentOrder rentOrder = orderService.payOrder(orderId);
-        return "redirect:/order/{id}";
+    public String payOrder(@PathVariable("id") UUID orderId) {
+        RentOrder order = orderService.payOrder(orderId);
+        log.info("User {} paid for order {}", order.getAppUser().getId(), order.getId());
+        return REDIRECT_ORDER_INFO_PAGE;
     }
 
     @PutMapping("/pay/repair/{id}")
     @PreAuthorize("hasAuthority('USER')")
-    public String payRepair(@PathVariable("id") UUID orderId, Model model) {
-        RentOrder rentOrder = orderService.payRepair(orderId);
-        return "redirect:/order/{id}";
+    public String payRepair(@PathVariable("id") UUID orderId) {
+        RentOrder order = orderService.payRepair(orderId);
+        log.info("User {} paid repair for order {}", order.getAppUser().getId(), order.getId());
+        return REDIRECT_ORDER_INFO_PAGE;
     }
 }

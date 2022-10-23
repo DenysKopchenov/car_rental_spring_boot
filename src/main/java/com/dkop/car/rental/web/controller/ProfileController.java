@@ -22,6 +22,7 @@ import javax.validation.Valid;
 @PreAuthorize("hasAuthority('USER')")
 public class ProfileController {
 
+    private static final String USER_ATTRIBUTE = "appUser";
     private final UserService userService;
     private final Mapper mapper;
 
@@ -33,14 +34,14 @@ public class ProfileController {
     @GetMapping
     public String showProfile(Model model, @AuthenticationPrincipal AppUser principal) {
         AppUser appUser = userService.findById(principal.getId());
-        model.addAttribute("appUser", mapper.mapAppUserToAppUserDto(appUser));
+        model.addAttribute(USER_ATTRIBUTE, mapper.mapAppUserToAppUserDto(appUser));
         return "profile/profile";
     }
 
     @GetMapping("/edit")
     public String showEditProfileForm(Model model, @AuthenticationPrincipal AppUser principal) {
         AppUser appUser = userService.findById(principal.getId());
-        model.addAttribute("appUser", mapper.mapAppUserToAppUserDto(appUser));
+        model.addAttribute(USER_ATTRIBUTE, mapper.mapAppUserToAppUserDto(appUser));
         return "profile/editProfile";
     }
 
@@ -52,7 +53,7 @@ public class ProfileController {
         try {
             userService.updateUserProfile(appUserDto);
         } catch (UserAlreadyExists e) {
-            redirectAttributes.addFlashAttribute("appUser", appUserDto);
+            redirectAttributes.addFlashAttribute(USER_ATTRIBUTE, appUserDto);
             return "redirect:/profile?failed";
         }
         return "redirect:/profile?success";

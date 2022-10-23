@@ -2,7 +2,6 @@ package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
-import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.RentOrder;
 import com.dkop.car.rental.model.order.RepairPayment;
 import com.dkop.car.rental.service.OrderService;
@@ -25,6 +24,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/manager")
 @PreAuthorize("hasAuthority('MANAGER')")
 public class ManagerController {
+    private static final String REDIRECT_ORDER_INFO_PAGE = "redirect:/order/{id}";
+    private static final String TITLE_ATTRIBUTE = "title";
+    private static final String ORDER_ATTRIBUTE = "order";
     private final OrderService orderService;
     private final Mapper mapper;
 
@@ -38,31 +40,20 @@ public class ManagerController {
                                    Model model) {
         Page<RentOrder> allOrdersPaged = orderService.findAllOrders(paginationAndSortingBean);
         List<OrderDto> allOrders = allOrdersPaged.stream()
-                .map(order -> {
-                    OrderDto orderDto = new OrderDto();
-                    orderDto.setId(order.getId());
-                    orderDto.setCar(order.getCar());
-                    orderDto.setAppUserDto(mapper.mapAppUserToAppUserDto(order.getAppUser()));
-                    OrderDetails orderDetails = order.getOrderDetails();
-                    orderDto.setWithDriver(orderDetails.isWithDriver());
-                    orderDto.setStartDate(orderDetails.getStartDate());
-                    orderDto.setEndDate(orderDetails.getEndDate());
-                    orderDto.setRentalPrice(orderDetails.getRentalPrice());
-                    orderDto.setOrderStatus(orderDetails.getOrderStatus());
-                    orderDto.setRepairPayment(orderDetails.getRepairPayment());
-                    return orderDto;
-                })
+                .map(mapper::mapRentOrderToOrderDto
+                )
                 .collect(Collectors.toList());
         model.addAttribute("orders", allOrders);
         model.addAttribute("numberOfPages", allOrdersPaged.getTotalPages());
+        model.addAttribute(TITLE_ATTRIBUTE, "Orders");
         return "manager/allOrders";
     }
 
     @PutMapping("/accept/{id}")
     @PreAuthorize("hasAuthority('MANAGER')")
-    public String acceptOrder(@PathVariable("id") UUID orderId, Model model) {
+    public String acceptOrder(@PathVariable("id") UUID orderId) {
         orderService.acceptOrder(orderId);
-        return "redirect:/order/{id}";
+        return REDIRECT_ORDER_INFO_PAGE;
     }
 
     @GetMapping("/reject/{id}")
@@ -71,7 +62,8 @@ public class ManagerController {
         RentOrder order = orderService.findById(orderId);
         OrderDto orderDto = mapper.mapRentOrderToOrderDto(order);
 
-        model.addAttribute("order", orderDto);
+        model.addAttribute(ORDER_ATTRIBUTE, orderDto);
+        model.addAttribute(TITLE_ATTRIBUTE, "Reject order");
         return "manager/rejectOrderForm";
     }
 
@@ -83,12 +75,12 @@ public class ManagerController {
                                Model model) {
         if (rejectDetails.isBlank()) {
             RentOrder rentOrder = orderService.findById(orderId);
-            model.addAttribute("order", mapper.mapRentOrderToOrderDto(rentOrder));
+            model.addAttribute(ORDER_ATTRIBUTE, mapper.mapRentOrderToOrderDto(rentOrder));
             model.addAttribute("rejectDetailsError", "Must not be empty");
             return "manager/rejectOrderForm";
         }
         orderService.rejectOrder(orderId, rejectDetails);
-        return "redirect:/order/{id}";
+        return REDIRECT_ORDER_INFO_PAGE;
     }
 
     @GetMapping("/return/{id}")
@@ -97,7 +89,8 @@ public class ManagerController {
         RentOrder order = orderService.findById(orderId);
         OrderDto orderDto = mapper.mapRentOrderToOrderDto(order);
 
-        model.addAttribute("order", orderDto);
+        model.addAttribute(ORDER_ATTRIBUTE, orderDto);
+        model.addAttribute(TITLE_ATTRIBUTE, "Return order");
         return "manager/returnOrderForm";
     }
 
@@ -105,18 +98,18 @@ public class ManagerController {
     @PreAuthorize("hasAuthority('MANAGER')")
     public String submitReturn(@PathVariable("id") UUID orderId, @ModelAttribute("order") OrderDto orderDto) {
         RepairPayment repairPayment = orderDto.getRepairPayment();
-        if (repairPayment.getRepairCost() == 0) {
+        if (repairPayment.getRepairCost() <= 0) {
             orderService.returnOrderWithoutDamage(orderId);
-            return "redirect:/order/{id}";
+            return REDIRECT_ORDER_INFO_PAGE;
         }
-        orderService.returnOrderWithDamage(orderId, orderDto.getRepairPayment());
-        return "redirect:/order/{id}";
+        orderService.returnOrderWithDamage(orderId, repairPayment);
+        return REDIRECT_ORDER_INFO_PAGE;
     }
 
     @PutMapping("/complete/{id}")
     @PreAuthorize("hasAuthority('MANAGER')")
     public String completeRepairPaidOrder(@PathVariable("id") UUID orderId) {
         orderService.completeRepairPaidOrder(orderId);
-        return "redirect:/order/{id}";
+        return REDIRECT_ORDER_INFO_PAGE;
     }
 }
