@@ -7,6 +7,7 @@ import com.dkop.car.rental.exception.UserAlreadyExists;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.model.user.Role;
 import com.dkop.car.rental.repository.AppUserRepository;
+import com.dkop.car.rental.service.MailService;
 import com.dkop.car.rental.service.UserService;
 import com.dkop.car.rental.util.Mapper;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +36,17 @@ public class UserServiceImpl implements UserService {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final Mapper mapper;
+    private final MailService mailService;
 
     @Autowired
-    public UserServiceImpl(AppUserRepository appUserRepository, @Lazy PasswordEncoder passwordEncoder, Mapper mapper) {
+    public UserServiceImpl(AppUserRepository appUserRepository,
+                           @Lazy PasswordEncoder passwordEncoder,
+                           Mapper mapper,
+                           MailService mailService) {
         this.appUserRepository = appUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.mapper = mapper;
+        this.mailService = mailService;
     }
 
 
@@ -51,7 +57,10 @@ public class UserServiceImpl implements UserService {
 
         AppUser appUser = mapper.mapRegFormDtoToUser(regFormDto);
         appUser.setEncodedPassword(passwordEncoder.encode(regFormDto.getPassword()));
-        return appUserRepository.save(appUser);
+        AppUser savedUser = appUserRepository.save(appUser);
+        mailService.sendEmail(appUser.getEmail(), "Registration completed",
+                String.format("You account %s successfully registered in our car rental service.", savedUser.getEmail()));
+        return savedUser;
     }
 
     @Override
@@ -80,7 +89,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AppUser changeUserActiveStatus(Boolean isActive, UUID id) {
+    public AppUser changeUserActiveStatus(boolean isActive, UUID id) {
         AppUser appUser = appUserRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         appUser.setActive(isActive);
         return appUserRepository.save(appUser);
