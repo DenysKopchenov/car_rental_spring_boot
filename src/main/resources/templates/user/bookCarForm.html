@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:insert="/fragments/head"></th:block>
+    <th:block th:insert="fragments/head"></th:block>
 </head>
 <body>
 <div class="bg-image"
@@ -9,7 +9,7 @@
     background-image: url(@{/images/bg.jpg});
     height: 100vh;
   |">
-    <th:block th:insert="/fragments/navbar :: navbar"></th:block>
+    <th:block th:insert="fragments/navbar :: navbar"></th:block>
 
     <div class="container">
         <div class="row">
@@ -124,7 +124,7 @@
         </div>
     </div>
 
-    <div th:insert="/fragments/footer :: footer"></div>
+    <div th:insert="fragments/footer :: footer"></div>
 </div>
 </body>
 </html>

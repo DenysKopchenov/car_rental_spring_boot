@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <th:block th:insert="/fragments/head">
+    <th:block th:insert="fragments/head">
     </th:block>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
@@ -12,7 +12,7 @@
     background-image: url(@{/images/bg.jpg});
     height: 100%;
   |">
-    <th:block th:insert="/fragments/navbar :: navbar">
+    <th:block th:insert="fragments/navbar :: navbar">
     </th:block>
     <div class="container">
         <div class="py-2 text-center">
@@ -85,7 +85,7 @@
             </div>
         </div>
     </div>
-    <th:block th:insert="/fragments/footer :: footer"></th:block>
+    <th:block th:insert="fragments/footer :: footer"></th:block>
 </div>
 </body>
 </html>

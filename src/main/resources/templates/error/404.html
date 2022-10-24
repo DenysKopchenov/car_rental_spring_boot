@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:insert="/fragments/head"></th:block>
+    <th:block th:insert="fragments/head"></th:block>
 </head>
 <body>
-<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<th:block th:insert="fragments/navbar :: navbar"></th:block>
 <div class="d-flex align-items-center justify-content-center vh-100">
     <div class="text-center">
         <h1 class="display-1 fw-bold">404</h1>
@@ -15,6 +15,6 @@
         <a th:href="@{/}" class="btn btn-primary">Go Home</a>
     </div>
 </div>
-<div th:insert="/fragments/footer :: body" class="fixed-bottom"></div>
+<div th:insert="fragments/footer :: body" class="fixed-bottom"></div>
 </body>
 </html>

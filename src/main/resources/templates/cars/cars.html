@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:replace="/fragments/head :: head"></th:block>
+    <th:block th:replace="fragments/head :: head"></th:block>
 </head>
 <body>
-<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<th:block th:insert="fragments/navbar :: navbar"></th:block>
 <div class="bg-image"
      th:style="|
     background-image: url(@{/images/bg.jpg});
@@ -65,7 +65,7 @@
             <div class="col col-lg">
                 <div class="container d-flex flex-row justify-content-between mb-0 px-3">
                     <div>
-                        <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+                        <th:block th:insert="fragments/pagination :: pagination"></th:block>
                     </div>
                     <div class="m-2 pt-2">
                         <form th:action="@{/cars}" th:method="GET" th:object="${pagination}" onchange="submit()">
@@ -156,12 +156,12 @@
                     </div>
                 </div>
                 <div class="container d-flex flex-row justify-content-between mb-0 px-3">
-                    <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+                    <th:block th:insert="fragments/pagination :: pagination"></th:block>
                 </div>
             </div>
         </div>
     </div>
-    <th:block th:insert="/fragments/footer :: footer"></th:block>
+    <th:block th:insert="fragments/footer :: footer"></th:block>
 </div>
 </body>
 </html>

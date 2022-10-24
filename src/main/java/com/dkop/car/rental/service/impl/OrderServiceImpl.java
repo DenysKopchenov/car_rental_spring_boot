@@ -21,7 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.Duration;
 import java.time.Period;
+import java.time.chrono.ChronoPeriod;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -209,7 +212,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private int countRentDays(OrderDto orderDto) {
-        return Period.between(orderDto.getStartDate(), orderDto.getEndDate()).getDays();
+        return (int) ChronoUnit.DAYS.between(orderDto.getStartDate(), orderDto.getEndDate());
     }
 
     private boolean isOrderAlreadyExist(RentOrder rentOrder) {

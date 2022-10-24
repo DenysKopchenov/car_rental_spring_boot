@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:insert="/fragments/head"></th:block>
+    <th:block th:insert="fragments/head"></th:block>
 </head>
 <body class="d-flex flex-column h-100">
 <div class="bg-image"
@@ -9,8 +9,8 @@
     background-image: url(@{/images/bg.jpg});
     height: 100vh;
   |">
-    <th:block th:insert="/fragments/navbar :: navbar"></th:block>
-    <div th:insert="/fragments/footer :: body" class="fixed-bottom"></div>
+    <th:block th:insert="fragments/navbar :: navbar"></th:block>
+    <div th:insert="fragments/footer :: body" class="fixed-bottom"></div>
 </div>
 </body>
 </html>

@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
-    <th:block th:insert="/fragments/head"></th:block>
+    <th:block th:insert="fragments/head"></th:block>
 </head>
 <body>
-<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<th:block th:insert="fragments/navbar :: navbar"></th:block>
 
 <div class="container">
     <div class="d-flex flex-row justify-content-center mb-0 px-3">
@@ -101,6 +101,6 @@
     </div>
 </div>
 
-<div th:insert="/fragments/footer :: footer"></div>
+<div th:insert="fragments/footer :: footer"></div>
 </body>
 </html>

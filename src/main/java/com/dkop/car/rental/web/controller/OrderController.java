@@ -45,8 +45,10 @@ public class OrderController {
 
     @GetMapping("/booking")
     public String showPayment(@ModelAttribute("order") OrderDto orderDto, BindingResult bindingResult) {
-        if (orderDto.getStartDate().isAfter(orderDto.getEndDate())) {
-            bindingResult.rejectValue("startDate", "startDate", "Start date can be after end date");
+        LocalDate startDate = orderDto.getStartDate();
+        LocalDate endDate = orderDto.getEndDate();
+        if (startDate.isAfter(endDate) || startDate.isEqual(endDate)) {
+            bindingResult.rejectValue("startDate", "startDate", "Start date can be equal or after end date");
             return "orders/calculateForm";
         }
         orderService.calculateOrder(orderDto);

@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:insert="/fragments/head"></th:block>
+    <th:block th:insert="fragments/head"></th:block>
 </head>
 <body>
-<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<th:block th:insert="fragments/navbar :: navbar"></th:block>
 
 <div th:if="${!userOrders.isEmpty()}">
     <div class="container my-2">
         <h1>Orders</h1>
         <div class="row">
             <div class="col">
-                <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+                <th:block th:insert="fragments/pagination :: pagination"></th:block>
             </div>
             <div class="col">
                 <form th:action="@{/user/orders}" th:method="GET" th:object="${pagination}" onchange="submit()">
@@ -107,10 +107,10 @@
                     </div>
                 </div>
             </div>
-            <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+            <th:block th:insert="fragments/pagination :: pagination"></th:block>
         </div>
     </div>
 </div>
-<div th:insert="/fragments/footer :: footer"></div>
+<div th:insert="fragments/footer :: footer"></div>
 </body>
 </html>

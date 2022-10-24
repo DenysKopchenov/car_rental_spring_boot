@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:insert="/fragments/head"></th:block>
+    <th:block th:insert="fragments/head"></th:block>
 </head>
 <body>
-<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<th:block th:insert="fragments/navbar :: navbar"></th:block>
 <div class="alert alert-danger" th:if="${noImage != null}" th:text="${noImage}"></div>
 <div class="container">
     <div class="row justify-content-center">
@@ -59,6 +59,6 @@
         </div>
     </div>
 </div>
-<div th:insert="/fragments/footer :: footer"></div>
+<div th:insert="fragments/footer :: footer"></div>
 </body>
 </html>

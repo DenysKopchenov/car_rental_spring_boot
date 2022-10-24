@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:insert="/fragments/head"></th:block>
+    <th:block th:insert="fragments/head"></th:block>
 </head>
 <body>
-<th:block th:insert="/fragments/navbar :: navbar"></th:block>
+<th:block th:insert="fragments/navbar :: navbar"></th:block>
 <div th:if="${param.blocked} and ${userResult != null}" th:text="|User ${userResult.email} was blocked|"
      class="alert alert-danger"></div>
 <div th:if="${param.unblocked} and ${userResult != null}" th:text="|User ${userResult.email} was unblocked|"
@@ -35,7 +35,7 @@
             </select>
         </label>
     </form>
-    <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+    <th:block th:insert="fragments/pagination :: pagination"></th:block>
     <table border="1" class="table table-striped table-responsive-md">
         <thead>
         <tr>
@@ -63,9 +63,9 @@
         </tr>
         </tbody>
     </table>
-    <th:block th:insert="/fragments/pagination :: pagination"></th:block>
+    <th:block th:insert="fragments/pagination :: pagination"></th:block>
 </div>
 
-<div th:insert="/fragments/footer :: footer"></div>
+<div th:insert="fragments/footer :: footer"></div>
 </body>
 </html>

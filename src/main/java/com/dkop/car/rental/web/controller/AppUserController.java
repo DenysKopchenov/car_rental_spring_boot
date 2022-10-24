@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class AppUserController {
 
     private static final String REDIRECT_ORDER_INFO_PAGE = "redirect:/order/{id}";
+    private static final String TITLE = "title";
     private final OrderService orderService;
     private final Mapper mapper;
 
@@ -50,6 +51,7 @@ public class AppUserController {
                 .collect(Collectors.toList());
         model.addAttribute("userOrders", userOrders);
         model.addAttribute("numberOfPages", userOrdersPaged.getTotalPages());
+        model.addAttribute(TITLE, "My orders");
         return "user/myOrders";
     }
 
@@ -62,7 +64,6 @@ public class AppUserController {
         if (bindingResult.hasErrors()) {
             return "user/bookCarForm";
         }
-
 
         RentOrder order = orderService.saveOrder(orderDto);
         log.info("User {} created order {}", order.getAppUser().getId(), order.getId());
