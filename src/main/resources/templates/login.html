@@ -19,27 +19,30 @@
         <div class="row justify-content-md-center">
             <div class="col-md-4 p-2 bg-light rounded">
                 <form th:action="@{/login}" th:method="POST">
-                    <div th:if="${param.error}" class="alert alert-danger">
-                        Invalid username and password.
+                    <div th:if="${param.error}" th:text="#{login.invalid.credentials}" class="alert alert-danger">
                     </div>
-                    <div th:if="${param.logout}" class="alert alert-success">
-                        You have been logged out.
+                    <div th:if="${param.logout}" th:text="#{login.logout}" class="alert alert-success">
                     </div>
                     <div class="col m-2 p-2">
-                        <label for="username">Email</label>
+                        <label for="username" th:text="#{email}">Email</label>
                         <input type="text" class="form-control" id="username" name="username"
                                placeholder="email@example.com" required>
                     </div>
                     <div class="col m-2 p-2">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <label for="password" th:text="#{password}">Password</label>
+                        <input type="password" th:attr="placeholder=#{password}" class="form-control" id="password"
+                               name="password" required>
                     </div>
-                    <button class="btn btn-primary btn-lg btn-block" th:action="@{/registration}" type="submit">
-                        Login
-                    </button>
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-lg btn-block" th:action="@{/registration}" type="submit"
+                                th:text="#{login}">
+                            Login
+                        </button>
+                    </div>
                 </form>
-                <p class="text-center text-muted mt-4 mb-2">Does not have an account?
-                    <a th:href="@{/registration}" class="fw-bold text-body"><u>Sign up</u></a></p>
+                <p class="text-center text-muted mt-4 mb-2">
+                    <th:block th:text="#{login.no.account}">Does not have an account?></th:block>
+                    <a th:href="@{/registration}" class="fw-bold text-body" th:text="#{sign.up}">Sign up</a></p>
             </div>
         </div>
     </div>

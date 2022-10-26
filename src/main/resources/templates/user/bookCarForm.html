@@ -69,7 +69,7 @@
                                     <labe for="issueDate" class="col-sm-3 form-label">Issue date</labe>
                                     <input class="col-md-4 form-control" type="date" id="issueDate"
                                            th:field="*{passportData.issueDate}"
-                                           th:attr="min=${#temporals.format(#temporals.createNow().minusYears(18), 'yyyy-MM-dd')}"
+                                           th:attr="max=${#temporals.format(#temporals.createNow().minusYears(@environment.getProperty('minimal.age.for.order')), 'yyyy-MM-dd')}"
                                            required>
                                     <div class="alert alert-danger"
                                          th:if="${#fields.hasErrors('passportData.issueDate')}"

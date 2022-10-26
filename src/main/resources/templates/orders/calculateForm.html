@@ -17,7 +17,8 @@
                     <form th:action="@{/order/booking}" th:object="${order}" th:method="GET">
                         <h2 class="text-center">Calculate price</h2>
                         <div class="form-check">
-                            <label for="needDriver" class="form-check-label">Need driver (+30$ per/day)</label>
+                            <label for="needDriver" class="form-check-label"
+                                   th:text="|Need driver (${@environment.getProperty('price.for.driver')}$ per/day)|"></label>
                             <input type="checkbox" id="needDriver"
                                    th:field="*{withDriver}"
                                    class="checkbox-custom">

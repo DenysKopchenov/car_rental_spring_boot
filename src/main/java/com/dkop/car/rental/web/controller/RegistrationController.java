@@ -8,7 +8,9 @@ import com.dkop.car.rental.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -36,7 +38,6 @@ public class RegistrationController {
     private static final String REGISTRATION_PAGE = "registration";
     private static final String USER = "appUser";
     private static final String TITLE_ATTRIBUTE = "title";
-    private static final String TITLE_VALUE = "Registration";
     private static final String SUCCESS_REGISTRATION = "redirect:/registration?success";
     private static final String FAILED_REGISTRATION = "redirect:/registration?failed";
 
@@ -46,17 +47,18 @@ public class RegistrationController {
     private String recaptchaServerUrl;
     private final UserService userService;
     private final RestTemplate restTemplate;
-
+    private final MessageSource messageSource;
 
     @Autowired
-    public RegistrationController(UserService userService, @Lazy RestTemplate restTemplate) {
+    public RegistrationController(UserService userService, @Lazy RestTemplate restTemplate, MessageSource messageSource) {
         this.userService = userService;
         this.restTemplate = restTemplate;
+        this.messageSource = messageSource;
     }
 
     @GetMapping
     public String showRegistrationForm(@ModelAttribute(USER) RegFormDto regFormDto, Model model) {
-        model.addAttribute(TITLE_ATTRIBUTE, TITLE_VALUE);
+        model.addAttribute(TITLE_ATTRIBUTE, messageSource.getMessage("registration", null, LocaleContextHolder.getLocale()));
         return REGISTRATION_PAGE;
     }
 
@@ -68,7 +70,7 @@ public class RegistrationController {
                            Model model,
                            RedirectAttributes redirectAttributes) {
         if (!verifyReCaptcha(gRecaptchaResponse)) {
-            model.addAttribute("captcha", "First validate captcha");
+            model.addAttribute("captcha", messageSource.getMessage("validation.captcha", null, LocaleContextHolder.getLocale()));
             log.info("{} captcha error", regFormDto.getEmail());
             return REGISTRATION_PAGE;
         }

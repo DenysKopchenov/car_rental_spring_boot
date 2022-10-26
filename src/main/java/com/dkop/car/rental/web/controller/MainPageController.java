@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MainPageController {
 
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
 
     @Autowired
     public MainPageController(MessageSource messageSource) {
@@ -19,7 +19,7 @@ public class MainPageController {
 
     @GetMapping
     public String homePage(Model model) {
-        model.addAttribute("title", messageSource.getMessage("hello", null, LocaleContextHolder.getLocale()));
+        model.addAttribute("title", messageSource.getMessage("home", null, LocaleContextHolder.getLocale()));
         return "home";
     }
 }

@@ -6,7 +6,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
-public class FieldMatchValidator implements ConstraintValidator<FieldMatch, RegFormDto> {
+public class PasswordMatchValidator implements ConstraintValidator<PasswordMatch, RegFormDto> {
 
     @Override
     public boolean isValid(RegFormDto regFormDto, ConstraintValidatorContext context) {

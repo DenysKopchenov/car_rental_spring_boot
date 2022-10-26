@@ -21,26 +21,28 @@
         </div>
         <div class="row justify-content-md-center">
             <div class="col-md-4 p-2 bg-light rounded">
-                <div th:if="${param.success}" class="alert alert-success">Registration success</div>
+                <div th:if="${param.success}" class="alert alert-success" th:text="#{registration.success}">Registration
+                    success
+                </div>
                 <div th:if="${param.failed}" class="alert alert-danger"
-                     th:text="|Registration failed ${appUser.email} already exists|"></div>
+                     th:text="|#{registration.failed} ${appUser.email} #{registration.already.exist}|"></div>
                 <form id="regForm" th:method="POST" th:action="@{/registration}"
                       th:object="${appUser}">
                     <div class="col m-2 p-2">
-                        <label for="firstName">First name</label>
+                        <label for="firstName" th:text="#{registration.first.name}">First name</label>
                         <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('firstName')}"
                              th:errors="*{firstName}"></div>
                     </div>
                     <div class="col m-2 p-2">
-                        <label for="lastName">Last name</label>
+                        <label for="lastName" th:text="#{registration.last.name}">Last name</label>
                         <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('lastName')}"
                              th:errors="*{lastName}"></div>
                     </div>
 
                     <div class="col m-2 p-2">
-                        <label for="email">Email</label>
+                        <label for="email" th:text="#{email}">Email</label>
                         <input type="email" class="form-control" id="email" th:field="*{email}"
                                placeholder="email@example.com" required>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('email')}"
@@ -48,13 +50,13 @@
                     </div>
 
                     <div class="col m-2 p-2">
-                        <label for="password">Password</label>
+                        <label for="password" th:text="#{password}">Password</label>
                         <input type="password" class="form-control" id="password" th:field="*{password}" required>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('password')}"
                              th:errors="*{password}"></div>
                     </div>
                     <div class="col m-2 p-2">
-                        <label for="confPassword">Confirm password</label>
+                        <label for="confPassword" th:text="#{password.confirm}">Confirm password</label>
                         <input type="password" class="form-control" id="confPassword" th:field="*{confPassword}"
                                required>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('confPassword')}"
@@ -65,7 +67,8 @@
                     <div class="col custom-control custom-checkbox m-2 p-2">
                         <input type="checkbox" class="custom-control-input" id="same-address" th:field="*{termsOfUse}"
                                required>
-                        <label class="custom-control-label" for="same-address">Terms of use</label>
+                        <label class="custom-control-label" for="same-address" th:text="#{registration.terms.of.use}">Terms
+                            of use</label>
                         <div class="alert alert-danger" th:if="${#fields.hasErrors('termsOfUse')}"
                              th:errors="*{termsOfUse}"></div>
                     </div>
@@ -75,13 +78,15 @@
                          th:text="${captcha}"></div>
                     <div class="g-recaptcha" th:data-sitekey="${@environment.getProperty('recaptcha.key')}"></div>
                     <br/>
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">
-                        Register
-                    </button>
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-lg btn-block" type="submit">
+                            Register
+                        </button>
+                    </div>
                 </form>
-                <p class="text-center text-muted mt-4 mb-2">Have already an account? <a
-                        th:href="@{/login}" class="fw-bold text-body"><u>Login
-                    here</u></a></p>
+                <p class="text-center text-muted mt-4 mb-2">
+                    <th:block th:text="#{registration.have.account}">Have already an account?</th:block>
+                    <a th:href="@{/login}" class="fw-bold text-body" th:text="#{registration.login}">Login here</a></p>
             </div>
         </div>
     </div>
