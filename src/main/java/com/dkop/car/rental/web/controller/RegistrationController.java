@@ -68,11 +68,11 @@ public class RegistrationController {
         return REGISTRATION_PAGE;
     }
 
-    @SneakyThrows
+
     @PostMapping
     public String register(@ModelAttribute(USER) @Valid RegFormDto regFormDto,
-                           @RequestParam("g-recaptcha-response") String gRecaptchaResponse,
                            BindingResult bindingResult,
+                           @RequestParam("g-recaptcha-response") String gRecaptchaResponse,
                            Model model,
                            RedirectAttributes redirectAttributes) {
         if (!verifyReCaptcha(gRecaptchaResponse)) {
@@ -80,7 +80,6 @@ public class RegistrationController {
             log.info("{} captcha error", regFormDto.getEmail());
             return REGISTRATION_PAGE;
         }
-
         if (bindingResult.hasErrors()) {
             return REGISTRATION_PAGE;
         }

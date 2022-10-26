@@ -59,7 +59,7 @@ public class AppUserController {
     @PreAuthorize("hasAuthority('USER')")
     public String bookCar(@ModelAttribute("order") @Valid OrderDto orderDto, BindingResult bindingResult) {
         if (orderDto.getStartDate().isAfter(orderDto.getEndDate())) {
-            bindingResult.rejectValue("startDate", "startDate", "Start date can be after end date");
+            bindingResult.rejectValue("startDate", "start-date");
         }
         if (bindingResult.hasErrors()) {
             return "user/bookCarForm";
