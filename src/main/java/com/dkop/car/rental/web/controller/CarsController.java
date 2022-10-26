@@ -10,11 +10,13 @@ import com.dkop.car.rental.model.car.Manufacturer;
 import com.dkop.car.rental.model.user.Role;
 import com.dkop.car.rental.service.CarService;
 import com.dkop.car.rental.util.Mapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/cars")
+@Slf4j
 public class CarsController {
 
     private static final String TITLE_ATTRIBUTE = "title";
@@ -79,6 +82,12 @@ public class CarsController {
         model.addAttribute(TITLE_ATTRIBUTE, car.getModel());
         model.addAttribute("car", carDto);
         return "cars/carInfo";
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public void handleRuntimeException(RuntimeException ex, HttpServletResponse response) throws IOException {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        log.error(ex.getMessage());
     }
 
     private void setManufacturersAndCategoryClassAttributes(Model model) {

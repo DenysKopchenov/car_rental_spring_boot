@@ -70,7 +70,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public void setAvailability(UUID id, Boolean available) {
-        Car car = carRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Car car = carRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("setAvailability() Invalid car id"));
         car.setAvailable(available);
         carRepository.save(car);
     }
@@ -85,7 +85,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car findById(UUID id) {
-        return carRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return carRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("findById() Invalid car id"));
     }
 
     @Override

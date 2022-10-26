@@ -53,19 +53,20 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public AppUser saveAppUser(RegFormDto regFormDto) throws UserAlreadyExists {
-        checkIsUserExists(regFormDto);
+        checkIsUserExists(regFormDto.getEmail());
 
         AppUser appUser = mapper.mapRegFormDtoToUser(regFormDto);
         appUser.setEncodedPassword(passwordEncoder.encode(regFormDto.getPassword()));
         AppUser savedUser = appUserRepository.save(appUser);
-        mailService.sendEmail(appUser.getEmail(), "Registration completed",
+        mailService.sendEmail(savedUser.getEmail(), "Registration completed",
                 String.format("You account %s successfully registered in our car rental service.", savedUser.getEmail()));
         return savedUser;
     }
 
     @Override
+    @Transactional
     public AppUser saveManager(RegFormDto regFormDto) throws UserAlreadyExists {
-        checkIsUserExists(regFormDto);
+        checkIsUserExists(regFormDto.getEmail());
 
         AppUser appUser = mapper.mapRegFormDtoToUser(regFormDto);
         appUser.setEncodedPassword(passwordEncoder.encode(regFormDto.getPassword()));
@@ -75,7 +76,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AppUser findById(UUID id) {
-        return appUserRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return appUserRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("findById() Invalid user id"));
     }
 
     @Override
@@ -90,18 +91,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AppUser changeUserActiveStatus(boolean isActive, UUID id) {
-        AppUser appUser = appUserRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        AppUser appUser = findById(id);
         appUser.setActive(isActive);
         return appUserRepository.save(appUser);
     }
 
     @Override
     public AppUser updateUserProfile(AppUserDto appUserDto) throws UserAlreadyExists {
-        if (appUserRepository.existsByEmail(appUserDto.getEmail())) {
-            throw new UserAlreadyExists(String.format(USER_ALREADY_EXIST_PATTERN, (appUserDto.getEmail())));
+        AppUser appUser = findById(appUserDto.getId());
+        String userInputEmail = appUserDto.getEmail();
+        if (!appUser.getEmail().equals(userInputEmail)) {
+            checkIsUserExists(userInputEmail);
         }
-        AppUser appUser = appUserRepository.findById(appUserDto.getId()).orElseThrow(EntityNotFoundException::new);
-        appUser.setEmail(appUserDto.getEmail());
+        appUser.setEmail(userInputEmail);
         appUser.setFirstName(appUserDto.getFirstName());
         appUser.setLastName(appUserDto.getLastName());
         return appUserRepository.save(appUser);
@@ -109,12 +111,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return appUserRepository.findByEmail(username).orElseThrow(EntityNotFoundException::new);
+        return appUserRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(String.format("Username %s not found", username)));
     }
 
-    private void checkIsUserExists(RegFormDto regFormDto) throws UserAlreadyExists {
-        if (appUserRepository.existsByEmail(regFormDto.getEmail())) {
-            throw new UserAlreadyExists(String.format(USER_ALREADY_EXIST_PATTERN, (regFormDto.getEmail())));
+    private void checkIsUserExists(String email) throws UserAlreadyExists {
+        if (appUserRepository.existsByEmail(email)) {
+            throw new UserAlreadyExists(String.format(USER_ALREADY_EXIST_PATTERN, (email)));
         }
     }
 }

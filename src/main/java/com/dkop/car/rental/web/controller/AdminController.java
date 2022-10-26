@@ -23,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,11 +31,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -93,7 +98,8 @@ public class AdminController {
             return REGISTRATION_PAGE;
         }
         try {
-            userService.saveManager(regFormDto);
+            AppUser manager = userService.saveManager(regFormDto);
+            log.info("Manager with id = {} created", manager.getId());
             return "redirect:/admin/new/manager?success";
         } catch (UserAlreadyExists ex) {
             redirectAttributes.addFlashAttribute(USER, regFormDto);
@@ -127,12 +133,14 @@ public class AdminController {
     @PutMapping("/car/unavailable/{id}")
     public String setUnavailable(@PathVariable("id") UUID id, HttpServletRequest request) {
         carService.setAvailability(id, Boolean.FALSE);
+        log.info("Car with id = {} sets unavailable", id);
         return REDIRECT + request.getHeader(HEADER_REFERER);
     }
 
     @PutMapping("/car/available/{id}")
     public String setAvailable(@PathVariable("id") UUID id, HttpServletRequest request) {
         carService.setAvailability(id, Boolean.TRUE);
+        log.info("Car with id = {} sets available", id);
         return REDIRECT + request.getHeader(HEADER_REFERER);
     }
 
@@ -148,7 +156,8 @@ public class AdminController {
     @PutMapping("/edit/car/{id}")
     public String editCar(@ModelAttribute("updated") @Valid CarDto updated,
                           @RequestParam("image") MultipartFile multipartImage) {
-        carService.updateCar(updated);
+        Car car = carService.updateCar(updated);
+        log.info("Car with id = {} updated", car.getId());
         return "redirect:/cars/{id}?success";
     }
 
@@ -167,6 +176,7 @@ public class AdminController {
     @PutMapping("/block/{id}")
     public String blockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         AppUser appUser = userService.changeUserActiveStatus(Boolean.FALSE, id);
+        log.info("User with id = {} blocked", appUser.getId());
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
         return REDIRECT + request.getHeader(HEADER_REFERER);
     }
@@ -174,10 +184,16 @@ public class AdminController {
     @PutMapping("/unblock/{id}")
     public String unblockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         AppUser appUser = userService.changeUserActiveStatus(Boolean.TRUE, id);
+        log.info("User with id = {} unblocked", appUser.getId());
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
         return REDIRECT + request.getHeader(HEADER_REFERER);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public void handleRuntimeException(RuntimeException ex, HttpServletResponse response) throws IOException {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        log.error(ex.getMessage());
+    }
 
     private static void setManufacturersAndCategoryClassAttributes(Model model) {
         model.addAttribute(MANUFACTURERS_ATTRIBUTE, Arrays.stream(Manufacturer.values()).collect(Collectors.toList()));

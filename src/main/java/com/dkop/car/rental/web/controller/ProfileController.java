@@ -5,24 +5,32 @@ import com.dkop.car.rental.exception.UserAlreadyExists;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.UserService;
 import com.dkop.car.rental.util.Mapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/profile")
 @PreAuthorize("hasAuthority('USER')")
+@Slf4j
 public class ProfileController {
 
     private static final String USER_ATTRIBUTE = "appUser";
+    private static final String EDIT_PROFILE = "profile/profile";
     private final UserService userService;
     private final Mapper mapper;
 
@@ -35,27 +43,38 @@ public class ProfileController {
     public String showProfile(Model model, @AuthenticationPrincipal AppUser principal) {
         AppUser appUser = userService.findById(principal.getId());
         model.addAttribute(USER_ATTRIBUTE, mapper.mapAppUserToAppUserDto(appUser));
-        return "profile/profile";
+        return EDIT_PROFILE;
     }
 
     @GetMapping("/edit")
     public String showEditProfileForm(Model model, @AuthenticationPrincipal AppUser principal) {
         AppUser appUser = userService.findById(principal.getId());
         model.addAttribute(USER_ATTRIBUTE, mapper.mapAppUserToAppUserDto(appUser));
-        return "profile/editProfile";
+        return EDIT_PROFILE;
     }
 
-    @PostMapping("/edit")
+    @PutMapping("/edit")
     public String editProfile(@ModelAttribute("appUser")
                               @Valid
                               AppUserDto appUserDto,
-                              RedirectAttributes redirectAttributes) {
+                              BindingResult bindingResult,
+                              Model model) {
+        if (bindingResult.hasErrors()) {
+            return EDIT_PROFILE;
+        }
         try {
             userService.updateUserProfile(appUserDto);
         } catch (UserAlreadyExists e) {
-            redirectAttributes.addFlashAttribute(USER_ATTRIBUTE, appUserDto);
-            return "redirect:/profile?failed";
+            model.addAttribute(USER_ATTRIBUTE, appUserDto);
+            model.addAttribute("emailExist", appUserDto.getEmail());
+            return EDIT_PROFILE;
         }
         return "redirect:/profile?success";
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public void handleRuntimeException(RuntimeException ex, HttpServletResponse response) throws IOException {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        log.error(ex.getMessage());
     }
 }

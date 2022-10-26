@@ -2,34 +2,31 @@ package com.dkop.car.rental.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 @Controller
 @Slf4j
 public class CustomErrorController implements ErrorController {
 
     private static final String TITLE_ATTRIBUTE = "title";
+    private static final List<Integer> availableErrorPages = List.of(400, 403, 404, 500);
 
     @GetMapping("/error")
     public String handleError(HttpServletRequest request, Model model) {
-        Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        if (status != null) {
-            int statusCode = Integer.parseInt(status.toString());
-
-            if (statusCode == HttpStatus.FORBIDDEN.value()) {
-                model.addAttribute(TITLE_ATTRIBUTE, "403");
-                return "error/403";
-            } else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-                model.addAttribute(TITLE_ATTRIBUTE, "500");
-                return "error/500";
-            }
-        }
-        return "error/404";
+        Integer status = availableErrorPages.stream()
+                .filter(integer -> integer.equals(request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE)))
+                .findFirst()
+                .orElse(404);
+        model.addAttribute(TITLE_ATTRIBUTE, status);
+        return "error/" + status;
     }
 }

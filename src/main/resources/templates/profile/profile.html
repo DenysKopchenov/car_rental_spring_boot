@@ -8,8 +8,6 @@
 
 <div class="container justify-content-center">
     <div th:if="${param.success}" class="alert alert-success">Edit success</div>
-    <div th:if="${param.failed}" class="alert alert-danger"
-         th:text="|Edit failed ${appUser.email} already exists|"></div>
     <div class="col">
         <div class="card user-card-full">
             <div class="row m-l-0 m-r-0">

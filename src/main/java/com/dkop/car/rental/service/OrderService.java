@@ -32,7 +32,7 @@ public interface OrderService {
 
     RentOrder returnOrderWithDamage(UUID orderId, RepairPayment repairPayment);
 
-    RentOrder completeRepairPaidOrder(UUID orderId);
+    RentOrder completeOrderWithPaidRepair(UUID orderId);
 
     RentOrder askForReturn(UUID orderId);
 }

@@ -64,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
 
         long pricePerDay = calculatePricePerDay(orderDto);
         if (orderDto.getRentalPrice() != pricePerDay * countRentDays(orderDto)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("saveOrder() wrong price");
         }
 
         OrderDetails orderDetails = mapper.mapOrderDtoToOrderDetails(orderDto);
@@ -72,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
         rentOrder.setOrderDetails(orderDetails);
 
         if (isOrderAlreadyExist(rentOrder)) {
-            throw new IllegalArgumentException(ORDER_ALREADY_EXISTS);
+            throw new IllegalArgumentException("saveOrder() " + ORDER_ALREADY_EXISTS);
         }
 
         return orderRepository.save(rentOrder);
@@ -101,112 +101,112 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public RentOrder payOrder(UUID orderId) {
-        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        RentOrder rentOrder = findById(orderId);
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         if (orderDetails.getOrderStatus().equals(OrderStatus.AWAIT_PAYMENT)) {
             orderDetails.setOrderStatus(OrderStatus.PAID);
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_PAYMENT));
+        throw new IllegalArgumentException("payOrder() " + String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_PAYMENT));
     }
 
     @Override
     public RentOrder findById(UUID orderId) {
-        return orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
+        return orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("findById() " + ORDER_NOT_FOUND));
     }
 
     @Override
     @Transactional
     public RentOrder acceptOrder(UUID orderId) {
-        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        RentOrder rentOrder = findById(orderId);
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         if (orderDetails.getOrderStatus().equals(OrderStatus.PENDING)) {
             orderDetails.setOrderStatus(OrderStatus.AWAIT_PAYMENT);
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
+        throw new IllegalArgumentException("acceptOrder() " + String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
     }
 
     @Override
     @Transactional
     public RentOrder rejectOrder(UUID orderId, String rejectDetails) {
-        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        RentOrder rentOrder = findById(orderId);
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         if (orderDetails.getOrderStatus().equals(OrderStatus.PENDING)) {
             orderDetails.setOrderStatus(OrderStatus.REJECTED);
             orderDetails.setRejectOrderDetails(rejectDetails);
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PENDING));
+        throw new IllegalArgumentException("rejectOrder() " + String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PENDING));
     }
 
     @Override
     @Transactional
     public RentOrder payRepair(UUID orderId) {
-        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        RentOrder rentOrder = findById(orderId);
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         if (orderDetails.getOrderStatus().equals(OrderStatus.AWAIT_REPAIR_PAYMENT)) {
             orderDetails.setOrderStatus(OrderStatus.REPAIR_PAID);
             RepairPayment repairPayment = orderDetails.getRepairPayment();
             String damageDescription = repairPayment.getDamageDescription();
-            repairPayment.setDamageDescription("PAID " + damageDescription);
+            repairPayment.setDamageDescription(damageDescription + " was PAID");
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_REPAIR_PAYMENT));
+        throw new IllegalArgumentException("payRepair() " + String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.AWAIT_REPAIR_PAYMENT));
     }
 
     @Override
     @Transactional
     public RentOrder returnOrderWithoutDamage(UUID orderId) {
-        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        RentOrder rentOrder = findById(orderId);
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         if (orderDetails.getOrderStatus().equals(OrderStatus.CLIENT_WANT_RETURN)) {
             orderDetails.setOrderStatus(OrderStatus.COMPLETED);
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.CLIENT_WANT_RETURN));
+        throw new IllegalArgumentException("returnOrderWithoutDamage() " + String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.CLIENT_WANT_RETURN));
     }
 
     @Override
     @Transactional
     public RentOrder returnOrderWithDamage(UUID orderId, RepairPayment repairPayment) {
-        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        RentOrder rentOrder = findById(orderId);
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         if (orderDetails.getOrderStatus().equals(OrderStatus.CLIENT_WANT_RETURN)) {
             orderDetails.setRepairPayment(repairPayment);
             orderDetails.setOrderStatus(OrderStatus.AWAIT_REPAIR_PAYMENT);
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.CLIENT_WANT_RETURN));
+        throw new IllegalArgumentException("returnOrderWithDamage() " + String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.CLIENT_WANT_RETURN));
     }
 
     @Override
     @Transactional
-    public RentOrder completeRepairPaidOrder(UUID orderId) {
-        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+    public RentOrder completeOrderWithPaidRepair(UUID orderId) {
+        RentOrder rentOrder = findById(orderId);
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         if (orderDetails.getOrderStatus().equals(OrderStatus.REPAIR_PAID)) {
             orderDetails.setOrderStatus(OrderStatus.COMPLETED);
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.REPAIR_PAID));
+        throw new IllegalArgumentException("completeOrderWithPaidRepair() " + String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.REPAIR_PAID));
     }
 
     @Override
     public RentOrder askForReturn(UUID orderId) {
-        RentOrder rentOrder = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException(ORDER_NOT_FOUND));
+        RentOrder rentOrder = findById(orderId);
         OrderDetails orderDetails = rentOrder.getOrderDetails();
         if (orderDetails.getOrderStatus().equals(OrderStatus.PAID)) {
             orderDetails.setOrderStatus(OrderStatus.CLIENT_WANT_RETURN);
             return orderRepository.save(rentOrder);
         }
-        throw new IllegalArgumentException(String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
+        throw new IllegalArgumentException("askForReturn() " + String.format(INVALID_ORDER_STATUS_PATTERN, OrderStatus.PAID));
     }
 
     private long calculatePricePerDay(OrderDto orderDto) {
         long pricePerDay = orderDto.getCar().getPricePerDay();
         if (orderDto.isWithDriver()) {
-            pricePerDay += priceForDriver;
+            return pricePerDay + priceForDriver;
         }
         return pricePerDay;
     }

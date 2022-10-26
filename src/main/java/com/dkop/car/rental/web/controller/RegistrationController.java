@@ -5,12 +5,9 @@ import com.dkop.car.rental.dto.RegFormDto;
 import com.dkop.car.rental.exception.UserAlreadyExists;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.UserService;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -55,11 +52,6 @@ public class RegistrationController {
     public RegistrationController(UserService userService, @Lazy RestTemplate restTemplate) {
         this.userService = userService;
         this.restTemplate = restTemplate;
-    }
-
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
     }
 
     @GetMapping
