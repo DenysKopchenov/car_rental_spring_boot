@@ -12,7 +12,8 @@
 <div class="container my-2">
     <h1>Users</h1>
     <form th:action="@{/admin/users}" th:method="GET" th:object="${pagination}" onchange="submit()">
-        <label class="form-label" for="size">Page size
+        <label class="form-label" for="size">
+            <th:block th:text="#{size}">Page size</th:block>
             <select class="form-select" name="size" id="size">
                 <option th:value="1" th:selected="*{size} == 1">1</option>
                 <option th:value="4" th:selected="*{size} == 4">4</option>
@@ -20,18 +21,24 @@
                 <option th:value="16" th:selected="*{size} == 16">16</option>
             </select>
         </label>
-        <label class="form-label" for="sort">Sort
+        <label class="form-label" for="sort">
+            <th:block th:text="#{sort}">Sort</th:block>
             <select class="form-select" name="sort" id="sort">
-                <option th:value="firstName" th:selected="*{sort eq 'firstName'}">First name</option>
-                <option th:value="lastName" th:selected="*{sort eq 'lastName'}">Last name</option>
-                <option th:value="email" th:selected="*{sort eq 'email'}">Email</option>
-                <option th:value="isActive" th:selected="*{sort eq 'isActive'}">Is active</option>
+                <option th:value="firstName" th:selected="*{sort eq 'firstName'}" th:text="#{first.name}">First name
+                </option>
+                <option th:value="lastName" th:selected="*{sort eq 'lastName'}" th:text="#{last.name}">Last name
+                </option>
+                <option th:value="email" th:selected="*{sort eq 'email'}" th:text="#{email}">Email</option>
+                <option th:value="isActive" th:selected="*{sort eq 'isActive'}" th:text="#{sort.is.active}">Is active
+                </option>
             </select>
         </label>
-        <label class="form-label" for="direction">Sort direction
+        <label class="form-label" for="direction">
+            <th:block th:text="#{sort.direction}">Sort direction</th:block>
             <select class="form-select" name="direction" id="direction">
-                <option th:value="ASC" th:selected="*{direction eq 'ASC'}">ASC</option>
-                <option th:value="DESC" th:selected="*{direction eq 'DESC'}">DESC</option>
+                <option th:value="ASC" th:selected="*{direction eq 'ASC'}" th:text="#{sort.direction.asc}">ASC</option>
+                <option th:value="DESC" th:selected="*{direction eq 'DESC'}" th:text="#{sort.direction.desc}">DESC
+                </option>
             </select>
         </label>
     </form>
@@ -39,10 +46,10 @@
     <table border="1" class="table table-striped table-responsive-md">
         <thead>
         <tr>
-            <th>First name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Actions</th>
+            <th th:text="#{first.name}">First name</th>
+            <th th:text="#{last.name}">Last Name</th>
+            <th th:text="#{email}">Email</th>
+            <th th:text="#{actions}">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -52,12 +59,14 @@
             <td th:text="${user.email}"></td>
             <td>
                 <form th:if="${user.isActive}" th:action="@{/admin/block/{id}(id=${user.id})}" th:method="PUT">
-                    <input class="btn btn-danger" type="submit"
-                           th:attr="onclick=|return confirm('block ${user.email}?')|" value="Block">
+                    <button class="btn btn-danger" type="submit"
+                            th:attr="onclick=|return confirm('block ${user.email}?')|"
+                            th:text="#{actions.block}"></button>
                 </form>
                 <form th:if="${!user.isActive}" th:action="@{/admin/unblock/{id}(id=${user.id})}" th:method="PUT">
-                    <input class="btn btn-success" type="submit"
-                           th:attr="onclick=|return confirm('unblock ${user.email}?')|" value="Unblock">
+                    <button class="btn btn-success" type="submit"
+                            th:attr="onclick=|return confirm('unblock ${user.email}?')|"
+                            th:text="#{actions.unblock}"></button>
                 </form>
             </td>
         </tr>

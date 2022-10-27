@@ -13,13 +13,13 @@
     <div th:if="${param.success}">
         <div class="alert alert-success">Car created</div>
     </div>
-    <th:block th:if="${cars.isEmpty()}">NOT FOUND</th:block>
+    <th:block th:if="${cars.isEmpty()}" th:text="#{not.found}">NOT FOUND</th:block>
     <div class="container-fluid" th:if="${!cars.isEmpty()}">
         <div class="row">
             <div class="col-sm-2 m-2 p-2 bg-light border rounded">
                 <form th:action="@{/cars}" th:object="${filter}" th:method="GET">
                     <div class="border border-1 border-primary rounded mb-2">
-                        <label class="p-2">Categories</label>
+                        <label class="p-2" th:text="#{car.class}">Categories</label>
                         <div class="form-check" th:each="category : ${class}">
                             <input type="checkbox"
                                    th:id="${category}"
@@ -30,7 +30,7 @@
                         </div>
                     </div>
                     <div class="border border-1 border-primary rounded mb-2">
-                        <label class="p-2">Manufacturers</label>
+                        <label class="p-2" th:text="#{car.manufacturers}">Manufacturers</label>
                         <div class="form-check" th:each="manufacturer : ${manufacturers}">
                             <input type="checkbox"
                                    th:id="${manufacturer}"
@@ -42,24 +42,24 @@
                     </div>
                     <div class="row">
                         <div class="col mb-2">
-                            <label class="form-label" for="minPrice">Min price</label>
+                            <label class="form-label" for="minPrice" th:text="#{cars.min.price}">Min price</label>
                             <input class="form-control" type="number" th:field="*{minPrice}" id="minPrice">
                         </div>
                         <div class="col mb-2">
-                            <label class="form-label" for="maxPrice">Max price</label>
+                            <label class="form-label" for="maxPrice" th:text="#{cars.max.price}">Max price</label>
                             <input class="form-control" type="number" th:field="*{maxPrice}" id="maxPrice"
                                    th:attr="min=*{minPrice} + 1"
                                    th:required="*{minPrice} > 0">
                         </div>
                     </div>
                     <div class="col mb-2">
-                        <label class="form-label" for="model">Model</label>
+                        <label class="form-label" for="model" th:text="#{car.model}">Model</label>
                         <input class="form-control" type="text" th:field="*{model}" id="model">
                     </div>
                     <input type="hidden" th:value="${pagination.size}" th:field="${pagination.size}">
                     <input type="hidden" th:value="${pagination.sort}" th:field="${pagination.sort}">
                     <input type="hidden" th:value="${pagination.direction}" th:field="${pagination.direction}">
-                    <input class="btn btn-primary" type="submit" value="Apply">
+                    <input class="btn btn-primary" type="submit" th:attr="value=#{apply}">
                 </form>
             </div>
             <div class="col col-lg">
@@ -74,7 +74,7 @@
                             <input type="hidden" th:value="${filter.minPrice}" th:field="${filter.minPrice}">
                             <input type="hidden" th:value="${filter.maxPrice}" th:field="${filter.maxPrice}">
                             <input type="hidden" th:value="${filter.model}" th:field="${filter.model}">
-                            <label class="form-label" for="size">Page size</label>
+                            <label class="form-label" for="size" th:text="#{size}">Page size</label>
                             <select class="form-select-sm" name="size" id="size">
                                 <option th:value="1" th:selected="*{size} == 1">1</option>
                                 <option th:value="4" th:selected="*{size} == 4">4</option>
@@ -82,21 +82,30 @@
                                 <option th:value="16" th:selected="*{size} == 16">16</option>
                             </select>
 
-                            <label class="form-label" for="sort">Sort</label>
+                            <label class="form-label" for="sort" th:text="#{sort}">Sort</label>
                             <select class="form-select-sm" name="sort" id="sort">
-                                <option th:value="model" th:selected="*{sort eq 'model'}">Model</option>
-                                <option th:value="categoryClass" th:selected="*{sort eq 'categoryClass'}">Category
+                                <option th:value="model" th:selected="*{sort eq 'model'}" th:text="#{sort.model}">
+                                    Model
                                 </option>
-                                <option th:value="manufacturer" th:selected="*{sort eq 'manufacturer'}">Manufacturer
+                                <option th:value="categoryClass" th:selected="*{sort eq 'categoryClass'}"
+                                        th:text="#{sort.category}">Category
                                 </option>
-                                <option th:value="pricePerDay" th:selected="*{sort eq 'pricePerDay'}">Price per day
+                                <option th:value="manufacturer" th:selected="*{sort eq 'manufacturer'}"
+                                        th:text="#{sort.manufacturer}">Manufacturer
+                                </option>
+                                <option th:value="pricePerDay" th:selected="*{sort eq 'pricePerDay'}"
+                                        th:text="#{car.price}">Price per day
                                 </option>
                             </select>
 
-                            <label class="form-label" for="direction">Sort direction</label>
+                            <label class="form-label" for="direction" th:text="#{sort.direction}">Sort direction</label>
                             <select class="form-select-sm" name="direction" id="direction">
-                                <option th:value="ASC" th:selected="*{direction eq 'ASC'}">ASC</option>
-                                <option th:value="DESC" th:selected="*{direction eq 'DESC'}">DESC</option>
+                                <option th:value="ASC" th:selected="*{direction eq 'ASC'}"
+                                        th:text="#{sort.direction.asc}">ASC
+                                </option>
+                                <option th:value="DESC" th:selected="*{direction eq 'DESC'}"
+                                        th:text="#{sort.direction.desc}">DESC
+                                </option>
                             </select>
                         </form>
                     </div>
@@ -114,41 +123,42 @@
                                         <p class="ml-auto" th:text="|${car.manufacturer} ${car.model}|"></p>
                                     </div>
                                     <div class="d-flex flex-row justify-content-center mb-0 px-3">
-                                        <p class="price ml-auto" th:text="|Category: ${car.categoryClass}|"></p>
+                                        <p class="price ml-auto" th:text="|#{car.class}: ${car.categoryClass}|"></p>
                                     </div>
                                     <div class="d-flex flex-row justify-content-center mb-0 px-3">
-                                        <p class="price ml-auto" th:text="'$' + ${car.pricePerDay} + '/day'"></p>
+                                        <p class="price ml-auto" th:text="|$${car.pricePerDay}/#{day}|"></p>
                                     </div>
-                                    <div class="d-flex flex-row justify-content-between mb-0 px-3">
-                                        <th:block sec:authorize="hasAuthority('ADMIN')">
-                                            <div class="col m-auto text-center">
-                                                <form th:if="${car.isAvailable}"
-                                                      th:action="@{/admin/car/unavailable/{id}(id=${car.id})}"
-                                                      th:method="PUT">
-                                                    <input class="btn btn-danger" type="submit" value="Set unavailable">
-                                                </form>
-                                                <form th:if="${!car.isAvailable}"
-                                                      th:action="@{/admin/car/available/{id}(id=${car.id})}"
-                                                      th:method="PUT">
-                                                    <input class="btn btn-success" type="submit" value="Set available">
-                                                </form>
-                                            </div>
-                                            <div div class="col m-auto text-center">
-                                                <a th:href="@{/admin/edit/car/{id}(id=${car.id})}" class="btn btn-info">Edit
-                                                    car</a>
-                                            </div>
-                                        </th:block>
-                                        <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
-                                            <div class="col m-auto text-center">
-                                                <a th:href="@{/order?carId={id}(id=${car.id})}"
-                                                   class="btn btn-primary py-2 mr-1">Book
-                                                    now</a>
-                                            </div>
-                                        </th:block>
+                                    <th:block sec:authorize="hasAuthority('ADMIN')">
                                         <div class="col m-auto text-center">
-                                            <a th:href="@{/cars/{id}(id=${car.id})}"
-                                               class="btn btn-secondary py-2 ml-1">Details</a>
+                                            <form th:if="${car.isAvailable}"
+                                                  th:action="@{/admin/car/unavailable/{id}(id=${car.id})}"
+                                                  th:method="PUT">
+                                                <input class="btn btn-sm btn-danger" type="submit"
+                                                       th:attr="value=#{cars.set.unavailable}">
+                                            </form>
+                                            <form th:if="${!car.isAvailable}"
+                                                  th:action="@{/admin/car/available/{id}(id=${car.id})}"
+                                                  th:method="PUT">
+                                                <input class="btn btn-sm btn-success" type="submit"
+                                                       th:attr="value=#{cars.set.available}">
+                                            </form>
                                         </div>
+                                        <div div class="col m-auto text-center">
+                                            <a th:href="@{/admin/edit/car/{id}(id=${car.id})}"
+                                               class="btn btn-sm btn-info" th:text="#{car.edit.info.btn}">Edit
+                                                car</a>
+                                        </div>
+                                    </th:block>
+                                    <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
+                                        <div class="col m-auto text-center">
+                                            <a th:href="@{/order?carId={id}(id=${car.id})}"
+                                               class="btn btn-primary py-2 mr-1" th:text="#{car.book.now}">Book
+                                                now</a>
+                                        </div>
+                                    </th:block>
+                                    <div class="col m-auto text-center">
+                                        <a th:href="@{/cars/{id}(id=${car.id})}"
+                                           class="btn btn-secondary py-2 ml-1" th:text="#{car.details}">Details</a>
                                     </div>
                                 </div>
                             </div>

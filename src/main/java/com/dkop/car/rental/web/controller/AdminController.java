@@ -18,7 +18,6 @@ import com.dkop.car.rental.util.Mapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -68,14 +67,12 @@ public class AdminController {
     private final CarService carService;
     private final UserService userService;
     private final Mapper mapper;
-    private final MessageSource messageSource;
 
     @Autowired
-    public AdminController(CarService carService, UserService userService, Mapper mapper, MessageSource messageSource) {
+    public AdminController(CarService carService, UserService userService, Mapper mapper) {
         this.carService = carService;
         this.userService = userService;
         this.mapper = mapper;
-        this.messageSource = messageSource;
     }
 
 
@@ -94,9 +91,11 @@ public class AdminController {
     @PostMapping("/new/manager")
     public String registerNewManager(@ModelAttribute(USER) @Valid RegFormDto regFormDto,
                                      BindingResult bindingResult,
+                                     Model model,
                                      RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return REGISTRATION_PAGE;
+            model.addAttribute(TITLE_ATTRIBUTE, REGISTER_NEW_MANAGER_TITLE);
+            return "admin/newManager";
         }
         try {
             AppUser manager = userService.saveManager(regFormDto);
@@ -121,7 +120,6 @@ public class AdminController {
                                    @Valid CarDto carDto,
                                BindingResult bindingResult,
                                Model model,
-                               RedirectAttributes redirectAttributes,
                                @RequestParam("image") MultipartFile multipartImage) {
         if (multipartImage.getBytes().length == 0) {
             bindingResult.rejectValue("image", "car.no.image");
@@ -167,7 +165,8 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public String showUsers(@ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean, Model model) {
+    public String showUsers(@ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean,
+                            Model model) {
         Page<AppUser> allUserPage = userService.findAllByRole(paginationAndSortingBean, Role.USER);
         List<AppUserDto> allUsers = allUserPage.stream()
                 .map(mapper::mapAppUserToAppUserDto)
@@ -179,7 +178,8 @@ public class AdminController {
     }
 
     @PutMapping("/block/{id}")
-    public String blockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+    public String blockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes,
+                            HttpServletRequest request) {
         AppUser appUser = userService.changeUserActiveStatus(Boolean.FALSE, id);
         log.info("User with id = {} blocked", appUser.getId());
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
@@ -187,7 +187,8 @@ public class AdminController {
     }
 
     @PutMapping("/unblock/{id}")
-    public String unblockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+    public String unblockUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes,
+                              HttpServletRequest request) {
         AppUser appUser = userService.changeUserActiveStatus(Boolean.TRUE, id);
         log.info("User with id = {} unblocked", appUser.getId());
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));

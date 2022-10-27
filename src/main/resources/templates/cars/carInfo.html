@@ -24,14 +24,14 @@
                             </div>
                             <div class="col" th:text="${car.model}">
                             </div>
-                            <div class="col" th:text="|Category: ${car.categoryClass}|">
+                            <div class="col" th:text="|#{car.class}: ${car.categoryClass}|">
                             </div>
                         </div>
-                        <div class="col" th:text="|Transmission: ${car.transmission}|">
+                        <div class="col" th:text="|#{car.transmission}: ${car.transmission}|">
                         </div>
-                        <div class="col" th:text="|Fuel: ${car.fuel}|">
+                        <div class="col" th:text="|#{car.fuel}: ${car.fuel}|">
                         </div>
-                        <div class="col" th:text="|$${car.pricePerDay} /day|">
+                        <div class="col" th:text="|$${car.pricePerDay}/#{day}|">
                         </div>
                         <div class="d-flex flex-row justify-content-between mb-0 px-3">
                             <th:block sec:authorize="hasAuthority('ADMIN')">
@@ -39,23 +39,26 @@
                                     <form th:if="${car.isAvailable}"
                                           th:action="@{/admin/car/unavailable/{id}(id=${car.id})}"
                                           th:method="PUT">
-                                        <input class="btn btn-danger" type="submit" value="Set unavailable">
+                                        <input class="btn btn-danger" type="submit"
+                                               th:attr="value=#{cars.set.unavailable}">
                                     </form>
                                     <form th:if="${!car.isAvailable}"
                                           th:action="@{/admin/car/available/{id}(id=${car.id})}"
                                           th:method="PUT">
-                                        <input class="btn btn-success" type="submit" value="Set available">
+                                        <input class="btn btn-success" type="submit"
+                                               th:attr="value=#{cars.set.available}">
                                     </form>
                                 </div>
                                 <div div class="col m-auto text-center">
-                                    <a th:href="@{/admin/edit/car/{id}(id=${car.id})}" class="btn btn-info">Edit
+                                    <a th:href="@{/admin/edit/car/{id}(id=${car.id})}" class="btn btn-info"
+                                       th:text="#{car.edit.info.btn}">Edit
                                         car</a>
                                 </div>
                             </th:block>
                             <th:block sec:authorize="!isAuthenticated || hasAuthority('USER')">
                                 <div class="col m-auto text-center">
                                     <a th:href="@{/order?carId={id}(id=${car.id})}"
-                                       class="btn btn-primary py-2 mr-1">Book
+                                       class="btn btn-primary py-2 mr-1" th:text="#{car.book.now}">Book
                                         now</a>
                                 </div>
                             </th:block>
