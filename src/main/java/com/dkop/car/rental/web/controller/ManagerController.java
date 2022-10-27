@@ -1,7 +1,9 @@
 package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.OrderDto;
+import com.dkop.car.rental.dto.OrderFilterBean;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
+import com.dkop.car.rental.model.order.OrderStatus;
 import com.dkop.car.rental.model.order.RentOrder;
 import com.dkop.car.rental.model.order.RepairPayment;
 import com.dkop.car.rental.model.user.AppUser;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -48,12 +51,14 @@ public class ManagerController {
 
     @GetMapping("/orders")
     public String showClientOrders(@ModelAttribute("pagination") PaginationAndSortingBean paginationAndSortingBean,
+                                   @ModelAttribute("filter") OrderFilterBean orderFilterBean,
                                    Model model) {
-        Page<RentOrder> allOrdersPaged = orderService.findAllOrders(paginationAndSortingBean);
+        Page<RentOrder> allOrdersPaged = orderService.findAllOrders(paginationAndSortingBean, orderFilterBean.getOrderStatuses());
         List<OrderDto> allOrders = allOrdersPaged.stream()
                 .map(mapper::mapRentOrderToOrderDto
                 )
                 .collect(Collectors.toList());
+        model.addAttribute("statuses", Arrays.stream(OrderStatus.values()).collect(Collectors.toList()));
         model.addAttribute("orders", allOrders);
         model.addAttribute("numberOfPages", allOrdersPaged.getTotalPages());
         model.addAttribute(TITLE_ATTRIBUTE, "Orders");
@@ -61,7 +66,6 @@ public class ManagerController {
     }
 
     @PutMapping("/accept/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
     public String acceptOrder(@PathVariable("id") UUID orderId,
                               @AuthenticationPrincipal AppUser manager) {
         RentOrder rentOrder = orderService.acceptOrder(orderId);
@@ -70,7 +74,6 @@ public class ManagerController {
     }
 
     @GetMapping("/reject/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
     public String showRejectOrderForm(@PathVariable("id") UUID orderId, Model model) {
         RentOrder rentOrder = orderService.findById(orderId);
         OrderDto orderDto = mapper.mapRentOrderToOrderDto(rentOrder);
@@ -80,7 +83,6 @@ public class ManagerController {
     }
 
     @PutMapping("/reject/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
     public String submitReject(@PathVariable("id") UUID orderId,
                                @ModelAttribute("rejectDetails") String rejectDetails,
                                Model model,
@@ -95,7 +97,6 @@ public class ManagerController {
     }
 
     @GetMapping("/return/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
     public String showReturnOrderForm(@PathVariable("id") UUID orderId, Model model) {
         RentOrder order = orderService.findById(orderId);
         OrderDto orderDto = mapper.mapRentOrderToOrderDto(order);
@@ -106,12 +107,11 @@ public class ManagerController {
     }
 
     @PutMapping("/return/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
     public String submitReturn(@PathVariable("id") UUID orderId,
                                @ModelAttribute("order") OrderDto orderDto,
                                @AuthenticationPrincipal AppUser manager) {
         RepairPayment repairPayment = orderDto.getRepairPayment();
-        if (repairPayment.getRepairCost() <= 0) {
+        if (repairPayment.getRepairCost() <= 0 && repairPayment.getDamageDescription().isBlank()) {
             RentOrder rentOrder = orderService.returnOrderWithoutDamage(orderId);
             log.info("Order {} completed by manager {} without damage", rentOrder.getId(), manager.getId());
             return REDIRECT_ORDER_INFO_PAGE;
@@ -122,7 +122,6 @@ public class ManagerController {
     }
 
     @PutMapping("/complete/{id}")
-    @PreAuthorize("hasAuthority('MANAGER')")
     public String completeRepairPaidOrder(@PathVariable("id") UUID orderId,
                                           @AuthenticationPrincipal AppUser manager) {
         RentOrder rentOrder = orderService.completeOrderWithPaidRepair(orderId);

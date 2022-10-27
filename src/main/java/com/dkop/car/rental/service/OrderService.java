@@ -2,10 +2,12 @@ package com.dkop.car.rental.service;
 
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
+import com.dkop.car.rental.model.order.OrderStatus;
 import com.dkop.car.rental.model.order.RentOrder;
 import com.dkop.car.rental.model.order.RepairPayment;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface OrderService {
@@ -16,7 +18,7 @@ public interface OrderService {
 
     Page<RentOrder> findOrdersByAppUserId(UUID appUserId, PaginationAndSortingBean paginationAndSortingBean);
 
-    Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean);
+    Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean, List<OrderStatus> statuses);
 
     RentOrder findById(UUID orderId);
 

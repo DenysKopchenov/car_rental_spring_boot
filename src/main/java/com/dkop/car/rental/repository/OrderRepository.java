@@ -16,8 +16,6 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<RentOrder, UUID> {
 
-    List<RentOrder> findByOrderDetailsOrderStatus(OrderStatus orderStatus);
-
     @Query("select (count(r) > 0) from RentOrder r " +
             "where r.car.id = :carId and r.appUser.id = :userId and r.orderDetails.startDate = :startDate and r.orderDetails.endDate = :endDate and r.orderDetails.withDriver = :withDriver and r.orderDetails.orderStatus = :orderStatus")
     boolean isOrderExist(@Param("carId") UUID carId,
@@ -29,4 +27,8 @@ public interface OrderRepository extends JpaRepository<RentOrder, UUID> {
 
 
     Page<RentOrder> findOrdersByAppUserId(UUID appUserId, Pageable pageable);
+
+    @Query("select r from RentOrder r " +
+            "where r.orderDetails.orderStatus in :statuses")
+    Page<RentOrder> findAllFilteredByStatuses(@Param("statuses") List<OrderStatus> statuses, Pageable pageable);
 }

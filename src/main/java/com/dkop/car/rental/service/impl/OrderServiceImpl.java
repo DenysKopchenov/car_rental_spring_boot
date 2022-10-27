@@ -22,8 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -87,13 +90,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean) {
+    public Page<RentOrder> findAllOrders(PaginationAndSortingBean paginationAndSortingBean, List<OrderStatus> statuses) {
         if (Objects.isNull(paginationAndSortingBean.getSort())) {
             paginationAndSortingBean.setSort(DEFAULT_ORDER_SORT);
         }
+        if (statuses.isEmpty()) {
+            statuses = Arrays.stream(OrderStatus.values()).collect(Collectors.toList());
+        }
         PageRequest of = PageRequest.of(paginationAndSortingBean.getPage() - 1,
                 paginationAndSortingBean.getSize(), Sort.by(Sort.Direction.valueOf(paginationAndSortingBean.getDirection()), paginationAndSortingBean.getSort()));
-        return orderRepository.findAll(of);
+        return orderRepository.findAllFilteredByStatuses(statuses, of);
     }
 
     @Override
