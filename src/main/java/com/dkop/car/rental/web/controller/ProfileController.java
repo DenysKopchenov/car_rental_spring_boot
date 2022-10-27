@@ -14,10 +14,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -30,7 +28,7 @@ import java.io.IOException;
 public class ProfileController {
 
     private static final String USER_ATTRIBUTE = "appUser";
-    private static final String EDIT_PROFILE = "profile/profile";
+    private static final String EDIT_PROFILE = "profile/editProfile";
     private final UserService userService;
     private final Mapper mapper;
 
@@ -43,7 +41,7 @@ public class ProfileController {
     public String showProfile(Model model, @AuthenticationPrincipal AppUser principal) {
         AppUser appUser = userService.findById(principal.getId());
         model.addAttribute(USER_ATTRIBUTE, mapper.mapAppUserToAppUserDto(appUser));
-        return EDIT_PROFILE;
+        return "profile/profile";
     }
 
     @GetMapping("/edit")

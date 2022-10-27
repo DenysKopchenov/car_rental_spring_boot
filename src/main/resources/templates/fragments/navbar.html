@@ -10,44 +10,50 @@
 <body>
 <header class="bg-dark text-white" th:fragment="navbar">
     <div class="container">
-        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <div class="d-flex align-items-center justify-content-center">
             <a th:href="@{/}" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
                 <img th:src="@{/images/logo.png}" alt="" srcset=""
                      class="bi m-2" width="100" height="75">
             </a>
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a class="nav-link p-2 text-secondary" th:href="@{/}">Home</a></li>
-                <li><a class="nav-link p-2 text-white" th:href="@{/cars}">Cars</a></li>
+                <li><a class="nav-link p-2 text-secondary" th:href="@{/}" th:text="#{home}">Home</a></li>
+                <li><a class="nav-link p-2 text-white" th:href="@{/cars}" th:text="#{cars}">Cars</a></li>
                 <th:block sec:authorize="hasAuthority('ADMIN')">
-                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/new/car}">New car</a></li>
-                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/new/manager}">Create new
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/new/car}" th:text="#{admin.new.car}">New
+                        car</a></li>
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/new/manager}"
+                           th:text="#{admin.new.manager}">Create new
                         manager</a></li>
-                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/users}">Show users</a></li>
+                    <li><a class="nav-link p-2 text-white" th:href="@{/admin/users}" th:text="#{admin.users}">Show
+                        users</a></li>
                 </th:block>
                 <li sec:authorize="hasAuthority('USER')" class="text-end">
-                    <a class="nav-link p-2 text-white" th:href="@{/user/orders}">My orders</a>
+                    <a class="nav-link p-2 text-white" th:href="@{/user/orders}" th:text="#{user.orders}">My orders</a>
                 </li>
                 <li sec:authorize="hasAuthority('MANAGER')" class="text-end">
-                    <a class="nav-link p-2 text-white" th:href="@{/manager/orders}">All orders</a>
+                    <a class="nav-link p-2 text-white" th:href="@{/manager/orders}" th:text="#{manager.orders}">All
+                        orders</a>
                 </li>
             </ul>
             <form th:action="@{/cars}" class="d-flex">
-                <input type="search" class="form-control m-2 form-control-dark" placeholder="Search car" name="model"
+                <input type="search" class="form-control m-2 form-control-dark"
+                       th:attr="placeholder=#{navbar.search}"
+                       name="model"
                        id="model" aria-label="Search">
-                <input type="submit" value="Search" class="btn m-2 btn-light">
+                <input type="submit" th:attr="value=#{navbar.search}" class="btn m-2 btn-light">
             </form>
 
             <div sec:authorize="!isAuthenticated" class="text-end">
-                <a type="button" class="btn m-2 btn-warning" th:href="@{/login}">Login</a>
-                <a type="button" class="btn m-2 btn-warning" th:href="@{/registration}">Sign-up</a>
+                <a type="button" class="btn m-2 btn-warning" th:href="@{/login}" th:text="#{login}">Login</a>
+                <a type="button" class="btn m-2 btn-warning" th:href="@{/registration}" th:text="#{sign.up}">Sign-up</a>
             </div>
             <div sec:authorize="isAuthenticated" class="text-center">
                 <div class="d-flex">
                     <th:block sec:authorize="hasAuthority('USER')">
-                        <a type="button" class="btn m-2 btn-warning" th:href="@{/profile}">Profile</a>
+                        <a type="button" class="btn m-2 btn-warning" th:href="@{/profile}" th:text="#{navbar.profile}">Profile</a>
                     </th:block>
                     <form method="post" th:action="@{/logout}">
-                        <input class="btn m-2 btn-warning" type="submit" value="Logout"/>
+                        <input class="btn m-2 btn-warning" type="submit" th:attr="value=#{navbar.logout}"/>
                     </form>
                 </div>
             </div>
