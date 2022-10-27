@@ -90,6 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public AppUser changeUserActiveStatus(boolean isActive, UUID id) {
         AppUser appUser = findById(id);
         appUser.setActive(isActive);
@@ -97,6 +98,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public AppUser updateUserProfile(AppUserDto appUserDto) throws UserAlreadyExists {
         AppUser appUser = findById(appUserDto.getId());
         String userInputEmail = appUserDto.getEmail();

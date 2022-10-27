@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -66,8 +65,10 @@ public class AppUserController {
     @PostMapping("/booking")
     @PreAuthorize("hasAuthority('USER')")
     public String bookCar(@ModelAttribute("order") @Valid OrderDto orderDto, BindingResult bindingResult) {
-        if (orderDto.getStartDate().isAfter(orderDto.getEndDate())) {
-            bindingResult.rejectValue("startDate", "start-date");
+        LocalDate startDate = orderDto.getStartDate();
+        LocalDate endDate = orderDto.getEndDate();
+        if (startDate.isAfter(endDate) || startDate.isEqual(endDate)) {
+            bindingResult.rejectValue("startDate", "start.date.error");
         }
         checkIsAdult(orderDto, bindingResult);
         if (bindingResult.hasErrors()) {

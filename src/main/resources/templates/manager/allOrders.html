@@ -8,14 +8,15 @@
 
 <div th:if="${!orders.isEmpty()} ?: 'Not found'">
     <div class="container my-2">
-        <h1>Orders</h1>
+        <h1 th:text="#{orders}">Orders</h1>
         <div class="row">
             <div class="col">
                 <th:block th:insert="fragments/pagination :: pagination"></th:block>
             </div>
             <div class="col">
                 <form th:action="@{/manager/orders}" th:method="GET" th:object="${pagination}" onchange="submit()">
-                    <label class="form-label" for="size">Page size
+                    <label class="form-label" for="size">
+                        <th:block th:text="#{size}">Page size</th:block>
                         <select class="form-select" name="size" id="size">
                             <option th:value="1" th:selected="*{size} == 1">1</option>
                             <option th:value="4" th:selected="*{size} == 4">4</option>
@@ -23,27 +24,36 @@
                             <option th:value="16" th:selected="*{size} == 16">16</option>
                         </select>
                     </label>
-                    <label class="form-label" for="sort">Sort
+                    <label class="form-label" for="sort">
+                        <th:block th:text="#{sort}">Sort</th:block>
                         <select class="form-select" name="sort" id="sort">
                             <option th:value="orderDetails.orderStatus"
-                                    th:selected="*{sort eq 'orderDetails.orderStatus'}">
+                                    th:selected="*{sort eq 'orderDetails.orderStatus'}"
+                                    th:text="#{order.status}">
                                 Order status
                             </option>
                             <option th:value="orderDetails.startDate"
-                                    th:selected="*{sort eq 'orderDetails.startDate'}">
+                                    th:selected="*{sort eq 'orderDetails.startDate'}"
+                                    th:text="#{start.date}">
                                 Start date
                             </option>
 
                             <option th:value="orderDetails.rentalPrice"
-                                    th:selected="*{sort eq 'orderDetails.rentalPrice'}">
+                                    th:selected="*{sort eq 'orderDetails.rentalPrice'}"
+                                    th:text="#{order.rental.price}">
                                 Rental price
                             </option>
                         </select>
                     </label>
-                    <label class="form-label" for="direction">Sort direction
+                    <label class="form-label" for="direction">
+                        <th:block th:text="#{sort.direction}">Sort direction</th:block>
                         <select class="form-select" name="direction" id="direction">
-                            <option th:value="ASC" th:selected="*{direction eq 'ASC'}">ASC</option>
-                            <option th:value="DESC" th:selected="*{direction eq 'DESC'}">DESC</option>
+                            <option th:value="ASC" th:selected="*{direction eq 'ASC'}" th:text="#{sort.direction.asc}">
+                                ASC
+                            </option>
+                            <option th:value="DESC" th:selected="*{direction eq 'DESC'}"
+                                    th:text="#{sort.direction.desc}">DESC
+                            </option>
                         </select>
                     </label>
                 </form>
@@ -60,22 +70,24 @@
                         <div class="col">
                             <div class="d-flex flex-row justify-content-between mb-0 px-3">
                                 <div class="col"
-                                     th:text="|Client: ${order.passportData.firstName} ${order.passportData.lastName}|">
+                                     th:text="|#{customer}: ${order.passportData.firstName} ${order.passportData.lastName}|">
                                 </div>
-                                <div class="col" th:text="|With driver: ${order.withDriver ? 'Yes' : 'No'}">
+                                <div class="col">
+                                    <th:block th:text="|#{with.driver}:|"></th:block>
+                                    <th:block th:text="${order.withDriver} ? #{yes} : #{no}"></th:block>
                                 </div>
                             </div>
                             <div class="d-flex flex-row justify-content-between mb-0 px-3">
-                                <div class="col" th:text="|Start date: ${order.startDate}|">
+                                <div class="col" th:text="|#{start.date}: ${order.startDate}|">
                                 </div>
-                                <div class="col" th:text="|End date: ${order.endDate}|">
+                                <div class="col" th:text="|#{end.date}: ${order.endDate}|">
                                 </div>
                             </div>
-                            <div class="col" th:text="|Status: ${order.orderStatus}|">
+                            <div class="col" th:text="|#{order.status}: ${order.orderStatus}|">
                             </div>
                             <div class="d-flex flex-row justify-content-between mb-0 px-3">
                                 <div class="col" th:if="${order.orderStatus.name eq 'REJECTED'}"
-                                     th:text="|Reject details: ${order.rejectOrderDetails}|">
+                                     th:text="|#{order.reject.details}: ${order.rejectOrderDetails}|">
                                 </div>
                                 <div class="col" th:if="${order.repairPayment != null}"
                                      th:text="|${order.repairPayment.damageDescription} $${order.repairPayment.repairCost}|">
@@ -86,31 +98,33 @@
                             <th:blcok th:if="${order.orderStatus.name eq 'PENDING'}">
                                 <form class="col" th:action="@{/manager/reject/{id}(id=${order.id})}"
                                       th:method="GET">
-                                    <input type="submit"
-                                           th:attr="onclick=|return confirm('Reject order?')|"
-                                           value="Reject"
-                                           class="btn btn-warning">
+                                    <button type="submit"
+                                            th:attr="onclick=|return confirm('Reject order?')|"
+                                            class="btn btn-warning"
+                                            th:text="#{order.reject}"></button>
                                 </form>
                                 <form class="col" th:action="@{/manager/accept/{id}(id=${order.id})}"
                                       th:method="PUT">
-                                    <input type="submit"
-                                           th:attr="onclick=|return confirm('Accept order')|"
-                                           value="Accept"
-                                           class="btn btn-success">
+                                    <button type="submit"
+                                            th:attr="onclick=|return confirm('Accept order')|"
+                                            class="btn btn-success"
+                                            th:text="#{order.accept}">
+                                    </button>
                                 </form>
                             </th:blcok>
                             <form class="col" th:if="${order.orderStatus.name eq 'CLIENT_WANT_RETURN'}"
                                   th:action="@{/manager/return/{id}(id=${order.id})}" th:method="GET">
-                                <input type="submit"
-                                       th:attr="onclick=|return confirm('Submit return order?')|"
-                                       value="Submit return"
-                                       class="btn btn-info">
+                                <button type="submit"
+                                        th:attr="onclick=|return confirm('Submit return order?')|"
+                                        th:text="#{order.return}"
+                                        class="btn btn-info">
+                                </button>
                             </form>
                             <form class="col" th:if="${order.orderStatus.name eq 'REPAIR_PAID'}"
                                   th:action="@{/manager/complete/{id}(id=${order.id})}" th:method="PUT">
                                 <input type="submit"
-                                       th:attr="onclick=|return confirm('Submit return order?')|"
-                                       value="Complete"
+                                       th:attr="onclick=|return confirm('Complete order?')|"
+                                       th:text="#{order.complete}"
                                        class="btn btn-success">
                             </form>
                         </div>

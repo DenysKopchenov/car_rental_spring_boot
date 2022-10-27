@@ -53,7 +53,7 @@ public class OrderController {
         LocalDate startDate = orderDto.getStartDate();
         LocalDate endDate = orderDto.getEndDate();
         if (startDate.isAfter(endDate) || startDate.isEqual(endDate)) {
-            bindingResult.rejectValue("startDate", "start-date");
+            bindingResult.rejectValue("startDate", "start.date.error");
             return "orders/calculateForm";
         }
         orderService.calculateOrder(orderDto);

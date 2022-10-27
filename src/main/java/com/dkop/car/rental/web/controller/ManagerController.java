@@ -8,6 +8,8 @@ import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.OrderService;
 import com.dkop.car.rental.util.Mapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,10 +37,12 @@ public class ManagerController {
     private static final String TITLE_ATTRIBUTE = "title";
     private static final String ORDER_ATTRIBUTE = "order";
     private final OrderService orderService;
+    private final MessageSource messageSource;
     private final Mapper mapper;
 
-    public ManagerController(OrderService orderService, Mapper mapper) {
+    public ManagerController(OrderService orderService, MessageSource messageSource, Mapper mapper) {
         this.orderService = orderService;
+        this.messageSource = messageSource;
         this.mapper = mapper;
     }
 
@@ -82,7 +86,7 @@ public class ManagerController {
                                Model model,
                                @AuthenticationPrincipal AppUser manager) {
         if (rejectDetails.isBlank()) {
-            model.addAttribute("rejectDetailsError", "Add reject details");
+            model.addAttribute("rejectDetailsError", messageSource.getMessage("order.reject.details.error", null, LocaleContextHolder.getLocale()));
             return showRejectOrderForm(orderId, model);
         }
         RentOrder rentOrder = orderService.rejectOrder(orderId, rejectDetails);

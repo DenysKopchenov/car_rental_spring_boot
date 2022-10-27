@@ -21,9 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.Duration;
-import java.time.Period;
-import java.time.chrono.ChronoPeriod;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.UUID;
@@ -56,6 +53,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public RentOrder saveOrder(OrderDto orderDto) {
         RentOrder rentOrder = new RentOrder();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -193,6 +191,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public RentOrder askForReturn(UUID orderId) {
         RentOrder rentOrder = findById(orderId);
         OrderDetails orderDetails = rentOrder.getOrderDetails();

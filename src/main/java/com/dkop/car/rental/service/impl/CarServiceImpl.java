@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Arrays;
@@ -95,6 +96,7 @@ public class CarServiceImpl implements CarService {
 
     @SneakyThrows
     @Override
+    @Transactional
     public Car updateCar(CarDto carDto) {
         Car car = mapper.mapCarDtoToCar(carDto);
         if (Objects.isNull(car.getImage())) {
