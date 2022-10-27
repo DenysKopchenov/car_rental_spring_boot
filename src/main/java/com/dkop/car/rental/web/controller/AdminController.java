@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdminController {
 
-    private static final String REGISTRATION_PAGE = "registration";
     private static final String TITLE_ATTRIBUTE = "title";
     private static final String ADMIN_PAGE = "Administrator";
     private static final String REGISTER_NEW_MANAGER_TITLE = "Register new manager";

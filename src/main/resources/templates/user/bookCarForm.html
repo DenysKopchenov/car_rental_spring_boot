@@ -19,25 +19,25 @@
                         <form th:action="@{/user/booking}" th:object="${order}" th:method="POST">
                             <div class="d-flex flex-row m-2">
                                 <div class="col px-2">
-                                    <label for="startDate" class="label">Start date</label>
+                                    <label for="startDate" class="label" th:text="#{start.date}">Start date</label>
                                     <input type="date" class="form-control" id="startDate"
                                            th:value="*{startDate}"
                                            th:field="*{startDate}"
                                            th:attr="min=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
-                                           placeholder="Date" required readonly>
+                                           required readonly>
                                 </div>
                                 <div class="col px-2">
-                                    <label for="endDate" class="label">End date</label>
+                                    <label for="endDate" class="label" th:text="#{end.date}">End date</label>
                                     <input type="date" class="form-control" id="endDate"
                                            th:value="*{endDate}"
                                            th:field="*{endDate}"
                                            th:attr="min=${#temporals.format(#temporals.createNow().plusDays(1), 'yyyy-MM-dd')}"
-                                           placeholder="Date" required readonly>
+                                           required readonly>
                                 </div>
                             </div>
                             <div class="d-flex flex-row m-2">
                                 <div class="col px-2">
-                                    <labe for="firstName" class="form-label">First name</labe>
+                                    <labe for="firstName" class="form-label" th:text="#{first.name}">First name</labe>
                                     <input class="form-control" type="text" id="firstName"
                                            th:field="*{passportData.firstName}" required>
                                     <div class="alert alert-danger"
@@ -45,7 +45,7 @@
                                          th:errors="*{passportData.firstName}"></div>
                                 </div>
                                 <div class="col px-2">
-                                    <labe for="lastName" class="form-label">Last name</labe>
+                                    <labe for="lastName" class="form-label" th:text="#{last.name}">Last name</labe>
                                     <input class="form-control" type="text" id="lastName"
                                            th:field="*{passportData.lastName}" required>
                                     <div class="alert alert-danger"
@@ -56,7 +56,8 @@
 
                             <div class="d-flex flex-row m-2">
                                 <div class="col px-2">
-                                    <labe for="passport" class="form-label">Passport code</labe>
+                                    <labe for="passport" class="form-label" th:text="#{passport.code}">Passport code
+                                    </labe>
                                     <input class="form-control" type="text" id="passport"
                                            th:field="*{passportData.passportCode}" required>
                                     <div class="alert alert-danger"
@@ -66,10 +67,12 @@
                             </div>
                             <div class="d-flex flex-row m-2">
                                 <div class="col px-2">
-                                    <labe for="issueDate" class="col-sm-3 form-label">Issue date</labe>
+                                    <labe for="issueDate" class="col-sm-3 form-label" th:text="#{passport.issue.date}">
+                                        Issue date
+                                    </labe>
                                     <input class="col-md-4 form-control" type="date" id="issueDate"
                                            th:field="*{passportData.issueDate}"
-                                           th:attr="max=${#temporals.format(#temporals.createNow().minusYears(@environment.getProperty('minimal.age.for.order')), 'yyyy-MM-dd')}"
+                                           th:attr="max=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
                                            required>
                                     <div class="alert alert-danger"
                                          th:if="${#fields.hasErrors('passportData.issueDate')}"
@@ -78,7 +81,10 @@
                             </div>
                             <div class="d-flex flex-row m-2">
                                 <div class="col px-2">
-                                    <labe for="issueDepartment" class="form-label">Issue department</labe>
+                                    <labe for="issueDepartment" class="form-label"
+                                          th:text="#{passport.issue.department}">
+                                        Issue department
+                                    </labe>
                                     <input class="form-control" type="text" id="issueDepartment"
                                            th:field="*{passportData.issueDepartment}" required>
                                     <div class="alert alert-danger"
@@ -87,7 +93,7 @@
                                 </div>
                             </div>
                             <div class="d-flex flex-row justify-content-center m-2">
-                                <input type="submit" value="Send order" class="btn btn-primary py-2 px-3">
+                                <input type="submit" th:attr="value=#{order.create}" class="btn btn-primary py-2 px-3">
                             </div>
                             <input type="hidden"
                                    th:value="*{car}"
@@ -114,12 +120,15 @@
                         <div th:text="|Total days = ${order.numberOfRentDays}|"></div>
                     </div>
                     <div class="col-3">
-                        <div th:text="|With driver = ${order.withDriver ? 'Yes' : 'No'}|"></div>
-                        <div th:text="|Total price = $${order.rentalPrice}|"></div>
+                        <div>
+                            <th:block th:text="|#{with.driver}:|"></th:block>
+                            <th:block th:text="${order.withDriver} ? #{yes} : #{no}"></th:block>
+                        </div>
+                        <div th:text="|#{order.rental.price} $${order.rentalPrice}|"></div>
                     </div>
                 </div>
                 <br>
-                <div sec:authorize="!isAuthenticated" class="row p-2 bg-light">
+                <div sec:authorize="!isAuthenticated" class="row p-2 bg-light" th:text="#{login.for.book}">
                     Login to book car now
                 </div>
             </div>

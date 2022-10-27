@@ -19,20 +19,22 @@
                 <div class="col-6">
                     <div class="col">
                         <div class="col" sec:authorize="${hasAuthority('MANAGER')}"
-                             th:text="|Client: ${order.appUserDto.firstName} ${order.appUserDto.lastName}|">
+                             th:text="|#{customer}: ${order.passportData.firstName} ${order.passportData.lastName}|">
                         </div>
-                        <div class="col" th:text="|With driver: ${order.withDriver ? 'Yes' : 'No'}">
+                        <div class="col">
+                            <th:block th:text="|#{with.driver}:|"></th:block>
+                            <th:block th:text="${order.withDriver} ? #{yes} : #{no}"></th:block>
                         </div>
-                        <div class="col" th:text="|Start date: ${order.startDate}|">
+                        <div class="col" th:text="|#{start.date}: ${order.startDate}|">
                         </div>
-                        <div class="col" th:text="|End date: ${order.endDate}|">
+                        <div class="col" th:text="|#{end.date}: ${order.endDate}|">
                         </div>
-                        <div class="col" th:text="|Status: ${order.orderStatus}|">
+                        <div class="col" th:text="|#{order.status}: ${order.orderStatus}|">
                         </div>
                     </div>
                     <div class="col">
                         <div class="col" th:if="${order.orderStatus.name eq 'REJECTED'}"
-                             th:text="|Reject details: ${order.rejectOrderDetails}|">
+                             th:text="|#{order.reject.details}: ${order.rejectOrderDetails}|">
                         </div>
                         <div class="col" th:if="${order.repairPayment != null}"
                              th:text="|${order.repairPayment.damageDescription} $${order.repairPayment.repairCost}|">
@@ -42,56 +44,63 @@
                         <th:blcok sec:authorize="${hasAuthority('USER')}">
                             <form class="col" th:if="${order.orderStatus.name eq 'AWAIT_PAYMENT'}"
                                   th:action="@{/user/pay/order/{id}(id=${order.id})}" th:method="PUT">
-                                <input type="submit"
-                                       th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|"
-                                       value="Pay for car"
-                                       class="btn btn-success">
+                                <button type="submit"
+                                        th:attr="onclick=|return confirm('Pay$${order.rentalPrice} for car ${order.car.manufacturer} ${order.car.model}')|"
+                                        th:text="#{order.pay.car}"
+                                        class="btn btn-success">
+                                </button>
                             </form>
 
                             <form class="col" th:if="${order.orderStatus.name eq 'AWAIT_REPAIR_PAYMENT'}"
                                   th:action="@{/user/pay/repair/{id}(id=${order.id})}" th:method="PUT">
-                                <input type="submit"
-                                       th:attr="onclick=|return confirm('Pay$${order.repairPayment.repairCost} for car damage ${order.car.manufacturer} ${order.car.model} ${order.repairPayment.damageDescription}')|"
-                                       value="Pay for car DAMAGE"
-                                       class="btn btn-success">
+                                <button type="submit"
+                                        th:attr="onclick=|return confirm('Pay$${order.repairPayment.repairCost} for car damage ${order.car.manufacturer} ${order.car.model} ${order.repairPayment.damageDescription}')|"
+                                        th:text="#{order.pay.repair}"
+                                        class="btn btn-success">
+                                </button>
                             </form>
 
                             <form class="col" th:if="${order.orderStatus.name eq 'PAID'}"
                                   th:action="@{/user/return/{id}(id=${order.id})}" th:method="PUT">
-                                <input type="submit"
-                                       th:attr="onclick=|return confirm('Want return car?)|"
-                                       value="Return car"
-                                       class="btn btn-success">
+                                <button type="submit"
+                                        th:attr="onclick=|return confirm('Want return car?)|"
+                                        th:text="#{order.return}"
+                                        class="btn btn-success">
+                                </button>
                             </form>
                         </th:blcok>
                         <th:blcok sec:authorize="${hasAuthority('MANAGER')}">
                             <th:blcok th:if="${order.orderStatus.name eq 'PENDING'}">
                                 <form class="col" th:action="@{/manager/reject/{id}(id=${order.id})}" th:method="GET">
-                                    <input type="submit"
-                                           th:attr="onclick=|return confirm('Reject order?')|"
-                                           value="Reject"
-                                           class="btn btn-warning">
+                                    <button type="submit"
+                                            th:attr="onclick=|return confirm('Reject order?')|"
+                                            th:text="#{order.reject}"
+                                            class="btn btn-warning">
+                                    </button>
                                 </form>
                                 <form class="col" th:action="@{/manager/accept/{id}(id=${order.id})}" th:method="PUT">
-                                    <input type="submit"
-                                           th:attr="onclick=|return confirm('Accept order')|"
-                                           value="Accept"
-                                           class="btn btn-success">
+                                    <button type="submit"
+                                            th:attr="onclick=|return confirm('Accept order')|"
+                                            th:text="#{order.accept}"
+                                            class="btn btn-success">
+                                    </button>
                                 </form>
                             </th:blcok>
                             <form class="col" th:if="${order.orderStatus.name eq 'CLIENT_WANT_RETURN'}"
                                   th:action="@{/manager/return/{id}(id=${order.id})}" th:method="GET">
-                                <input type="submit"
-                                       th:attr="onclick=|return confirm('Submit return order?')|"
-                                       value="Submit return"
-                                       class="btn btn-info">
+                                <button type="submit"
+                                        th:attr="onclick=|return confirm('Submit return order?')|"
+                                        th:text="#{order.return}"
+                                        class="btn btn-info">
+                                </button>
                             </form>
                             <form class="col" th:if="${order.orderStatus.name eq 'REPAIR_PAID'}"
                                   th:action="@{/manager/complete/{id}(id=${order.id})}" th:method="PUT">
-                                <input type="submit"
-                                       th:attr="onclick=|return confirm('Submit return order?')|"
-                                       value="Complete"
-                                       class="btn btn-success">
+                                <button type="submit"
+                                        th:attr="onclick=|return confirm('Submit return order?')|"
+                                        th:text="#{order.complete}"
+                                        class="btn btn-success">
+                                </button>
                             </form>
                         </th:blcok>
                     </div>

@@ -15,35 +15,35 @@
             <div class="col-md-4 d-flex align-items-center">
                 <div class="col p-2 rounded bg-light">
                     <form th:action="@{/order/booking}" th:object="${order}" th:method="GET">
-                        <h2 class="text-center">Calculate price</h2>
+                        <h2 class="text-center" th:text="#{calculate.price}">Calculate price</h2>
                         <div class="form-check">
                             <label for="needDriver" class="form-check-label"
-                                   th:text="|Need driver (${@environment.getProperty('price.for.driver')}$ per/day)|"></label>
+                                   th:text="|#{with.driver} (${@environment.getProperty('price.for.driver')}$ /#{day})|"></label>
                             <input type="checkbox" id="needDriver"
                                    th:field="*{withDriver}"
                                    class="checkbox-custom">
                         </div>
                         <div class="d-flex flex-row m-2">
                             <div class="col px-2">
-                                <label for="startDate" class="label">Start date</label>
+                                <label for="startDate" class="label" th:text="#{start.date}">Start date</label>
                                 <input type="date" class="form-control" id="startDate"
                                        th:field="*{startDate}"
                                        th:attr="min=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
-                                       placeholder="Date" required>
+                                       required>
                                 <div class="alert alert-danger"
                                      th:if="${#fields.hasErrors('startDate')}"
                                      th:errors="*{startDate}"></div>
                             </div>
                             <div class="col px-2">
-                                <label for="endDate" class="label">End date</label>
+                                <label for="endDate" class="label" th:text="#{start.date}">End date</label>
                                 <input type="date" class="form-control" id="endDate"
                                        th:field="*{endDate}"
                                        th:attr="min=${#temporals.format(#temporals.createNow().plusDays(1), 'yyyy-MM-dd')}"
-                                       placeholder="Date" required>
+                                       required>
                             </div>
                         </div>
                         <div class="d-flex flex-row justify-content-center m-2">
-                            <input type="submit" value="Calculate price" class="btn btn-info py-3 px-4">
+                            <input type="submit" th:attr="value=#{calculate.price}" class="btn btn-info py-3 px-4">
                         </div>
                         <input type="hidden" th:value="*{car}" th:field="*{car}">
                     </form>
@@ -56,7 +56,7 @@
                 </div>
                 <div class="row px-3 bg-light">
                     <div th:text="|${order.car.manufacturer} ${order.car.model}|"></div>
-                    <div th:text="|Price per day  $${order.car.pricePerDay}/day|"></div>
+                    <div th:text="|#{car.price}${order.car.pricePerDay}/#{day}|"></div>
                 </div>
             </div>
         </div>

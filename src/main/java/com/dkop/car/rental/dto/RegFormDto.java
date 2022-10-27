@@ -18,7 +18,7 @@ import javax.validation.constraints.Pattern;
 public class RegFormDto {
 
     private static final String PASSWORD_REGEX = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,20}$";
-    private static final String NAME_REGEX = "[A-Za-z]{2,20}";
+    private static final String NAME_REGEX = "[A-Z_А-ЯЇІЄҐ][a-z_а-яїієґ']{2,20}";
     private static final String PASSWORD_VALIDATION_MESSAGE = "{validation.password}";
     private static final String NAME_VALIDATION_MESSAGE = "{validation.name}";
     private static final String EMAIL_VALIDATION_MESSAGE = "{validation.email}";

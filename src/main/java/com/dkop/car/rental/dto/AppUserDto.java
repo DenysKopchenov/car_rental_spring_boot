@@ -17,17 +17,19 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AppUserDto {
 
-    private static final String NAME_REGEX = "[A-Za-z]{2,20}";
+    private static final String NAME_REGEX = "[A-Z_А-ЯЇІЄҐ][a-z_а-яїієґ']{2,20}";
+    private static final String NAME_VALIDATION_MESSAGE = "{validation.name}";
+    private static final String EMAIL_VALIDATION_MESSAGE = "{validation.email}";
 
     private UUID id;
     @NotBlank
-    @Email
+    @Email(message = EMAIL_VALIDATION_MESSAGE)
     private String email;
     @NotBlank
-    @Pattern(regexp = NAME_REGEX)
+    @Pattern(regexp = NAME_REGEX, message = NAME_VALIDATION_MESSAGE)
     private String firstName;
     @NotBlank
-    @Pattern(regexp = NAME_REGEX)
+    @Pattern(regexp = NAME_REGEX, message = NAME_VALIDATION_MESSAGE)
     private String lastName;
     private Role role;
     private boolean isActive;

@@ -12,7 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -24,6 +24,7 @@ import java.util.UUID;
 @Entity
 public class PassportData {
 
+    private static final String NAME_REGEX = "[A-Z_А-ЯЇІЄҐ][a-z_а-яїієґ']{2,20}";
     @Id
     @GeneratedValue()
     @GenericGenerator(
@@ -32,15 +33,15 @@ public class PassportData {
     )
     private UUID id;
     @NotBlank
-    @Pattern(regexp = "[A-Za-z]{2,20}")
+    @Pattern(regexp = NAME_REGEX)
     private String firstName;
     @NotBlank
-    @Pattern(regexp = "[A-Za-z]{2,20}")
+    @Pattern(regexp = NAME_REGEX)
     private String lastName;
     @NotBlank
     private String passportCode;
     @NotNull
-    @Past
+    @PastOrPresent
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate issueDate;
     @NotBlank

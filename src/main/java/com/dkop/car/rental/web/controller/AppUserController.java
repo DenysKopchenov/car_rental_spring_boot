@@ -63,14 +63,12 @@ public class AppUserController {
     }
 
     @PostMapping("/booking")
-    @PreAuthorize("hasAuthority('USER')")
     public String bookCar(@ModelAttribute("order") @Valid OrderDto orderDto, BindingResult bindingResult) {
         LocalDate startDate = orderDto.getStartDate();
         LocalDate endDate = orderDto.getEndDate();
         if (startDate.isAfter(endDate) || startDate.isEqual(endDate)) {
             bindingResult.rejectValue("startDate", "start.date.error");
         }
-        checkIsAdult(orderDto, bindingResult);
         if (bindingResult.hasErrors()) {
             return "user/bookCarForm";
         }
@@ -80,14 +78,7 @@ public class AppUserController {
         return "redirect:/order/" + order.getId();
     }
 
-    private void checkIsAdult(OrderDto orderDto, BindingResult bindingResult) {
-        if (orderDto.getPassportData().getIssueDate().isAfter(LocalDate.now().minusYears(minimalAgeForOrder))) {
-            bindingResult.rejectValue("passportData.issueDate", "issueDateError", String.format("Must be greater than %d years", minimalAgeForOrder));
-        }
-    }
-
     @PutMapping("/return/{id}")
-    @PreAuthorize("hasAuthority('USER')")
     public String returnCar(@PathVariable("id") UUID orderId) {
         RentOrder order = orderService.askForReturn(orderId);
         log.info("User {} asked for return order {}", order.getAppUser().getId(), order.getId());
@@ -95,7 +86,6 @@ public class AppUserController {
     }
 
     @PutMapping("/pay/order/{id}")
-    @PreAuthorize("hasAuthority('USER')")
     public String payOrder(@PathVariable("id") UUID orderId) {
         RentOrder order = orderService.payOrder(orderId);
         log.info("User {} paid for order {}", order.getAppUser().getId(), order.getId());
@@ -103,7 +93,6 @@ public class AppUserController {
     }
 
     @PutMapping("/pay/repair/{id}")
-    @PreAuthorize("hasAuthority('USER')")
     public String payRepair(@PathVariable("id") UUID orderId) {
         RentOrder order = orderService.payRepair(orderId);
         log.info("User {} paid repair for order {}", order.getAppUser().getId(), order.getId());
