@@ -17,15 +17,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -127,11 +124,5 @@ public class ManagerController {
         RentOrder rentOrder = orderService.completeOrderWithPaidRepair(orderId);
         log.info("Order {} completed by manager {} with repair cost {}", rentOrder.getId(), manager.getId(), rentOrder.getOrderDetails().getRepairPayment().getRepairCost());
         return REDIRECT_ORDER_INFO_PAGE;
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public void handleRuntimeException(RuntimeException ex, HttpServletResponse response) throws IOException {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        log.error(ex.getMessage());
     }
 }

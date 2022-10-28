@@ -1,20 +1,14 @@
 package com.dkop.car.rental.dto;
 
 import com.dkop.car.rental.model.user.Role;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.UUID;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class AppUserDto {
 
     private static final String NAME_REGEX = "[A-Z_А-ЯЇІЄҐ][a-z_а-яїієґ']{2,20}";

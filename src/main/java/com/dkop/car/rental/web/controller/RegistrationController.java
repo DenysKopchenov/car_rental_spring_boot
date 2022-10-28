@@ -2,7 +2,7 @@ package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.ReCaptchaResponse;
 import com.dkop.car.rental.dto.RegFormDto;
-import com.dkop.car.rental.exception.UserAlreadyExists;
+import com.dkop.car.rental.exception.UserAlreadyExistsException;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +82,7 @@ public class RegistrationController {
             AppUser appUser = userService.saveAppUser(regFormDto);
             log.info("{} successfully registered", appUser.getEmail());
             return SUCCESS_REGISTRATION;
-        } catch (UserAlreadyExists ex) {
+        } catch (UserAlreadyExistsException ex) {
             redirectAttributes.addFlashAttribute(USER, regFormDto);
             return FAILED_REGISTRATION;
         }

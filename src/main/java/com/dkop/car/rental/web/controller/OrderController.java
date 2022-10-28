@@ -12,15 +12,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -67,11 +64,5 @@ public class OrderController {
         OrderDto orderDto = mapper.mapRentOrderToOrderDto(order);
         model.addAttribute("order", orderDto);
         return "orders/orderInfo";
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public void handleRuntimeException(RuntimeException ex, HttpServletResponse response) throws IOException {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        log.error(ex.getMessage());
     }
 }

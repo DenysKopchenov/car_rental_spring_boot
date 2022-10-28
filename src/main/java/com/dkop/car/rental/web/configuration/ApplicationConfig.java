@@ -12,18 +12,11 @@ import java.util.Properties;
 @Configuration
 public class ApplicationConfig {
 
-    private String mailSenderUserName;
-    private String mailSenderPassword;
-    private String dataSourceUrl;
-    private String dataSourceUsername;
-    private String dataSourcePassword;
-
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
-
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
@@ -34,16 +27,6 @@ public class ApplicationConfig {
 
         return mailSender;
     }
-
-//    @Bean
-//    public DataSource dataSource() {
-//        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-//
-//        dataSourceBuilder.url(dataSourceUrl);
-//        dataSourceBuilder.username(dataSourceUsername);
-//        dataSourceBuilder.password(dataSourcePassword);
-//        return dataSourceBuilder.build();
-//    }
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {

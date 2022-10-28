@@ -2,22 +2,16 @@ package com.dkop.car.rental.dto;
 
 import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Manufacturer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class CarFilterBean {
 
-    private List<Manufacturer> manufacturers = Collections.emptyList();
-    private List<CategoryClass> categories = Collections.emptyList();
+    private List<Manufacturer> manufacturers = new ArrayList<>();
+    private List<CategoryClass> categories = new ArrayList<>();
     private String model = "";
     private long minPrice;
     private long maxPrice;

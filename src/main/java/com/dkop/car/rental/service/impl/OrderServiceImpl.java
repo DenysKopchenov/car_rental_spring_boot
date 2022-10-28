@@ -2,6 +2,7 @@ package com.dkop.car.rental.service.impl;
 
 import com.dkop.car.rental.dto.OrderDto;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
+import com.dkop.car.rental.exception.OrderAlreadyExistsException;
 import com.dkop.car.rental.model.order.OrderDetails;
 import com.dkop.car.rental.model.order.OrderStatus;
 import com.dkop.car.rental.model.order.RentOrder;
@@ -73,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
         rentOrder.setOrderDetails(orderDetails);
 
         if (isOrderAlreadyExist(rentOrder)) {
-            throw new IllegalArgumentException("saveOrder() " + ORDER_ALREADY_EXISTS);
+            throw new OrderAlreadyExistsException("saveOrder() " + ORDER_ALREADY_EXISTS);
         }
 
         return orderRepository.save(rentOrder);

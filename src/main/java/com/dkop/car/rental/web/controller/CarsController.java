@@ -1,6 +1,5 @@
 package com.dkop.car.rental.web.controller;
 
-
 import com.dkop.car.rental.dto.CarDto;
 import com.dkop.car.rental.dto.CarFilterBean;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
@@ -16,7 +15,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -82,12 +80,6 @@ public class CarsController {
         model.addAttribute(TITLE_ATTRIBUTE, car.getModel());
         model.addAttribute("car", carDto);
         return "cars/carInfo";
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public void handleRuntimeException(RuntimeException ex, HttpServletResponse response) throws IOException {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        log.error(ex.getMessage());
     }
 
     private void setManufacturersAndCategoryClassAttributes(Model model) {

@@ -4,11 +4,7 @@ import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Fuel;
 import com.dkop.car.rental.model.car.Manufacturer;
 import com.dkop.car.rental.model.car.Transmission;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Min;
@@ -16,11 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
+@Data
 public class CarDto {
 
     private UUID id;

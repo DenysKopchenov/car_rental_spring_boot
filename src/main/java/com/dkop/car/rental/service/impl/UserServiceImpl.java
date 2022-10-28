@@ -3,7 +3,7 @@ package com.dkop.car.rental.service.impl;
 import com.dkop.car.rental.dto.AppUserDto;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.dto.RegFormDto;
-import com.dkop.car.rental.exception.UserAlreadyExists;
+import com.dkop.car.rental.exception.UserAlreadyExistsException;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.model.user.Role;
 import com.dkop.car.rental.repository.AppUserRepository;
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public AppUser saveAppUser(RegFormDto regFormDto) throws UserAlreadyExists {
+    public AppUser saveAppUser(RegFormDto regFormDto) throws UserAlreadyExistsException {
         checkIsUserExists(regFormDto.getEmail());
 
         AppUser appUser = mapper.mapRegFormDtoToUser(regFormDto);
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public AppUser saveManager(RegFormDto regFormDto) throws UserAlreadyExists {
+    public AppUser saveManager(RegFormDto regFormDto) throws UserAlreadyExistsException {
         checkIsUserExists(regFormDto.getEmail());
 
         AppUser appUser = mapper.mapRegFormDtoToUser(regFormDto);
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public AppUser updateUserProfile(AppUserDto appUserDto) throws UserAlreadyExists {
+    public AppUser updateUserProfile(AppUserDto appUserDto) throws UserAlreadyExistsException {
         AppUser appUser = findById(appUserDto.getId());
         String userInputEmail = appUserDto.getEmail();
         if (!appUser.getEmail().equals(userInputEmail)) {
@@ -116,9 +116,9 @@ public class UserServiceImpl implements UserService {
         return appUserRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(String.format("Username %s not found", username)));
     }
 
-    private void checkIsUserExists(String email) throws UserAlreadyExists {
+    private void checkIsUserExists(String email) throws UserAlreadyExistsException {
         if (appUserRepository.existsByEmail(email)) {
-            throw new UserAlreadyExists(String.format(USER_ALREADY_EXIST_PATTERN, (email)));
+            throw new UserAlreadyExistsException(String.format(USER_ALREADY_EXIST_PATTERN, (email)));
         }
     }
 }

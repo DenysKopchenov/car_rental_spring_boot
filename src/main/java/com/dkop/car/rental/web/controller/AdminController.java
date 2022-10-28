@@ -4,7 +4,7 @@ import com.dkop.car.rental.dto.AppUserDto;
 import com.dkop.car.rental.dto.CarDto;
 import com.dkop.car.rental.dto.PaginationAndSortingBean;
 import com.dkop.car.rental.dto.RegFormDto;
-import com.dkop.car.rental.exception.UserAlreadyExists;
+import com.dkop.car.rental.exception.UserAlreadyExistsException;
 import com.dkop.car.rental.model.car.Car;
 import com.dkop.car.rental.model.car.CategoryClass;
 import com.dkop.car.rental.model.car.Fuel;
@@ -23,7 +23,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,9 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -74,7 +71,6 @@ public class AdminController {
         this.mapper = mapper;
     }
 
-
     @GetMapping
     public String showAdminPage(Model model) {
         model.addAttribute(TITLE_ATTRIBUTE, ADMIN_PAGE);
@@ -100,7 +96,7 @@ public class AdminController {
             AppUser manager = userService.saveManager(regFormDto);
             log.info("Manager with id = {} created", manager.getId());
             return "redirect:/admin/new/manager?success";
-        } catch (UserAlreadyExists ex) {
+        } catch (UserAlreadyExistsException ex) {
             redirectAttributes.addFlashAttribute(USER, regFormDto);
             return "redirect:/admin/new/manager?failed";
         }
@@ -192,12 +188,6 @@ public class AdminController {
         log.info("User with id = {} unblocked", appUser.getId());
         redirectAttributes.addFlashAttribute("userResult", mapper.mapAppUserToAppUserDto(appUser));
         return REDIRECT + request.getHeader(HEADER_REFERER);
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public void handleRuntimeException(RuntimeException ex, HttpServletResponse response) throws IOException {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        log.error(ex.getMessage());
     }
 
     private static void setManufacturersAndCategoryClassAttributes(Model model) {

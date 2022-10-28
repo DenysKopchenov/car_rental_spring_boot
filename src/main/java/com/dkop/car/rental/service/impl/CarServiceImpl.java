@@ -48,7 +48,7 @@ public class CarServiceImpl implements CarService {
         long maxPrice = getMaxPriceFromFilterOrMaxFromRepository(carFilterBean, minPrice);
         String model = carFilterBean.getModel();
 
-        PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
+        PageRequest of = PageRequest.of(normalizePageNumberForPageRequest(pagination), pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
         return carRepository.findAllFilteredPaged(manufacturers,
                 categories, model, minPrice, maxPrice, of);
     }
@@ -64,7 +64,7 @@ public class CarServiceImpl implements CarService {
         long maxPrice = getMaxPriceFromFilterOrMaxFromRepository(carFilterBean, minPrice);
         String model = carFilterBean.getModel();
 
-        PageRequest of = PageRequest.of(pagination.getPage() - 1, pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
+        PageRequest of = PageRequest.of(normalizePageNumberForPageRequest(pagination), pagination.getSize(), Sort.by(Sort.Direction.valueOf(pagination.getDirection()), pagination.getSort()));
         return carRepository.findAllAvailableFilteredPaged(manufacturers,
                 categories, model, minPrice, maxPrice, of);
     }
@@ -99,7 +99,7 @@ public class CarServiceImpl implements CarService {
     @Transactional
     public Car updateCar(CarDto carDto) {
         Car car = mapper.mapCarDtoToCar(carDto);
-        if (Objects.isNull(car.getImage())) {
+        if (car.getImage().length == 0) {
             car.setImage(findImageByCarId(car.getId()));
         }
         return carRepository.save(car);
@@ -112,6 +112,10 @@ public class CarServiceImpl implements CarService {
             carFilterBean.setMaxPrice(maxPrice);
         }
         return maxPrice;
+    }
+
+    private static int normalizePageNumberForPageRequest(PaginationAndSortingBean pagination) {
+        return pagination.getPage() - 1;
     }
 
     private long getMinPriceFromFilterOrMinFromRepository(CarFilterBean carFilterBean) {

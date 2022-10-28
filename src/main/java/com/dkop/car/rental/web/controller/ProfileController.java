@@ -1,7 +1,7 @@
 package com.dkop.car.rental.web.controller;
 
 import com.dkop.car.rental.dto.AppUserDto;
-import com.dkop.car.rental.exception.UserAlreadyExists;
+import com.dkop.car.rental.exception.UserAlreadyExistsException;
 import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.UserService;
 import com.dkop.car.rental.util.Mapper;
@@ -11,15 +11,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 
 @Controller
 @RequestMapping("/profile")
@@ -62,17 +59,11 @@ public class ProfileController {
         }
         try {
             userService.updateUserProfile(appUserDto);
-        } catch (UserAlreadyExists e) {
+        } catch (UserAlreadyExistsException e) {
             model.addAttribute(USER_ATTRIBUTE, appUserDto);
             model.addAttribute("emailExist", appUserDto.getEmail());
             return EDIT_PROFILE;
         }
         return "redirect:/profile?success";
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public void handleRuntimeException(RuntimeException ex, HttpServletResponse response) throws IOException {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        log.error(ex.getMessage());
     }
 }

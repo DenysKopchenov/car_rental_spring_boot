@@ -1,9 +1,7 @@
 package com.dkop.car.rental.dto;
 
 import com.dkop.car.rental.dto.constraint.PasswordMatch;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
@@ -11,9 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @PasswordMatch(message = "{validation.password.confirm}")
 public class RegFormDto {
 

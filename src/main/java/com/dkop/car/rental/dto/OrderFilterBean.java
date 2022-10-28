@@ -1,18 +1,12 @@
 package com.dkop.car.rental.dto;
 
 import com.dkop.car.rental.model.order.OrderStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.Collections;
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class OrderFilterBean {
 
     private List<OrderStatus> orderStatuses = Collections.emptyList();

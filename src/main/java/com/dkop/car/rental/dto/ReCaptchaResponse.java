@@ -1,13 +1,11 @@
 package com.dkop.car.rental.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class ReCaptchaResponse {
 
     private boolean success;
     private String hostname;
-    private String challenge_ts;
+    private String challengeTs;
 }

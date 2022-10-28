@@ -7,14 +7,12 @@ import com.dkop.car.rental.model.user.AppUser;
 import com.dkop.car.rental.service.OrderService;
 import com.dkop.car.rental.util.Mapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,9 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -38,8 +34,6 @@ public class AppUserController {
 
     private static final String REDIRECT_ORDER_INFO_PAGE = "redirect:/order/{id}";
     private static final String TITLE = "title";
-    @Value("${minimal.age.for.order}")
-    private long minimalAgeForOrder;
     private final OrderService orderService;
     private final Mapper mapper;
 
@@ -97,11 +91,5 @@ public class AppUserController {
         RentOrder order = orderService.payRepair(orderId);
         log.info("User {} paid repair for order {}", order.getAppUser().getId(), order.getId());
         return REDIRECT_ORDER_INFO_PAGE;
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public void handleRuntimeException(RuntimeException ex, HttpServletResponse response) throws IOException {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        log.error(ex.getMessage());
     }
 }
