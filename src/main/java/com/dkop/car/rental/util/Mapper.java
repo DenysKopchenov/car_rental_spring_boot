@@ -24,7 +24,7 @@ public class Mapper {
         car.setFuel(carDto.getFuel());
         car.setTransmission(carDto.getTransmission());
         car.setPricePerDay(carDto.getPricePerDay());
-        car.setImage(car.getImage());
+        car.setImage(carDto.getImage().getBytes());
         car.setAvailable(carDto.isAvailable());
         return car;
     }
